@@ -1,4 +1,4 @@
 <template>
-    <div></div>
+    <div>게시글 상세보기 페이지 입니다.</div>
 </template>
 <script></script>
