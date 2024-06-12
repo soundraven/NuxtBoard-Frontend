@@ -2,6 +2,10 @@
     <div :class="$style.index">
         <UContainer>
             <UAccordion multiple :items="explain" />
+            <UButton class="mx-8" @click="navigateTo('login')">login</UButton>
+            <UButton class="mx-8" @click="navigateTo('sign')">sign</UButton>
+            <UButton class="mx-8" @click="navigateTo('write')">write</UButton>
+            <UButton class="mx-8" @click="navigateTo('post')">post</UButton>
         </UContainer>
     </div>
 </template>
