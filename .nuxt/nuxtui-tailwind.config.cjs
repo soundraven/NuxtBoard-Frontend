@@ -1,6 +1,6 @@
 
       const { defaultExtractor: createDefaultExtractor } = require('tailwindcss/lib/lib/defaultExtractor.js')
-      const { customSafelistExtractor, generateSafelist } = require("/Users/hyeonseok/Documents/NuxtBoard-Frontend/node_modules/@nuxt/ui/dist/runtime/utils/colors")
+      const { customSafelistExtractor, generateSafelist } = require("C:/Users/kin97/Desktop/Coding/NuxtBoard-Frontend/node_modules/@nuxt/ui/dist/runtime/utils/colors")
       const { iconsPlugin, getIconCollections } = require('@egoist/tailwindcss-icons')
 
       const defaultExtractor = createDefaultExtractor({ tailwindConfig: { separator: ':' } })
@@ -16,8 +16,8 @@
         ],
         content: {
           files: [
-            "/Users/hyeonseok/Documents/NuxtBoard-Frontend/node_modules/@nuxt/ui/dist/runtime/components/**/*.{vue,mjs,ts}",
-            "/Users/hyeonseok/Documents/NuxtBoard-Frontend/node_modules/@nuxt/ui/dist/runtime/ui.config/**/*.{mjs,js,ts}"
+            "C:/Users/kin97/Desktop/Coding/NuxtBoard-Frontend/node_modules/@nuxt/ui/dist/runtime/components/**/*.{vue,mjs,ts}",
+            "C:/Users/kin97/Desktop/Coding/NuxtBoard-Frontend/node_modules/@nuxt/ui/dist/runtime/ui.config/**/*.{mjs,js,ts}"
           ],
           transform: {
             vue: (content) => {

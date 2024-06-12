@@ -40,6 +40,6 @@ if (import.meta.hot) {
   })
 }
 
-import cfg0 from "/Users/hyeonseok/Documents/NuxtBoard-Frontend/app.config.ts"
+import cfg0 from "C:/Users/kin97/Desktop/Coding/NuxtBoard-Frontend/app.config.ts"
 
 export default /*@__PURE__*/ defuFn(cfg0, inlineConfig)
