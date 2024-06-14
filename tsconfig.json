@@ -1,10 +1,8 @@
 {
-    // https://nuxt.com/docs/guide/concepts/typescript
     "extends": "./.nuxt/tsconfig.json",
-
     "compilerOptions": {
-        "target": "esnext",
-        "module": "esnext",
+        "target": "ESNext",
+        "module": "ESNext",
         "moduleResolution": "node",
         "strict": true,
         "jsx": "preserve",
@@ -13,7 +11,7 @@
         "allowJs": true,
         "noEmit": true,
         "skipLibCheck": true,
-        "types": ["@nuxt/types", "@nuxtjs/tailwindcss", "nuxt"]
+        "types": ["@nuxt/types", "@nuxtjs/tailwindcss"]
     },
-    "exclude": ["node_modules", ".nuxt", "dist"]
+    "exclude": ["node_modules", "dist"]
 }

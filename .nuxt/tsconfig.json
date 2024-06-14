@@ -20,18 +20,6 @@
       "@unhead/vue": [
         "../node_modules/@unhead/vue"
       ],
-      "vue": [
-        "../node_modules/vue"
-      ],
-      "@vue/runtime-core": [
-        "../node_modules/@vue/runtime-core"
-      ],
-      "@vue/compiler-sfc": [
-        "../node_modules/@vue/compiler-sfc"
-      ],
-      "@vue/runtime-dom": [
-        "../node_modules/@vue/runtime-dom"
-      ],
       "vue-router": [
         "../node_modules/vue-router"
       ],
@@ -138,7 +126,7 @@
     "noUncheckedIndexedAccess": false,
     "forceConsistentCasingInFileNames": true,
     "noImplicitOverride": true,
-    "module": "ESNext",
+    "module": "preserve",
     "noEmit": true,
     "lib": [
       "ESNext",

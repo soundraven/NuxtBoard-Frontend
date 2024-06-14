@@ -24,6 +24,7 @@ import type { FormSubmitEvent } from "#ui/types"
 onMounted(() => {
     if (process.server) return
 })
+
 const userinfo = object({
     email: string().email("Invalid email!").required("Required"),
     password: string()
