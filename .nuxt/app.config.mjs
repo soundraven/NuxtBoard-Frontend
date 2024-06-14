@@ -3,9 +3,7 @@ import { updateAppConfig } from '#app/config'
 import { defuFn } from 'defu'
 
 const inlineConfig = {
-  "nuxt": {
-    "buildId": "dev"
-  },
+  "nuxt": {},
   "ui": {
     "primary": "green",
     "gray": "cool",

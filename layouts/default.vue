@@ -1,5 +1,5 @@
 <template>
-    <div class="h-12 flex justify-center items-center w-screen">
+    <div class="w-screen h-12 flex justify-center items-center">
         Under Construction
     </div>
     <slot />

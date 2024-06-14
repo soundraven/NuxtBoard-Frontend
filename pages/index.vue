@@ -2,15 +2,17 @@
     <div :class="$style.index">
         <UContainer>
             <UAccordion multiple :items="explain" />
-            <UButton class="mx-8" @click="navigateTo('login')">login</UButton>
-            <UButton class="mx-8" @click="navigateTo('sign')">sign</UButton>
-            <UButton class="mx-8" @click="navigateTo('write')">write</UButton>
-            <UButton class="mx-8" @click="navigateTo('post')">post</UButton>
+            <UButton class="mx-8" @click="goToPage('login')">login</UButton>
+            <UButton class="mx-8" @click="goToPage('sign')">sign</UButton>
+            <UButton class="mx-8" @click="goToPage('write')">write</UButton>
+            <UButton class="mx-8" @click="goToPage('post')">post</UButton>
         </UContainer>
     </div>
 </template>
 
 <script setup lang="ts">
+import { navigateTo } from "#app"
+
 const explain = [
     {
         label: "Purpose",
@@ -26,6 +28,10 @@ const explain = [
             "NuxtUI의 NuxtColorMode, TailwindCSS, 컴포넌트 등을 활용하여 글 작성, 수정, 삭제, 게시글 조회 등의 기능을 구현하였습니다.",
     },
 ]
+
+const goToPage = (destination: string) => {
+    navigateTo(`/${destination}`)
+}
 </script>
 
 <style lang="scss" module>

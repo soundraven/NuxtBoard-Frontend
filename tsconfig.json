@@ -13,7 +13,7 @@
         "allowJs": true,
         "noEmit": true,
         "skipLibCheck": true,
-        "types": ["@nuxt/types", "@nuxtjs/tailwindcss"]
+        "types": ["@nuxt/types", "@nuxtjs/tailwindcss", "nuxt"]
     },
     "exclude": ["node_modules", ".nuxt", "dist"]
 }

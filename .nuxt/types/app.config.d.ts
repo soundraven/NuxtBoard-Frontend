@@ -1,12 +1,10 @@
 
 import type { CustomAppConfig } from 'nuxt/schema'
 import type { Defu } from 'defu'
-import cfg0 from "C:/Users/kin97/Desktop/Coding/NuxtBoard-Frontend/app.config"
+import cfg0 from "../../app.config"
 
 declare const inlineConfig = {
-  "nuxt": {
-    "buildId": "dev"
-  },
+  "nuxt": {},
   "ui": {
     "primary": "green",
     "gray": "cool",

@@ -1,3 +1,4 @@
+export { useConsentScriptTrigger, useAnalyticsPageEvent, useElementScriptTrigger, useScript, useScriptGoogleAnalytics, useScriptPlausibleAnalytics, useScriptCloudflareWebAnalytics, useScriptFathomAnalytics, useScriptMatomoAnalytics, useScriptGoogleTagManager, useScriptGoogleAdsense, useScriptSegment, useScriptMetaPixel, useScriptXPixel, useScriptIntercom, useScriptHotjar, useScriptStripe, useScriptLemonSqueezy, useScriptVimeoPlayer, useScriptYouTubePlayer, useScriptGoogleMaps, useScriptNpm } from '#app/composables/script-stubs';
 export { isVue2, isVue3 } from 'vue-demi';
 export { defineNuxtLink } from '#app/components/nuxt-link';
 export { useNuxtApp, tryUseNuxtApp, defineNuxtPlugin, definePayloadPlugin, useRuntimeConfig, defineAppConfig } from '#app/nuxt';
@@ -12,7 +13,7 @@ export { useState, clearNuxtState } from '#app/composables/state';
 export { clearError, createError, isNuxtError, showError, useError } from '#app/composables/error';
 export { useFetch, useLazyFetch } from '#app/composables/fetch';
 export { useCookie, refreshCookie } from '#app/composables/cookie';
-export { prerenderRoutes, useRequestHeader, useRequestHeaders, useRequestEvent, useRequestFetch, setResponseStatus } from '#app/composables/ssr';
+export { onPrehydrate, prerenderRoutes, useRequestHeader, useRequestHeaders, useRequestEvent, useRequestFetch, setResponseStatus } from '#app/composables/ssr';
 export { onNuxtReady } from '#app/composables/ready';
 export { preloadComponents, prefetchComponents, preloadRouteComponents } from '#app/composables/preload';
 export { abortNavigation, addRouteMiddleware, defineNuxtRouteMiddleware, setPageLayout, navigateTo, useRoute, useRouter } from '#app/composables/router';
