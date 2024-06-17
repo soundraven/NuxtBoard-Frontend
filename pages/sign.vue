@@ -1,4 +1,10 @@
 <template>
-    <div>회원가입 페이지 입니다.</div>
+    <LoginForm @onSubmit="onSubmit" />
 </template>
-<script></script>
+<script setup lang="ts">
+import type { Userinfo } from "@/structure/userinfo"
+
+const onSubmit = async (e: Userinfo) => {
+    await console.log(e, "sign in success")
+}
+</script>
