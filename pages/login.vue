@@ -39,7 +39,14 @@ const form = reactive({
     password: "",
 })
 
-const onSubmit = async (event: FormSubmitEvent<Userinfo>) => {
-    await console.log(event.data)
+const onSubmit = async (e: FormSubmitEvent<Userinfo>) => {
+    if (
+        e.data.email === "1q2w3e4r@gmail.com" &&
+        e.data.password === "1q2w3e4r"
+    ) {
+        await console.log(e.data, "success")
+    } else {
+        await console.log("login fail")
+    }
 }
 </script>

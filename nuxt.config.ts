@@ -13,4 +13,11 @@ export default defineNuxtConfig({
         },
     },
     modules: ["@nuxt/ui"],
+
+    typescript: {
+        strict: true,
+    },
+    imports: {
+        autoImport: true, // auto-import 기능 활성화
+    },
 })

@@ -8,12 +8,9 @@
             <UButton class="mx-8" @click="goToPage('post')">post</UButton>
         </UContainer>
     </div>
-    <button class="w-screen bg-red-500">테스트</button>
 </template>
 
 <script setup lang="ts">
-import { navigateTo } from "#app"
-
 const explain = [
     {
         label: "Purpose",

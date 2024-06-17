@@ -7,5 +7,8 @@
 </template>
 
 <script setup lang="ts">
-onMounted(() => {})
+onMounted(() => {
+    if (process.server) return
+    console.log("Component has been mounted")
+})
 </script>
