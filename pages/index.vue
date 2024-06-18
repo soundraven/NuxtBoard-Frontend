@@ -12,8 +12,8 @@
                 <UButton class="mx-8" @click="navigateTo('/write')"
                     >write</UButton
                 >
-                <UButton class="mx-8" @click="navigateTo('/detail')"
-                    >detail</UButton
+                <UButton class="mx-8" @click="navigateTo('/list')"
+                    >list</UButton
                 >
                 <UButton class="mx-8" @click="navigateTo('/post')"
                     >post</UButton
