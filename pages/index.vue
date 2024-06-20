@@ -3,7 +3,9 @@
         <UContainer>
             <UAccordion multiple :items="explain" />
             <UContainer class="flex justify-center">
-                <UButton class="mx-4" @click="navigateTo('/login')"
+                <UButton
+                    class="w-16 mx-4 flex items-center justify-center"
+                    @click="navigateTo('/login')"
                     >login</UButton
                 >
                 <UButton

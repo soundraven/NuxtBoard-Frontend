@@ -36,14 +36,24 @@ const form = reactive({
     password: "",
 })
 
+interface LoginResult {
+    message: string
+}
+
 const onSubmit = async (e: FormSubmitEvent<Userinfo>) => {
-    if (
-        e.data.email === "1q2w3e4r@gmail.com" &&
-        e.data.password === "1q2w3e4r"
-    ) {
-        console.log(e, "login success!")
-    } else {
-        console.log(e, "login fail...")
-    }
+    // if (
+    //     e.data.email === "1q2w3e4r@gmail.com" &&
+    //     e.data.password === "1q2w3e4r"
+    // ) {
+    //     console.log(e, "login success!")
+    // } else {
+    //     console.log(e, "login fail...")
+    // }
+    const { pending, data: loginResult } = await useLazyAsyncData<LoginResult>(
+        "loginResult",
+        () => $fetch("https://nuxt-board-backend.vercel.app/api/userdata")
+    )
+
+    console.log((loginResult.value as { message: string }).message)
 }
 </script>
