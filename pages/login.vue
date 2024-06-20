@@ -39,6 +39,7 @@ const form: Userinfo = reactive({
 })
 
 interface LoginResult {
+    status: number
     message: string
 }
 
@@ -49,10 +50,14 @@ const onSubmit = async () => {
         body: payload,
     })
 
+    if (loginResult.status === 401) {
+        alert("login failed")
+    }
+
     if (loginResult.message === "success") {
         alert("login successed")
     } else {
-        alert("login failed")
+        alert("unknown error")
     }
 }
 </script>
