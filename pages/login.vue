@@ -20,7 +20,9 @@
 
 <script setup lang="ts">
 import { object, string, type InferType } from "yup"
-import type { FormSubmitEvent } from "#ui/types"
+
+const config = useRuntimeConfig()
+const api = config.public.apiBaseUrl
 
 const userinfo = object({
     email: string().email("Invalid email!").required("Required"),
@@ -31,7 +33,7 @@ const userinfo = object({
 
 type Userinfo = InferType<typeof userinfo>
 
-const form = reactive({
+const form: Userinfo = reactive({
     email: "",
     password: "",
 })
@@ -40,20 +42,17 @@ interface LoginResult {
     message: string
 }
 
-const onSubmit = async (e: FormSubmitEvent<Userinfo>) => {
-    // if (
-    //     e.data.email === "1q2w3e4r@gmail.com" &&
-    //     e.data.password === "1q2w3e4r"
-    // ) {
-    //     console.log(e, "login success!")
-    // } else {
-    //     console.log(e, "login fail...")
-    // }
-    const { pending, data: loginResult } = await useLazyAsyncData<LoginResult>(
-        "loginResult",
-        () => $fetch("https://nuxt-board-backend.vercel.app/api/userdata")
-    )
+const onSubmit = async () => {
+    const payload = { email: form.email, password: form.password }
+    const loginResult: LoginResult = await $fetch(`${api}/login`, {
+        method: "POST",
+        body: payload,
+    })
 
-    console.log((loginResult.value as { message: string }).message)
+    if (loginResult.message === "success") {
+        alert("login successed")
+    } else {
+        alert("login failed")
+    }
 }
 </script>

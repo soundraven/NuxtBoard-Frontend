@@ -4,6 +4,11 @@ import autoprefixer from "autoprefixer"
 
 export default defineNuxtConfig({
     devtools: { enabled: true },
+    runtimeConfig: {
+        public: {
+            apiBaseUrl: process.env.VITE_API_BASE_URL,
+        },
+    },
     css: ["@/assets/css/tailwind.css"],
     vite: {
         css: {
