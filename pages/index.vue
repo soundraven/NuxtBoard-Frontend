@@ -3,22 +3,37 @@
         <UContainer>
             <UAccordion multiple :items="explain" />
             <UContainer class="flex justify-center">
-                <UButton class="mx-8" @click="navigateTo('/login')"
+                <UButton class="mx-4" @click="navigateTo('/login')"
                     >login</UButton
                 >
-                <UButton class="mx-8" @click="navigateTo('/sign')"
+                <UButton
+                    class="w-16 mx-4 flex items-center justify-center"
+                    @click="navigateTo('/sign')"
                     >sign</UButton
                 >
-                <UButton class="mx-8" @click="navigateTo('/write')"
+                <UButton
+                    class="w-16 mx-4 flex items-center justify-center"
+                    @click="navigateTo('/write')"
                     >write</UButton
                 >
-                <UButton class="mx-8" @click="navigateTo('/list')"
+                <UButton
+                    class="w-16 mx-4 flex items-center justify-center"
+                    @click="navigateTo('/list')"
                     >list</UButton
                 >
-                <UButton class="mx-8" @click="navigateTo('/post')"
-                    >post</UButton
-                ></UContainer
-            >
+                <UButton
+                    class="w-16 mx-4 flex items-center justify-center"
+                    @click="navigateTo('/post')"
+                >
+                    post
+                </UButton>
+                <UButton
+                    class="w-16 mx-4 flex items-center justify-center"
+                    @click="navigateTo('/mypage')"
+                >
+                    mypage
+                </UButton>
+            </UContainer>
         </UContainer>
     </div>
 </template>

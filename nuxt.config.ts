@@ -17,7 +17,4 @@ export default defineNuxtConfig({
     typescript: {
         strict: true,
     },
-    imports: {
-        autoImport: true, // auto-import 기능 활성화
-    },
 })
