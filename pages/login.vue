@@ -44,18 +44,21 @@ interface LoginResult {
 }
 
 const onSubmit = async () => {
-    const payload = { email: form.email, password: form.password }
-    const loginResult: LoginResult = await $fetch(`${api}/login`, {
+    const payload: Userinfo = { email: form.email, password: form.password }
+    const loginResult: LoginResult = await $fetch(`${api}/users/login`, {
         method: "POST",
-        body: payload,
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
     })
 
     if (loginResult.status === 401) {
-        alert("login failed")
+        alert(`${loginResult.message}`)
     }
 
     if (loginResult.message === "success") {
-        alert("login successed")
+        alert(`${loginResult.message}`)
     } else {
         alert("unknown error")
     }

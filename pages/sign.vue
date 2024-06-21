@@ -20,7 +20,9 @@
 
 <script setup lang="ts">
 import { object, string, type InferType } from "yup"
-import type { FormSubmitEvent } from "#ui/types"
+
+const config = useRuntimeConfig()
+const api = config.public.apiBaseUrl
 
 const userinfo = object({
     email: string().email("Invalid email!").required("Required"),
@@ -36,7 +38,27 @@ const form = reactive({
     password: "",
 })
 
-const onSubmit = async (e: FormSubmitEvent<Userinfo>) => {
-    console.log(e, "sign in success!")
+interface SignResult {
+    status: number
+    message: string
+}
+const onSubmit = async () => {
+    const payload: Userinfo = { email: form.email, password: form.password }
+    const signResult: SignResult = await $fetch(`${api}/users/login`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+    })
+
+    if (signResult.status === 400) {
+        alert(`${signResult.message}`)
+    }
+    if (signResult.message === "success") {
+        alert(`${signResult.message}`)
+    } else {
+        alert("unknown error")
+    }
 }
 </script>
