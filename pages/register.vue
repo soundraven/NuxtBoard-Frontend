@@ -38,13 +38,13 @@ const form = reactive({
     password: "",
 })
 
-interface SignResult {
+interface RegistResult {
     status: number
     message: string
 }
 const onSubmit = async () => {
     const payload: Userinfo = { email: form.email, password: form.password }
-    const signResult: SignResult = await $fetch(`${api}/users/login`, {
+    const registResult: RegistResult = await $fetch(`${api}/users/register`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -52,11 +52,12 @@ const onSubmit = async () => {
         body: JSON.stringify(payload),
     })
 
-    if (signResult.status === 400) {
-        alert(`${signResult.message}`)
+    if (registResult.status === 400) {
+        alert(`${registResult.message}`)
     }
-    if (signResult.message === "success") {
-        alert(`${signResult.message}`)
+
+    if (registResult.status === 201) {
+        alert(`${registResult.message}`)
     } else {
         alert("unknown error")
     }

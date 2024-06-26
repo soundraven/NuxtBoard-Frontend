@@ -10,8 +10,8 @@
                 >
                 <UButton
                     class="w-16 mx-4 flex items-center justify-center"
-                    @click="navigateTo('/sign')"
-                    >sign</UButton
+                    @click="navigateTo('/register')"
+                    >register</UButton
                 >
                 <UButton
                     class="w-16 mx-4 flex items-center justify-center"
