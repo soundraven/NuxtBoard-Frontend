@@ -23,6 +23,7 @@
     "@vue/compiler-sfc": "^3.4.28",
     "@vue/runtime-core": "^3.4.28",
     "@vue/runtime-dom": "^3.4.28",
+    "pinia": "^2.1.7",
     "scss": "^0.2.4",
     "vue": "^3.4.28",
     "yup": "^1.4.0"

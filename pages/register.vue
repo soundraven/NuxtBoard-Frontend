@@ -12,6 +12,9 @@
             <UFormGroup label="Password" name="password">
                 <UInput v-model="form.password" type="password" />
             </UFormGroup>
+            <UFormGroup label="Username" name="username">
+                <UInput v-model="form.username" type="username" />
+            </UFormGroup>
 
             <UButton type="submit">Submit!</UButton>
         </UForm>
@@ -19,7 +22,8 @@
 </template>
 
 <script setup lang="ts">
-import { object, string, type InferType } from "yup"
+import { object, string } from "yup"
+import { type Userinfo, type ApiResponse } from "../structure/interface"
 
 const config = useRuntimeConfig()
 const api = config.public.apiBaseUrl
@@ -29,37 +33,39 @@ const userinfo = object({
     password: string()
         .min(8, "Must be at least 8 characters")
         .required("Required"),
+    username: string().max(8, "The maximum characters for the username is 8"),
 })
-
-type Userinfo = InferType<typeof userinfo>
 
 const form = reactive({
     email: "",
     password: "",
+    username: "",
 })
 
-interface RegistResult {
-    status: number
-    message: string
-}
 const onSubmit = async () => {
-    const payload: Userinfo = { email: form.email, password: form.password }
-    const registResult: RegistResult = await $fetch(`${api}/users/register`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-    })
+    try {
+        const registResult: ApiResponse = await $fetch(
+            `${api}/users/register`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: form,
+            }
+        )
 
-    if (registResult.status === 400) {
-        alert(`${registResult.message}`)
-    }
-
-    if (registResult.status === 201) {
-        alert(`${registResult.message}`)
-    } else {
-        alert("unknown error")
+        if (registResult.code === "S") {
+            alert(`${registResult.message}`)
+        } else {
+            alert("Unknown error")
+        }
+    } catch (error: any) {
+        if (error.data && error.data.code === "E") {
+            alert(`errorCode: ${error.data.errorCode}, ${error.data.message}`)
+        } else {
+            alert("Unknown error occurred. Please check and try again.")
+        }
     }
 }
 </script>
