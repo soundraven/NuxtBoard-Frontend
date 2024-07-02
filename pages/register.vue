@@ -23,7 +23,7 @@
 
 <script setup lang="ts">
 import { object, string } from "yup"
-import { type Userinfo, type ApiResponse } from "../structure/interface"
+import { type ApiResponse } from "~/structure/interface"
 
 const config = useRuntimeConfig()
 const api = config.public.apiBaseUrl

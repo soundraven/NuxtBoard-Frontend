@@ -20,6 +20,7 @@
 
 <script setup lang="ts">
 import { object, string, type InferType } from "yup"
+import { type ApiResponse } from "../structure/interface"
 
 const config = useRuntimeConfig()
 const api = config.public.apiBaseUrl
@@ -38,29 +39,27 @@ const form: Userinfo = reactive({
     password: "",
 })
 
-interface LoginResult {
-    status: number
-    message: string
-}
-
 const onSubmit = async () => {
-    const payload: Userinfo = { email: form.email, password: form.password }
-    const loginResult: LoginResult = await $fetch(`${api}/users/login`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-    })
+    try {
+        const loginResult: ApiResponse = await $fetch(`${api}/users/login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: form,
+        })
 
-    if (loginResult.status === 401) {
-        alert(`${loginResult.message}`)
-    }
-
-    if (loginResult.message === "success") {
-        alert(`${loginResult.message}`)
-    } else {
-        alert("unknown error")
+        if (loginResult.code === "S") {
+            alert(`${loginResult.message}`)
+        } else {
+            alert("Unknown error")
+        }
+    } catch (error: any) {
+        if (error.data && error.data.code === "E") {
+            alert(`errorCode: ${error.data.errorCode}, ${error.data.message}`)
+        } else {
+            alert("Unknown error occurred. Please check and try again.")
+        }
     }
 }
 </script>
