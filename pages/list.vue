@@ -1,6 +1,7 @@
 <template>
     <UContainer>
-        <UTable :rows="rows" />
+        <UTable :rows="rows" :columns="columns" />
+
         <div
             class="flex justify-center px-3 py-3.5 border-t border-gray-200 dark:border-gray-700"
         >
@@ -29,6 +30,36 @@ const rows = computed(() => {
         page.value * pageCount.value
     )
 })
+
+const columns = [
+    {
+        key: "id",
+        label: "ID",
+        sortable: true,
+        class: "min-w-20 text-center",
+    },
+    {
+        key: "board_id",
+        label: "게시판",
+        class: "min-w-20 text-center",
+    },
+    {
+        key: "registered_by",
+        label: "작성자",
+        class: "min-w-20 text-center",
+    },
+    {
+        key: "content",
+        label: "내용",
+        class: "max-w-64 text-center",
+    },
+    {
+        key: "registered_date",
+        label: "작성일자",
+        sortable: true,
+        class: "min-w-20 text-center",
+    },
+]
 
 const getPostList = async () => {
     try {
