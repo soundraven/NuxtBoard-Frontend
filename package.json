@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
+    "@element-plus/nuxt": "^1.0.9",
     "@nuxt/devtools": "latest",
     "@nuxt/types": "^2.17.3",
     "@nuxt/ui": "^2.13.0",
@@ -19,10 +20,12 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "@popperjs/core": "^2.11.8",
     "@types/yup": "^0.32.0",
     "@vue/compiler-sfc": "^3.4.28",
     "@vue/runtime-core": "^3.4.28",
     "@vue/runtime-dom": "^3.4.28",
+    "element-plus": "^2.7.6",
     "pinia": "^2.1.7",
     "scss": "^0.2.4",
     "vue": "^3.4.28",

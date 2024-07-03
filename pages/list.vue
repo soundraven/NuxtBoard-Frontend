@@ -1,7 +1,6 @@
 <template>
     <UContainer>
         <UTable :rows="rows" :columns="columns" />
-
         <div
             class="flex justify-center px-3 py-3.5 border-t border-gray-200 dark:border-gray-700"
         >
@@ -12,6 +11,7 @@
             />
         </div>
     </UContainer>
+    <el-button type="primary" class="mb-4">Element Plus Button</el-button>
 </template>
 <script setup lang="ts">
 import { type ApiResponse } from "~/structure/interface"

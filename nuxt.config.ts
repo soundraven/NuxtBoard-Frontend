@@ -9,7 +9,7 @@ export default defineNuxtConfig({
             apiBaseUrl: process.env.VITE_API_BASE_URL,
         },
     },
-    css: ["@/assets/css/tailwind.css"],
+    css: ["@/assets/css/tailwind.css", "element-plus/dist/index.css"],
     vite: {
         css: {
             postcss: {
@@ -17,7 +17,8 @@ export default defineNuxtConfig({
             },
         },
     },
-    modules: ["@nuxt/ui"],
+    plugins: ["~/plugins/element-plus.ts"],
+    modules: ["@nuxt/ui", "@element-plus/nuxt"],
 
     typescript: {
         strict: true,
