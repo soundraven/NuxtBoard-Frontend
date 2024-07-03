@@ -36,28 +36,28 @@ const columns = [
         key: "id",
         label: "ID",
         sortable: true,
-        class: "min-w-20 text-center",
+        class: "text-center w-1/12",
     },
     {
         key: "board_id",
         label: "게시판",
-        class: "min-w-20 text-center",
+        class: "text-center w-1/12",
     },
     {
         key: "registered_by",
         label: "작성자",
-        class: "min-w-20 text-center",
+        class: "text-center w-1/12",
     },
     {
-        key: "content",
-        label: "내용",
-        class: "max-w-64 text-center",
+        key: "title",
+        label: "제목",
+        class: "text-center w-6/12",
     },
     {
         key: "registered_date",
         label: "작성일자",
         sortable: true,
-        class: "min-w-20 text-center",
+        class: "text-center w-1/12",
     },
 ]
 
