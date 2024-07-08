@@ -12,4 +12,14 @@ interface Userinfo {
     username?: string
 }
 
-export type { Userinfo, ApiResponse }
+interface Postinfo {
+    id: number
+    board_id: number
+    board_name: string
+    registered_by: number //추후 Left join 활용해서 string으로 변경
+    registered_date: Date
+    title: string
+    content: string
+}
+
+export type { Userinfo, ApiResponse, Postinfo }

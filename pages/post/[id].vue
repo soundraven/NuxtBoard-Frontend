@@ -1,16 +1,16 @@
 <template>
-    <el-card class="w-9/12 mx-auto">
+    <el-card class="w-[1024px] h-[860px] mx-auto">
         <template #header>
             <div>
                 {{ postinfo.title }}
             </div>
         </template>
-        <div>{{ postinfo.content }}</div>
+        <div class="min-h-[500px]">{{ postinfo.content }}</div>
         <template #footer>Footer content</template>
     </el-card>
 </template>
 <script setup lang="ts">
-import type { ApiResponse } from "~/structure/interface"
+import type { ApiResponse, Postinfo } from "~/structure/interface"
 
 const route = useRoute()
 const router = useRouter() //추후 뒤로가기 기능을 위해 사용
@@ -20,7 +20,7 @@ const api = config.public.apiBaseUrl
 
 const postId = route.params.id
 
-const postinfo: Ref<string[]> = ref([])
+const postinfo: Ref<Postinfo> = ref({} as Postinfo)
 
 onMounted(async () => {
     const getPostinfo: ApiResponse = await $fetch(

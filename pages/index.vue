@@ -1,65 +1,27 @@
 <template>
-    <div :class="$style.index">
-        <UContainer>
-            <UAccordion multiple :items="explain" />
-            <UContainer class="flex justify-center">
-                <UButton
+    <div class="w-[1024px] min-h-[800px] mx-auto border-amber-300">
+        <el-container>
+            <el-container></el-container>
+            <el-aside class="w-[200px] h-[800px] border-2 flex justify-evenly">
+                <el-button
+                    v-for="navBtn in navBtnArray"
                     class="w-16 mx-4 flex items-center justify-center"
-                    @click="navigateTo('/login')"
-                    >login</UButton
+                    @click="navigateTo(`/${navBtn}`)"
                 >
-                <UButton
-                    class="w-16 mx-4 flex items-center justify-center"
-                    @click="navigateTo('/register')"
-                    >register</UButton
-                >
-                <UButton
-                    class="w-16 mx-4 flex items-center justify-center"
-                    @click="navigateTo('/write')"
-                    >write</UButton
-                >
-                <UButton
-                    class="w-16 mx-4 flex items-center justify-center"
-                    @click="navigateTo('/list')"
-                    >list</UButton
-                >
-                <UButton
-                    class="w-16 mx-4 flex items-center justify-center"
-                    @click="navigateTo('/post')"
-                >
-                    post
-                </UButton>
-                <UButton
-                    class="w-16 mx-4 flex items-center justify-center"
-                    @click="navigateTo('/mypage')"
-                >
-                    mypage
-                </UButton>
-            </UContainer>
-        </UContainer>
+                    {{ navBtn }}
+                </el-button>
+            </el-aside>
+        </el-container>
     </div>
 </template>
 
 <script setup lang="ts">
-const explain = [
-    {
-        label: "Purpose",
-        icon: "i-heroicons-information-circle",
-        defaultOpen: true,
-        content:
-            "기존 Vue3으로 작성한 게시판을 Nuxt3으로 마이그레이션하였습니다.",
-    },
-    {
-        label: "Explanation",
-        icon: "i-heroicons-installation-circle",
-        content:
-            "NuxtUI의 NuxtColorMode, TailwindCSS, 컴포넌트 등을 활용하여 글 작성, 수정, 삭제, 게시글 조회 등의 기능을 구현하였습니다.",
-    },
+const navBtnArray: string[] = [
+    "login",
+    "register",
+    "write",
+    "list",
+    "post",
+    "mypage",
 ]
 </script>
-
-<style lang="scss" module>
-.index {
-    width: 100vw;
-}
-</style>
