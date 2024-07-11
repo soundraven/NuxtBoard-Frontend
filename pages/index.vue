@@ -19,18 +19,19 @@
                 class="w-[280px] h-[550px] flex flex-col items-center border-2 border-red-400 p-[10px]"
             >
                 <div
-                    class="h-60px flex flex-col flex-wrap items-center border-2"
+                    class="flex flex-col flex-wrap items-center border-2 p-[6px]"
                 >
                     <el-button
                         type="primary"
-                        class="w-[240px] h-[30px] mt-[5px]"
+                        class="w-[240px] h-[30px] mb-[6px]"
                         @click="navigateTo('/login')"
                         >로그인</el-button
                     >
                     <el-button
-                        class="w-[240px] h-[30px] mt-[5px]"
-                        @click="navigateTo('/login')"
-                        >로그인</el-button
+                        class="w-[240px] h-[30px]"
+                        style="margin: 0px"
+                        @click="navigateTo('/register')"
+                        >회원가입</el-button
                     >
                 </div>
                 <div class="w-[240px] flex flex-wrap">
