@@ -1,50 +1,52 @@
 <template>
-    <el-container
-        class="w-[1280px] mx-auto flex flex-col flex-wrap items-center"
-    >
-        <el-container class="w-full h-full">
-            <img
-                src="https://img.ruliweb.com/view/2024/06/28/linm19480_1150x250_2.jpg"
-                alt=""
-                class="w-[1280px] h-[250px] object-cover"
-            />
-        </el-container>
-        <el-container class="flex w-full">
-            <el-container class="w-3/4 h-[550px] border-2 border-blue-400">
-                content
-            </el-container>
-            <el-aside
-                class="w-1/4 h-[550px] border-2 border-red-400 flex flex-col items-center"
+    <div class="w-screen flex flex-col items-center">
+        <el-header
+            height="240px"
+            style="padding: 0px"
+            class="w-[1300px] bg-gray-200"
+        >
+            광고 1을 위한 영역
+        </el-header>
+        <el-container>
+            <el-main
+                style="padding: 0px"
+                class="w-[1000px] border-2 border-blue-400"
             >
-                <el-button type="primary" class="w-[240px] h-[30px] mt-2"
-                    >로그인</el-button
-                >
-                <el-button class="w-[240px] h-[30px] mx-auto mt-2"
-                    >회원가입</el-button
-                >
-                <el-container
-                    class="flex content-start justify-evenly flex-wrap"
+                content
+            </el-main>
+            <el-aside
+                style="padding: 0px"
+                class="w-[280px] h-[550px] flex flex-col items-center border-2 border-red-400 p-[10px]"
+            >
+                <div
+                    class="h-60px flex flex-col flex-wrap items-center border-2"
                 >
                     <el-button
+                        type="primary"
+                        class="w-[240px] h-[30px] mt-[5px]"
+                        @click="navigateTo('/login')"
+                        >로그인</el-button
+                    >
+                    <el-button
+                        class="w-[240px] h-[30px] mt-[5px]"
+                        @click="navigateTo('/login')"
+                        >로그인</el-button
+                    >
+                </div>
+                <div class="w-[240px] flex flex-wrap">
+                    <button
                         v-for="navBtn in navBtnArray"
-                        class="w-1/4 mx-auto mt-2 flex items-center justify-center"
+                        class="w-[60px]"
                         @click="navigateTo(`/${navBtn}`)"
                     >
                         {{ navBtn }}
-                    </el-button></el-container
-                >
+                    </button>
+                </div>
             </el-aside>
         </el-container>
-    </el-container>
+    </div>
 </template>
 
 <script setup lang="ts">
-const navBtnArray: string[] = [
-    "login",
-    "register",
-    "write",
-    "list",
-    "post",
-    "mypage",
-]
+const navBtnArray: string[] = ["유머", "공지", "질문", "공략", "자랑", "후기"]
 </script>
