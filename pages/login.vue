@@ -1,21 +1,29 @@
 <template>
-    <UContainer>
-        <UForm
-            :schema="userinfo"
-            :state="form"
-            class="space-y-4"
-            @submit="onSubmit"
+    <div class="h-screen flex justify-center">
+        <el-card
+            :class="{ 'opacity-0': !showCard, 'opacity-100': showCard }"
+            class="w-[600px] h-[320px] flex justify-center items-center my-auto p-[40px] transition-opacity duration-1000 ease-in-out"
         >
-            <UFormGroup label="Email" name="email">
-                <UInput v-model="form.email" />
-            </UFormGroup>
-            <UFormGroup label="Password" name="password">
-                <UInput v-model="form.password" type="password" />
-            </UFormGroup>
+            <el-form :model="form" label-width="auto">
+                <el-form-item label="Email">
+                    <el-input v-model="form.email" />
+                </el-form-item>
+                <el-form-item label="Password">
+                    <el-input v-model="form.password" />
+                </el-form-item>
+                <div flex justify-center items-center>
+                    <el-button type="primary" @click="onSubmit"
+                        >로그인</el-button
+                    >
+                    <el-button @click="navigateTo('/register')"
+                        >회원가입</el-button
+                    >
+                </div>
 
-            <UButton type="submit">Submit!</UButton>
-        </UForm>
-    </UContainer>
+                <el-button>비밀번호 찾기</el-button>
+            </el-form>
+        </el-card>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -30,6 +38,20 @@ const userinfo = object({
     password: string()
         .min(8, "Must be at least 8 characters")
         .required("Required"),
+})
+
+const showCard: Ref<Boolean> = ref(false)
+
+const toggleCard = () => {
+    showCard.value = !showCard.value
+}
+
+onMounted(() => {
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            toggleCard()
+        })
+    })
 })
 
 type Userinfo = InferType<typeof userinfo>

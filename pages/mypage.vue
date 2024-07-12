@@ -1,18 +1,16 @@
 <template>
-    <div>
-        <UCard class="mx-10 my-4">
-            <template #header> 내 정보</template>
-            닉네임
-            <template #footer>asd</template>
-        </UCard>
-        <UCard class="mx-10 my-4">
-            <template #header> 내가 쓴 글</template>
-            <div>글목록</div>
-        </UCard>
-        <UCard class="mx-10 my-4">
-            <template #header> 내가 쓴 댓글</template>
-            <div>댓글목록</div>
-        </UCard>
+    <div class="flex justify-center">
+        <el-card style="max-width: 480px">
+            <template #header>
+                <div class="card-header">
+                    <span>사용자 정보 수정을 위한 공간</span>
+                </div>
+            </template>
+            <template #default>
+                <div>내가 쓴 글</div>
+                <div>내가 쓴 댓글</div>
+            </template>
+        </el-card>
     </div>
 </template>
 <script setup lang="ts">
