@@ -4,7 +4,11 @@
             :class="{ 'opacity-0': !showCard, 'opacity-100': showCard }"
             class="w-[600px] h-[320px] flex justify-center items-center my-auto p-[40px] transition-opacity duration-1000 ease-in-out"
         >
-            <el-form :model="form" label-width="auto">
+            <el-form
+                :model="form"
+                label-width="auto"
+                class="flex flex-col justify-center items-center"
+            >
                 <el-form-item label="Email">
                     <el-input v-model="form.email" />
                 </el-form-item>
@@ -18,9 +22,8 @@
                     <el-button @click="navigateTo('/register')"
                         >회원가입</el-button
                     >
+                    <el-button>비밀번호 찾기</el-button>
                 </div>
-
-                <el-button>비밀번호 찾기</el-button>
             </el-form>
         </el-card>
     </div>
