@@ -1,6 +1,6 @@
 <template>
     <div
-        class="w-screen h-[50px] flex justify-center border-b border-blue-600 py-[6px] fixed"
+        class="w-screen h-[50px] flex justify-center border-b border-blue-600 py-[6px] fixed top-0"
     >
         <div
             class="w-full max-w-[1300px] flex justify-between items-center px-[6px]"
@@ -21,7 +21,7 @@
             >
         </div>
     </div>
-    <slot />
+    <div class="mt-[50px]"><slot /></div>
 </template>
 
 <script setup lang="ts">

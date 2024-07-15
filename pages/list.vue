@@ -1,26 +1,36 @@
 <template>
-    <el-table :data="list" class="w-1024px mx-auto">
-        <el-table-column prop="id" label="ID" />
-        <el-table-column prop="board_id" label="게시판" />
-        <el-table-column prop="title" label="제목">
-            <template #default="scope">
-                <a
-                    @click="goToPost(scope.row.id)"
-                    class="text-blue-500 cursor-pointer"
-                    >{{ scope.row.title }}</a
-                >
-            </template>
-        </el-table-column>
-        <el-table-column prop="registered_by" label="작성자" />
-        <el-table-column prop="registered_date" label="작성일자" />
-    </el-table>
+    <div class="flex justify-center">
+        <el-table
+            :data="list"
+            style="width: 1000px; min-height: 840px"
+            highlight-current-row="true"
+            class="mx-auto"
+        >
+            <el-table-column prop="id" label="ID" />
+            <el-table-column prop="board_id" label="게시판" />
+            <el-table-column prop="title" label="제목">
+                <template #default="scope">
+                    <a
+                        @click="goToPost(scope.row.id)"
+                        class="text-blue-500 cursor-pointer"
+                        >{{ scope.row.title }}</a
+                    >
+                </template>
+            </el-table-column>
+            <el-table-column prop="registered_by" label="작성자" />
+            <el-table-column prop="registered_date" label="작성일자" />
+        </el-table>
+    </div>
     <div
         class="flex justify-center px-3 py-3.5 border-t border-gray-200 dark:border-gray-700"
     >
-        <UPagination
-            v-model="page"
-            :page-count="pageCount"
-            :total="list.length"
+        <el-pagination
+            v-model="currentPage"
+            :page-size="pageSize"
+            :pager-count="11"
+            layout="prev, pager, next"
+            :total="totalCount"
+            @current-change="handlePageChange"
         />
     </div>
 
@@ -34,30 +44,39 @@ const api = config.public.apiBaseUrl
 
 const router = useRouter()
 
-const page: Ref<number> = ref(1)
-const pageCount: Ref<number> = ref(10)
+const currentPage: Ref<number> = ref(1)
+const pageSize: Ref<number> = ref(20)
+const totalCount: Ref<number> = ref(0)
 
 const list: Ref = ref([])
 
-const rows = computed(() => {
-    return list.value.slice(
-        (page.value - 1) * pageCount.value,
-        page.value * pageCount.value
-    )
-})
+// const rows = computed(() => {
+//     return list.value.slice(
+//         (currentPage.value - 1) * pageSize.value,
+//         currentPage.value * pageSize.value
+//     )
+// })
+
+const handlePageChange = (newPage: number) => {
+    currentPage.value = newPage
+    getPostList()
+}
 
 const getPostList = async () => {
     try {
-        const postList: ApiResponse = await $fetch(`${api}/posts/list`, {
-            method: "GET",
-            headers: {
-                "Content-type": "application/json",
-            },
-        })
+        const postList: ApiResponse = await $fetch(
+            `${api}/posts/list?currentPage=${currentPage.value}&pageSize=${pageSize.value}`,
+            {
+                method: "GET",
+                headers: {
+                    "Content-type": "application/json",
+                },
+            }
+        )
 
-        list.value = postList.data
-
-        console.log(list.value[0])
+        list.value = postList.data.postList
+        totalCount.value = postList.data.totalCount
+        console.log(totalCount.value)
     } catch (error: any) {
         if (error.data && error.data.code === "E") {
             alert(`errorCode: ${error.data.errorCode}, ${error.data.message}`)

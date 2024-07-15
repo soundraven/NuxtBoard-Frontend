@@ -1,11 +1,13 @@
 <template>
     <div>
         <el-container class="w-full flex flex-col justify-center">
-            <el-container class="max-w-[1000px] h-full flex justify-center">
+            <el-container
+                class="max-w-[1000px] h-full flex justify-center border-2 border-green-400 p-[6px]"
+            >
                 <el-header
                     height="200px"
                     style="padding: 0px"
-                    class="w-[1000px] flex justify-center items-center bg-gray-200 border-2 border-blue-400"
+                    class="w-full flex justify-center items-center bg-gray-200 border-2 border-blue-400"
                 >
                     광고 1을 위한 영역
                 </el-header>
@@ -17,7 +19,7 @@
                         gap: 6px;
                         padding: 6px;
                     "
-                    class="w-[1000px] h-full border-2 border-blue-400 mt-[6px]"
+                    class="w-full h-full border-2 border-blue-400 mt-[6px]"
                 >
                     <el-card v-for="(card, index) in cards" class="h-[300px]">
                         {{ card }}{{ index + 1 }}

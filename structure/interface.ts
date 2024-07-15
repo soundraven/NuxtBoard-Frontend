@@ -7,7 +7,7 @@ interface ApiResponse {
 
 interface Userinfo {
     email: string
-    password: string
+    password?: string
     id?: number
     username?: string
 }
