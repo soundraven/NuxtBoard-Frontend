@@ -4,12 +4,15 @@ import autoprefixer from "autoprefixer"
 
 export default defineNuxtConfig({
     devtools: { enabled: true },
+
     runtimeConfig: {
         public: {
             apiBaseUrl: process.env.VITE_API_BASE_URL,
         },
     },
+
     css: ["@/assets/css/tailwind.css", "element-plus/dist/index.css"],
+
     vite: {
         css: {
             postcss: {
@@ -17,10 +20,13 @@ export default defineNuxtConfig({
             },
         },
     },
+
     plugins: ["~/plugins/element-plus.ts"],
-    modules: ["@nuxt/ui", "@element-plus/nuxt"],
+    modules: ["@nuxt/ui", "@element-plus/nuxt", "@pinia/nuxt"],
 
     typescript: {
         strict: true,
     },
+
+    compatibilityDate: "2024-07-15",
 })

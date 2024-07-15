@@ -16,14 +16,24 @@
                     placeholder="검색"
                 />
             </div>
-            <el-button type="info" @click="navigateTo('/mypage')"
-                >Mypage</el-button
-            >
+            <div class="flex items-center">
+                <div
+                    v-if="authStore.isAuthenticated"
+                    class="hover:cursor-pointer mr-[6px]"
+                    @click="navigateTo('/mypage')"
+                >
+                    {{ authStore.user.username }}
+                </div>
+                <el-button type="info" @click="navigateTo('/mypage')">
+                    <el-icon><User /></el-icon>
+                </el-button>
+            </div>
         </div>
     </div>
-    <div class="mt-[50px]"><slot /></div>
+    <div class="mt-[0px]"><slot /></div>
 </template>
 
 <script setup lang="ts">
 const keyword: Ref<string> = ref("")
+const authStore = useAuthStore()
 </script>

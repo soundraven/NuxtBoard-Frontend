@@ -71,4 +71,6 @@
 <script setup lang="ts">
 const navBtnArray: string[] = ["공지", "유머", "질문", "공략", "자랑", "후기"]
 const cards = ["게시판", "게시판", "게시판", "게시판", "게시판", "게시판"]
+
+const authStore = useAuthStore()
 </script>

@@ -12,7 +12,7 @@ export const useAuthStore = defineStore<
     {},
     { login(user: Userinfo): void; logout(): void; checkAuth(): void }
 >("auth", {
-    state: () => ({
+    state: (): State => ({
         isAuthenticated: false,
         user: {
             email: "",
@@ -20,6 +20,7 @@ export const useAuthStore = defineStore<
             username: "",
         },
     }),
+
     actions: {
         login(user: Userinfo) {
             this.isAuthenticated = true

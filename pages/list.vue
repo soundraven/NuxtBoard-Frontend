@@ -33,8 +33,6 @@
             @current-change="handlePageChange"
         />
     </div>
-
-    <el-button type="primary" class="mb-4">Element Plus Button</el-button>
 </template>
 <script setup lang="ts">
 import { type ApiResponse } from "~/structure/interface"
@@ -49,13 +47,6 @@ const pageSize: Ref<number> = ref(20)
 const totalCount: Ref<number> = ref(0)
 
 const list: Ref = ref([])
-
-// const rows = computed(() => {
-//     return list.value.slice(
-//         (currentPage.value - 1) * pageSize.value,
-//         currentPage.value * pageSize.value
-//     )
-// })
 
 const handlePageChange = (newPage: number) => {
     currentPage.value = newPage
@@ -76,7 +67,6 @@ const getPostList = async () => {
 
         list.value = postList.data.postList
         totalCount.value = postList.data.totalCount
-        console.log(totalCount.value)
     } catch (error: any) {
         if (error.data && error.data.code === "E") {
             alert(`errorCode: ${error.data.errorCode}, ${error.data.message}`)

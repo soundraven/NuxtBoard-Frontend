@@ -6,17 +6,24 @@
         >
             <el-form
                 :model="form"
+                :rules="rules"
+                ref="loginForm"
                 label-width="auto"
+                @submit.prevent="submitForm"
                 class="flex flex-col justify-center items-center"
             >
-                <el-form-item label="Email">
-                    <el-input v-model="form.email" />
+                <el-form-item label="Email" prop="email" class="w-full">
+                    <el-input type="email" v-model="form.email" />
                 </el-form-item>
-                <el-form-item label="Password">
-                    <el-input v-model="form.password" />
+                <el-form-item label="Password" prop="password" class="w-full">
+                    <el-input
+                        type="password"
+                        v-model="form.password"
+                        show-password
+                    />
                 </el-form-item>
                 <div flex justify-center items-center>
-                    <el-button type="primary" @click="onSubmit"
+                    <el-button type="primary" @click="submitForm"
                         >로그인</el-button
                     >
                     <el-button @click="navigateTo('/register')"
@@ -30,18 +37,62 @@
 </template>
 
 <script setup lang="ts">
-import { object, string, type InferType } from "yup"
-import { type ApiResponse } from "../structure/interface"
+import type { Userinfo, ApiResponse } from "../structure/interface"
+import type { FormInstance, FormRules } from "element-plus"
 
 const config = useRuntimeConfig()
 const api = config.public.apiBaseUrl
 
-const userinfo = object({
-    email: string().email("Invalid email!").required("Required"),
-    password: string()
-        .min(8, "Must be at least 8 characters")
-        .required("Required"),
-})
+const authStore = useAuthStore()
+const router = useRouter()
+
+const rules: FormRules = {
+    email: [
+        { required: true, message: "Please input your email", trigger: "blur" },
+        {
+            type: "email",
+            message: "Please input a valid email",
+            trigger: ["blur", "change"],
+        },
+    ],
+    password: [
+        {
+            required: true,
+            message: "Please input your password",
+            trigger: "blur",
+        },
+        {
+            validator: (rule, value, callback) => {
+                if (value.length < 8) {
+                    callback(
+                        new Error("Password must be at least 8 characters")
+                    )
+                } else if (!/[A-Z]/.test(value)) {
+                    callback(
+                        new Error(
+                            "Password must contain at least one uppercase letter"
+                        )
+                    )
+                } else if (!/[a-z]/.test(value)) {
+                    callback(
+                        new Error(
+                            "Password must contain at least one lowercase letter"
+                        )
+                    )
+                } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) {
+                    callback(
+                        new Error(
+                            "Password must contain at least one special character"
+                        )
+                    )
+                } else {
+                    callback()
+                }
+            },
+            trigger: "blur",
+        },
+    ],
+}
 
 const showCard: Ref<Boolean> = ref(false)
 
@@ -57,12 +108,23 @@ onMounted(() => {
     })
 })
 
-type Userinfo = InferType<typeof userinfo>
+const loginForm = ref<FormInstance | null>(null)
 
 const form: Userinfo = reactive({
     email: "",
     password: "",
 })
+
+const submitForm = async () => {
+    if (loginForm.value) {
+        try {
+            await loginForm.value.validate()
+            onSubmit()
+        } catch (error) {
+            alert("Validation failed")
+        }
+    }
+}
 
 const onSubmit = async () => {
     try {
@@ -74,8 +136,11 @@ const onSubmit = async () => {
             body: form,
         })
 
+        const userdata = loginResult.data
+
         if (loginResult.code === "S") {
-            alert(`${loginResult.message}`)
+            authStore.login(userdata)
+            router.push("/")
         } else {
             alert("Unknown error")
         }
