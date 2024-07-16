@@ -52,7 +52,7 @@ const rules: FormRules = {
         {
             type: "email",
             message: "Please input a valid email",
-            trigger: ["blur", "change"],
+            trigger: "blur",
         },
     ],
     password: [
@@ -89,7 +89,7 @@ const rules: FormRules = {
                     callback()
                 }
             },
-            trigger: "blur",
+            trigger: "change",
         },
     ],
 }
@@ -136,10 +136,11 @@ const onSubmit = async () => {
             body: form,
         })
 
-        const userdata = loginResult.data
-
         if (loginResult.code === "S") {
-            authStore.login(userdata)
+            const userdata: Userinfo = loginResult.data.user
+            const token: string = loginResult.data.token
+
+            authStore.login(userdata, token)
             router.push("/")
         } else {
             alert("Unknown error")

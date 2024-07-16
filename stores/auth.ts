@@ -10,7 +10,11 @@ export const useAuthStore = defineStore<
     string,
     State,
     {},
-    { login(user: Userinfo): void; logout(): void; checkAuth(): void }
+    {
+        login(user: Userinfo, token: string): void
+        logout(): void
+        checkAuth(): void
+    }
 >("auth", {
     state: (): State => ({
         isAuthenticated: false,
@@ -22,10 +26,12 @@ export const useAuthStore = defineStore<
     }),
 
     actions: {
-        login(user: Userinfo) {
+        login(user: Userinfo, token: string) {
             this.isAuthenticated = true
             this.user = user
+
             localStorage.setItem("user", JSON.stringify(user))
+            localStorage.setItem("token", token)
         },
 
         logout() {
