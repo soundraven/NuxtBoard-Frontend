@@ -17,13 +17,19 @@
                 />
             </div>
             <div class="flex items-center">
-                <div
+                <el-dropdown
                     v-if="authStore.isAuthenticated"
                     class="hover:cursor-pointer mr-[6px]"
-                    @click="navigateTo('/mypage')"
                 >
-                    {{ authStore.user.username }}
-                </div>
+                    <el-button>{{ authStore.user.username }}</el-button>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <el-dropdown-item @click="authStore.logout()">
+                                로그아웃
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </template>
+                </el-dropdown>
                 <el-button type="info" @click="navigateTo('/mypage')">
                     <el-icon><User /></el-icon>
                 </el-button>

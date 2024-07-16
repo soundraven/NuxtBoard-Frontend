@@ -42,6 +42,7 @@ export const useAuthStore = defineStore<
                 username: "",
             }
             localStorage.removeItem("user")
+            localStorage.removeItem("token")
         },
 
         checkAuth() {
