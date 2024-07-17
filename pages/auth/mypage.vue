@@ -17,7 +17,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import type { Userinfo, ApiResponse } from "../structure/interface"
+import type { Userinfo, ApiResponse } from "../types/interface"
 
 const config = useRuntimeConfig()
 const api = config.public.apiBaseUrl

@@ -10,7 +10,7 @@
     </el-card>
 </template>
 <script setup lang="ts">
-import type { ApiResponse, Postinfo } from "~/structure/interface"
+import type { ApiResponse, Postinfo } from "~/types/interface"
 
 const route = useRoute()
 const router = useRouter() //추후 뒤로가기 기능을 위해 사용

@@ -1,5 +1,5 @@
 import { defineStore } from "pinia"
-import { type Userinfo } from "../structure/interface"
+import { type Userinfo } from "../types/interface"
 
 interface State {
     isAuthenticated: boolean

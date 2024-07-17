@@ -3,7 +3,7 @@
         <el-table
             :data="list"
             style="width: 1000px; min-height: 840px"
-            highlight-current-row="true"
+            :highlight-current-row="true"
             class="mx-auto"
         >
             <el-table-column prop="id" label="ID" />
@@ -35,7 +35,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import { type ApiResponse } from "~/structure/interface"
+import { type ApiResponse } from "~/types/interface"
 
 const config = useRuntimeConfig()
 const api = config.public.apiBaseUrl
@@ -55,6 +55,7 @@ const handlePageChange = (newPage: number) => {
 
 const getPostList = async () => {
     try {
+        //api 쓸때 페이지 있는 쪽에 다 쓰지 말고 어디서 함수 하나 선언해 두고 getPostList
         const postList: ApiResponse = await $fetch(
             `${api}/posts/list?currentPage=${currentPage.value}&pageSize=${pageSize.value}`,
             {

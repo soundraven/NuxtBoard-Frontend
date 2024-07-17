@@ -9,7 +9,6 @@
                 :rules="rules"
                 ref="loginForm"
                 label-width="auto"
-                @submit.prevent="submitForm"
                 class="flex flex-col justify-center items-center"
             >
                 <el-form-item label="Email" prop="email" class="w-full">
@@ -22,7 +21,7 @@
                         show-password
                     />
                 </el-form-item>
-                <div flex justify-center items-center>
+                <div class="flex justify-center items-center">
                     <el-button type="primary" @click="submitForm"
                         >로그인</el-button
                     >
@@ -37,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Userinfo, ApiResponse } from "../structure/interface"
+import type { Userinfo, ApiResponse } from "../types/interface"
 import type { FormInstance, FormRules } from "element-plus"
 
 const config = useRuntimeConfig()
@@ -116,13 +115,13 @@ const form: Userinfo = reactive({
 })
 
 const submitForm = async () => {
-    if (loginForm.value) {
-        try {
-            await loginForm.value.validate()
-            onSubmit()
-        } catch (error) {
-            alert("Validation failed")
-        }
+    if (!loginForm.value) return
+
+    try {
+        await loginForm.value.validate()
+        onSubmit()
+    } catch (error) {
+        alert("Validation failed")
     }
 }
 
@@ -135,7 +134,7 @@ const onSubmit = async () => {
             },
             body: form,
         })
-
+        //코드가 S가 아닐때 리턴 시키는 방식으로 수정
         if (loginResult.code === "S") {
             const userdata: Userinfo = loginResult.data.user
             const token: string = loginResult.data.token

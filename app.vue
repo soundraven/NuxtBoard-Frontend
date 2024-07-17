@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { type Userinfo } from "./structure/interface"
+import type { Userinfo } from "./types/interface"
 
 const authStore = useAuthStore()
 

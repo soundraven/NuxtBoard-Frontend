@@ -27,6 +27,7 @@
     "@vue/compiler-sfc": "^3.4.28",
     "@vue/runtime-core": "^3.4.28",
     "@vue/runtime-dom": "^3.4.28",
+    "axios": "^1.7.2",
     "element-plus": "^2.7.6",
     "pinia": "^2.1.7",
     "scss": "^0.2.4",

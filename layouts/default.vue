@@ -1,4 +1,5 @@
 <template>
+    // fixed 말고 sticky 사용해보기
     <div
         class="w-screen h-[50px] flex justify-center border-b border-blue-600 py-[6px] fixed top-0"
     >
@@ -24,7 +25,7 @@
                     <el-button>{{ authStore.user.username }}</el-button>
                     <template #dropdown>
                         <el-dropdown-menu>
-                            <el-dropdown-item @click="authStore.logout()">
+                            <el-dropdown-item @click="authStore.logout">
                                 로그아웃
                             </el-dropdown-item>
                         </el-dropdown-menu>
@@ -36,7 +37,7 @@
             </div>
         </div>
     </div>
-    <div class="mt-[0px]"><slot /></div>
+    <div class="mt-0"><slot /></div>
 </template>
 
 <script setup lang="ts">
