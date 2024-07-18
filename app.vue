@@ -25,7 +25,6 @@ const autoLogin = async () => {
                 authorization: `Bearer ${token}`,
             },
         })
-        console.log(tryAutoLogin.data)
 
         const user = tryAutoLogin.data.user
         authStore.login(user, token)

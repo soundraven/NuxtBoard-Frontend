@@ -37,10 +37,9 @@
 <script setup lang="ts">
 import type { ApiResponse } from "@/types/interface"
 
-const config = useRuntimeConfig()
-const api = config.public.apiBaseUrl
-
+const authStore = useAuthStore()
 const router = useRouter()
+const { $axios } = useNuxtApp()
 
 const currentPage: Ref<number> = ref(1)
 const pageSize: Ref<number> = ref(20)
@@ -56,15 +55,12 @@ const handlePageChange = (newPage: number) => {
 const getPostList = async () => {
     try {
         //api 쓸때 페이지 있는 쪽에 다 쓰지 말고 어디서 함수 하나 선언해 두고 getPostList
-        const postList: ApiResponse = await $fetch(
-            `${api}/posts/list?currentPage=${currentPage.value}&pageSize=${pageSize.value}`,
-            {
-                method: "GET",
-                headers: {
-                    "Content-type": "application/json",
-                },
-            }
-        )
+        const postList = await $axios.get("/posts/list", {
+            params: {
+                currentPage: currentPage.value,
+                pageSize: pageSize.value,
+            },
+        })
 
         list.value = postList.data.postList
         totalCount.value = postList.data.totalCount

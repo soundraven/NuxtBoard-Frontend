@@ -22,6 +22,13 @@
             >
                 <el-card v-for="(card, index) in cards" class="h-[300px]">
                     {{ card }}{{ index + 1 }}
+                    <div v-for="(post, index) in groupedPost[1]">
+                        <div>Id: {{ post.id }}</div>
+                        <div>작성자: {{ post.registered_by }}</div>
+                        <div>제목: {{ post.title }}</div>
+                        <div>내용: {{ post.content }}</div>
+                        <div>작성일자: {{ post.registered_date }}</div>
+                    </div>
                 </el-card>
             </el-main>
         </el-container>
@@ -31,22 +38,6 @@
         >
             <div class="w-full h-[200px] bg-gray-200 border-2 border-blue-400">
                 우측 광고 or 개념글
-            </div>
-            <div
-                class="w-full flex flex-col flex-wrap items-center border-2 mt-[6px] p-[6px]"
-            >
-                <el-button
-                    type="primary"
-                    class="w-full h-[30px] mb-[6px]"
-                    @click="navigateTo('/auth/login')"
-                    >로그인</el-button
-                >
-                <el-button
-                    class="w-full h-[30px]"
-                    style="margin: 0px"
-                    @click="navigateTo('/auth/register')"
-                    >회원가입</el-button
-                >
             </div>
             <div
                 class="w-full h-[150px] flex flex-wrap justify-around items-center border-2 mt-[6px] p-[6px] pb-[12px]"
@@ -59,6 +50,10 @@
                 >
                     {{ navBtn }}
                 </el-button>
+
+                <el-button type="danger" @click="getPostList"
+                    >글 목록 로드</el-button
+                >
             </div>
         </el-aside>
     </el-container>
@@ -67,4 +62,40 @@
 <script setup lang="ts">
 const navBtnArray: string[] = ["공지", "유머", "질문", "공략", "자랑", "후기"]
 const cards = ["게시판", "게시판", "게시판", "게시판", "게시판", "게시판"]
+
+const { $axios } = useNuxtApp()
+
+const currentPage: Ref<number> = ref(1)
+const pageSize: Ref<number> = ref(20)
+const totalCount: Ref<number> = ref(0)
+
+const groupedPost = ref([])
+
+const list: Ref = ref([])
+
+const getPostList = async () => {
+    try {
+        //api 쓸때 페이지 있는 쪽에 다 쓰지 말고 어디서 함수 하나 선언해 두고 getPostList
+        const postList = await $axios.get("/posts/list", {
+            params: {
+                currentPage: currentPage.value,
+                pageSize: pageSize.value,
+            },
+        })
+
+        list.value = postList.data.postList
+        totalCount.value = postList.data.totalCount
+
+        groupedPost.value = postList.data.groupedPost
+        console.log(groupedPost.value)
+
+        alert("글목록로드성공")
+    } catch (error: any) {
+        if (error.data && error.data.code === "E") {
+            alert(`errorCode: ${error.data.errorCode}, ${error.data.message}`)
+        } else {
+            alert("Unknown error occurred. Please check and try again.")
+        }
+    }
+}
 </script>

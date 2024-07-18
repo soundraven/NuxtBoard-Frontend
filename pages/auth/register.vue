@@ -6,30 +6,81 @@
         >
             <el-form
                 :model="form"
+                :rules="rules"
+                ref="registerForm"
                 label-width="auto"
                 class="flex flex-col justify-center items-center"
             >
-                <el-form-item label="Email">
-                    <el-input v-model="form.email" />
+                <el-form-item label="Email" prop="email" class="w-full">
+                    <el-input type="email" v-model="form.email" />
                 </el-form-item>
-                <el-form-item label="Password">
-                    <el-input v-model="form.password" />
+                <el-form-item label="Password" prop="password" class="w-full">
+                    <el-input
+                        type="password"
+                        v-model="form.password"
+                        show-password
+                    />
                 </el-form-item>
-                <el-form-item label="Username">
+                <el-form-item label="Username" prop="username" class="w-full">
                     <el-input v-model="form.username" />
                 </el-form-item>
-                <el-button type="primary" @click="onSubmit">회원가입</el-button>
+                <el-button type="primary" @click="submitForm"
+                    >회원가입</el-button
+                >
             </el-form>
         </el-card>
     </div>
 </template>
 
 <script setup lang="ts">
-import { object, string } from "yup"
-import type { ApiResponse } from "@/types/interface"
+import type { Userinfo, ApiResponse } from "@/types/interface"
+import type { FormInstance } from "element-plus"
+import rules from "@/utils/formRules"
 
-const config = useRuntimeConfig()
-const api = config.public.apiBaseUrl
+const router = useRouter()
+const { $axios } = useNuxtApp()
+
+const registerForm = ref<FormInstance | null>(null)
+
+const form: Userinfo = reactive({
+    email: "",
+    password: "",
+    username: "",
+})
+
+const submitForm = async () => {
+    if (!registerForm.value) return
+
+    try {
+        await registerForm.value.validate()
+        onSubmit()
+    } catch (error) {
+        alert("Validation failed")
+    }
+}
+
+const onSubmit = async () => {
+    try {
+        const registResult = await $axios.post("/users/register", {
+            user: form,
+        })
+
+        console.log(registResult)
+
+        if (registResult.data.code === "S") {
+            alert(`${registResult.data.message}`)
+            navigateTo("/")
+        } else {
+            alert("Unknown error")
+        }
+    } catch (error: any) {
+        if (error.data && error.data.code === "E") {
+            alert(`errorCode: ${error.data.errorCode}, ${error.data.message}`)
+        } else {
+            alert("Unknown error occurred. Please check and try again.")
+        }
+    }
+}
 
 const showCard: Ref<Boolean> = ref(false)
 
@@ -44,45 +95,4 @@ onMounted(() => {
         })
     })
 })
-
-const userinfo = object({
-    email: string().email("Invalid email!").required("Required"),
-    password: string()
-        .min(8, "Must be at least 8 characters")
-        .required("Required"),
-    username: string().max(8, "The maximum characters for the username is 8"),
-})
-
-const form = reactive({
-    email: "",
-    password: "",
-    username: "",
-})
-
-const onSubmit = async () => {
-    try {
-        const registResult: ApiResponse = await $fetch(
-            `${api}/users/register`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: form,
-            }
-        )
-
-        if (registResult.code === "S") {
-            alert(`${registResult.message}`)
-        } else {
-            alert("Unknown error")
-        }
-    } catch (error: any) {
-        if (error.data && error.data.code === "E") {
-            alert(`errorCode: ${error.data.errorCode}, ${error.data.message}`)
-        } else {
-            alert("Unknown error occurred. Please check and try again.")
-        }
-    }
-}
 </script>
