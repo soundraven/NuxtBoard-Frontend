@@ -36,11 +36,11 @@
 </template>
 
 <script setup lang="ts">
-import type { Userinfo, ApiResponse } from "../types/interface"
+import type { Userinfo, ApiResponse } from "@/types/interface.d.ts"
 import type { FormInstance, FormRules } from "element-plus"
+import type { AxiosInstance } from "axios"
 
-const config = useRuntimeConfig()
-const api = config.public.apiBaseUrl
+const { $axios } = useNuxtApp()
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -127,19 +127,18 @@ const submitForm = async () => {
 
 const onSubmit = async () => {
     try {
-        const loginResult: ApiResponse = await $fetch(`${api}/users/login`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: form,
+        const loginResult = await $axios.post("/users/login", {
+            user: form,
         })
+
+        console.log(loginResult)
+
         //코드가 S가 아닐때 리턴 시키는 방식으로 수정
-        if (loginResult.code === "S") {
-            const userdata: Userinfo = loginResult.data.user
+        if (loginResult.data.code === "S") {
+            const user: Userinfo = loginResult.data.user
             const token: string = loginResult.data.token
 
-            authStore.login(userdata, token)
+            authStore.login(user, token)
             router.push("/")
         } else {
             alert("Unknown error")

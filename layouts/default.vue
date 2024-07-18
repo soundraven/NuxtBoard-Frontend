@@ -1,7 +1,6 @@
 <template>
-    // fixed 말고 sticky 사용해보기
     <div
-        class="w-screen h-[50px] flex justify-center border-b border-blue-600 py-[6px] fixed top-0"
+        class="w-screen h-[50px] flex justify-center border-b border-blue-600 py-[6px] sticky top-0"
     >
         <div
             class="w-full max-w-[1300px] flex justify-between items-center px-[6px]"
@@ -22,22 +21,31 @@
                     v-if="authStore.isAuthenticated"
                     class="hover:cursor-pointer mr-[6px]"
                 >
-                    <el-button>{{ authStore.user.username }}</el-button>
+                    <el-button>{{
+                        authStore.user.username === ""
+                            ? "Please set your username"
+                            : authStore.user.username
+                    }}</el-button>
                     <template #dropdown>
                         <el-dropdown-menu>
-                            <el-dropdown-item @click="authStore.logout">
-                                로그아웃
+                            <el-dropdown-item
+                                @click="navigateTo('/auth/mypage')"
+                            >
+                                Mypage
+                            </el-dropdown-item>
+                            <el-dropdown-item divided @click="authStore.logout">
+                                Logout
                             </el-dropdown-item>
                         </el-dropdown-menu>
                     </template>
                 </el-dropdown>
-                <el-button type="info" @click="navigateTo('/mypage')">
+                <el-button type="info" @click="navigateTo('/auth/mypage')">
                     <el-icon><User /></el-icon>
                 </el-button>
             </div>
         </div>
     </div>
-    <div class="mt-0"><slot /></div>
+    <slot />
 </template>
 
 <script setup lang="ts">

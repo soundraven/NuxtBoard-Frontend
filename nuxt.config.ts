@@ -21,7 +21,7 @@ export default defineNuxtConfig({
         },
     },
 
-    plugins: ["~/plugins/element-plus.ts"],
+    plugins: ["~/plugins/element-plus.ts", "~/plugins/axios.ts"],
     modules: ["@nuxt/ui", "@element-plus/nuxt", "@pinia/nuxt"],
 
     typescript: {

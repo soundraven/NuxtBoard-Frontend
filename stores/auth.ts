@@ -1,5 +1,6 @@
 import { defineStore } from "pinia"
-import { type Userinfo } from "../types/interface"
+import type { Userinfo } from "../types/interface"
+import Cookies from "js-cookie"
 
 interface State {
     isAuthenticated: boolean
@@ -30,8 +31,8 @@ export const useAuthStore = defineStore<
             this.isAuthenticated = true
             this.user = user
 
-            localStorage.setItem("user", JSON.stringify(user))
-            localStorage.setItem("token", token)
+            sessionStorage.setItem("user", JSON.stringify(user))
+            Cookies.set("token", token, { expires: 7 })
         },
 
         logout() {
@@ -41,8 +42,8 @@ export const useAuthStore = defineStore<
                 id: 0,
                 username: "",
             }
-            localStorage.removeItem("user")
-            localStorage.removeItem("token")
+            sessionStorage.removeItem("user")
+            Cookies.remove("token")
         },
 
         checkAuth() {

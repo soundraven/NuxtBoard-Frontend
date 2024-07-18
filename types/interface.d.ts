@@ -2,7 +2,8 @@ interface ApiResponse {
     code: string
     message: string
     errorCode?: string
-    data?: any
+    user?: Userinfo
+    token?: string
 }
 
 interface Userinfo {

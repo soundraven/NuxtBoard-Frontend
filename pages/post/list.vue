@@ -35,7 +35,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import { type ApiResponse } from "~/types/interface"
+import type { ApiResponse } from "@/types/interface"
 
 const config = useRuntimeConfig()
 const api = config.public.apiBaseUrl
