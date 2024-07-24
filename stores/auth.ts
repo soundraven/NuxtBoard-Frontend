@@ -42,12 +42,13 @@ export const useAuthStore = defineStore<
                 id: 0,
                 username: "",
             }
+
             sessionStorage.removeItem("user")
             Cookies.remove("token")
         },
 
         checkAuth() {
-            const userString = localStorage.getItem("user")
+            const userString = sessionStorage.getItem("user")
 
             if (userString) {
                 const user = JSON.parse(userString)

@@ -4,7 +4,7 @@
             class="max-w-[1000px] h-full flex justify-center border-2 border-green-400 p-[6px]"
         >
             <el-header
-                height="200px"
+                height="250px"
                 style="padding: 0px"
                 class="w-full flex justify-center items-center bg-gray-200 border-2 border-blue-400"
             >
@@ -20,12 +20,18 @@
                 "
                 class="w-full h-full border-2 border-blue-400 mt-[6px]"
             >
-                <el-card v-for="(card, index) in cards" class="h-[300px]">
-                    {{ card }}{{ index + 1 }}
-                    <div v-for="(post, index) in groupedPost[1]">
-                        <div>제목: {{ post.title }}</div>
-                        <div>
-                            {{ $indexStore.commoncode.boardNames[index] }}
+                <el-card
+                    v-for="(board, boardIndex) in $indexStore.commoncode
+                        .boardNames"
+                    class="h-[200px]"
+                >
+                    {{ board }}
+                    <div v-for="(post, index) in groupedPost[boardIndex]">
+                        <div
+                            class="hover: cursor-pointer"
+                            @click="navigateTo(`/post/${post.id}`)"
+                        >
+                            {{ post.id }} {{ post.title }}
                         </div>
                     </div>
                 </el-card>
@@ -42,7 +48,7 @@
                 class="w-full h-[150px] flex flex-wrap justify-around items-center border-2 mt-[6px] p-[6px] pb-[12px]"
             >
                 <el-button
-                    v-for="navBtn in navBtnArray"
+                    v-for="navBtn in $indexStore.commoncode.boardNames"
                     style="margin-top: 6px; margin-left: 0px"
                     class="w-[90px]"
                     @click="navigateTo(`/${navBtn}`)"
@@ -59,12 +65,7 @@
 </template>
 
 <script setup lang="ts">
-const navBtnArray: string[] = ["공지", "유머", "질문", "공략", "자랑", "후기"]
-const cards = ["게시판", "게시판", "게시판", "게시판", "게시판", "게시판"]
-
 const { $axios, $indexStore } = useNuxtApp()
-
-const indexStore = useIndexStore()
 
 const currentPage: Ref<number> = ref(1)
 const pageSize: Ref<number> = ref(20)
@@ -88,9 +89,6 @@ const getPostList = async () => {
         totalCount.value = postList.data.totalCount
 
         groupedPost.value = postList.data.groupedPost
-        console.log(groupedPost.value)
-
-        alert("글목록로드성공")
     } catch (error: any) {
         if (error.data && error.data.code === "E") {
             alert(`errorCode: ${error.data.errorCode}, ${error.data.message}`)
@@ -99,4 +97,8 @@ const getPostList = async () => {
         }
     }
 }
+
+onMounted(() => {
+    getPostList()
+})
 </script>

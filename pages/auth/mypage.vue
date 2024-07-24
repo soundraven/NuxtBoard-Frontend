@@ -4,9 +4,27 @@
             <template #header>
                 <div class="card-header">
                     <span>사용자 정보 수정을 위한 공간</span>
-                    <el-button type="warning" @click="deactivate"
+                    <el-button type="warning" @click="dialogVisible = true"
                         >회원탈퇴
                     </el-button>
+                    <el-dialog
+                        v-model="dialogVisible"
+                        title="Account Delete"
+                        width="500"
+                        :before-close="handleClose"
+                    >
+                        <span>Deleting your account is irreversible</span>
+                        <template #footer>
+                            <div class="dialog-footer">
+                                <el-button @click="dialogVisible = false"
+                                    >Cancel</el-button
+                                >
+                                <el-button type="danger" @click="deactivate">
+                                    Confirm
+                                </el-button>
+                            </div>
+                        </template>
+                    </el-dialog>
                 </div>
             </template>
             <template #default>
@@ -18,46 +36,62 @@
 </template>
 <script setup lang="ts">
 import type { Userinfo, ApiResponse } from "@/types/interface"
+import Cookies from "js-cookie"
 
 const config = useRuntimeConfig()
 const api = config.public.apiBaseUrl
 
 const router = useRouter()
 
-const { $indexStore } = useNuxtApp()
+const { $axios, $indexStore } = useNuxtApp()
 
 definePageMeta({
     middleware: "auth",
 })
 
+const dialogVisible = ref(false)
+
+const handleClose = (done: () => void) => {
+    ElMessageBox.confirm("Are you sure to close this dialog?")
+        .then(() => {
+            done()
+        })
+        .catch(() => {
+            // catch error
+        })
+}
+
 const deactivate = async () => {
     try {
         const userJson = sessionStorage.getItem("user")
-        const token = localStorage.getItem("token")
+        const token = Cookies.get("token")
 
         if (!userJson || !token) {
             alert("Userinfo or token is missing")
+            $indexStore.auth.logout()
             return
         }
 
-        const user = JSON.parse(userJson)
+        const user: Userinfo = JSON.parse(userJson)
 
-        const deactivateResult: ApiResponse = await $fetch(
-            `${api}/users/deactivate`,
+        const deactivateResult = await $axios.post(
+            "/users/deactivate",
             {
-                method: "POST",
+                user: user,
+            },
+            {
                 headers: {
-                    "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
-                },
-                body: {
-                    user: user,
                 },
             }
         )
 
-        if (deactivateResult.code === "S") {
+        console.log(deactivateResult.data)
+
+        if (deactivateResult.data.code === "S") {
             alert("Account successfully deactivated")
+            $indexStore.auth.logout()
+            dialogVisible.value = false
             router.push("/")
         } else {
             alert("Unknown error")

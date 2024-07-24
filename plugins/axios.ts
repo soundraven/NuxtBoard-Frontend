@@ -1,11 +1,13 @@
 import { defineNuxtPlugin } from "#app"
+import Cookies from "js-cookie"
 import axios from "axios"
 
 export default defineNuxtPlugin((nuxtApp) => {
     const config = useRuntimeConfig()
+    const baseURL = config.public.apiBaseUrl
 
     const api = axios.create({
-        baseURL: config.public.apiBaseUrl,
+        baseURL: baseURL,
         headers: {
             "Content-Type": "application/json",
         },
