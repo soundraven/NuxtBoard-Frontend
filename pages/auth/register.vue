@@ -37,7 +37,6 @@ import type { Userinfo, ApiResponse } from "@/types/interface"
 import type { FormInstance } from "element-plus"
 import rules from "@/utils/formRules"
 
-const router = useRouter()
 const { $axios } = useNuxtApp()
 
 const registerForm = ref<FormInstance | null>(null)

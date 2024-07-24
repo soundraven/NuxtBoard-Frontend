@@ -41,9 +41,8 @@ import type { FormInstance } from "element-plus"
 import type { AxiosInstance } from "axios"
 import rules from "@/utils/formRules"
 
-const authStore = useAuthStore()
 const router = useRouter()
-const { $axios } = useNuxtApp()
+const { $axios, $indexStore } = useNuxtApp()
 
 const loginForm = ref<FormInstance | null>(null)
 
@@ -74,7 +73,7 @@ const onSubmit = async () => {
             const user: Userinfo = loginResult.data.user
             const token: string = loginResult.data.token
 
-            authStore.login(user, token)
+            $indexStore.auth.login(user, token)
             router.push("/")
         } else {
             alert("Unknown error")

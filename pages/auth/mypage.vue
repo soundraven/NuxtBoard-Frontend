@@ -17,13 +17,14 @@
     </div>
 </template>
 <script setup lang="ts">
-import type { Userinfo, ApiResponse } from "../types/interface"
+import type { Userinfo, ApiResponse } from "@/types/interface"
 
 const config = useRuntimeConfig()
 const api = config.public.apiBaseUrl
 
-const authStore = useAuthStore()
 const router = useRouter()
+
+const { $indexStore } = useNuxtApp()
 
 definePageMeta({
     middleware: "auth",
@@ -31,7 +32,7 @@ definePageMeta({
 
 const deactivate = async () => {
     try {
-        const userJson = localStorage.getItem("user")
+        const userJson = sessionStorage.getItem("user")
         const token = localStorage.getItem("token")
 
         if (!userJson || !token) {

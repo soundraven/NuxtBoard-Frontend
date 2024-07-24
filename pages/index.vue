@@ -23,11 +23,10 @@
                 <el-card v-for="(card, index) in cards" class="h-[300px]">
                     {{ card }}{{ index + 1 }}
                     <div v-for="(post, index) in groupedPost[1]">
-                        <div>Id: {{ post.id }}</div>
-                        <div>작성자: {{ post.registered_by }}</div>
                         <div>제목: {{ post.title }}</div>
-                        <div>내용: {{ post.content }}</div>
-                        <div>작성일자: {{ post.registered_date }}</div>
+                        <div>
+                            {{ $indexStore.commoncode.boardNames[index] }}
+                        </div>
                     </div>
                 </el-card>
             </el-main>
@@ -63,7 +62,9 @@
 const navBtnArray: string[] = ["공지", "유머", "질문", "공략", "자랑", "후기"]
 const cards = ["게시판", "게시판", "게시판", "게시판", "게시판", "게시판"]
 
-const { $axios } = useNuxtApp()
+const { $axios, $indexStore } = useNuxtApp()
+
+const indexStore = useIndexStore()
 
 const currentPage: Ref<number> = ref(1)
 const pageSize: Ref<number> = ref(20)

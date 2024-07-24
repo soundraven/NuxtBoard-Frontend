@@ -37,9 +37,8 @@
 <script setup lang="ts">
 import type { ApiResponse } from "@/types/interface"
 
-const authStore = useAuthStore()
 const router = useRouter()
-const { $axios } = useNuxtApp()
+const { $axios, $indexStore } = useNuxtApp()
 
 const currentPage: Ref<number> = ref(1)
 const pageSize: Ref<number> = ref(20)
