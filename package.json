@@ -29,6 +29,7 @@
     "@vue/runtime-core": "^3.4.28",
     "@vue/runtime-dom": "^3.4.28",
     "axios": "^1.7.2",
+    "dayjs": "^1.11.12",
     "element-plus": "^2.7.6",
     "js-cookie": "^3.0.5",
     "pinia": "^2.1.7",

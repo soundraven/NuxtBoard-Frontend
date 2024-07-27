@@ -1,31 +1,29 @@
 <template>
-    <UCard>
-        <template #header>
+    <el-form :model="form" class="w-[1000px] mx-auto mt-[6px]">
+        <el-form-item label="Title">
             <UTextarea
-                v-model="title"
+                v-model="form.title"
                 :rows="1"
                 size="xl"
                 placeholder="글 내용을 작성해 주세요"
             />
-        </template>
-        <UTextarea
-            v-model="content"
-            resize
-            autoresize
-            :maxrows="20"
-            class="min-h-30 max-h-400px"
-            placeholder="글 내용을 작성해 주세요"
-        />
-        <template #footer>
-            <UButton @click="onSubmit">작성</UButton>
-        </template>
-    </UCard>
+        </el-form-item>
+        <el-form-item label="Content">
+            <UTextarea
+                v-model="form.content"
+                resize
+                autoresize
+                :maxrows="20"
+                class="min-h-30 max-h-400px"
+                placeholder="글 내용을 작성해 주세요"
+            />
+        </el-form-item>
+    </el-form>
 </template>
 <script setup lang="ts">
-const title: Ref<string> = ref("")
-const content: Ref<string> = ref("")
+const form = reactive({ title: "", content: "" })
 
 const onSubmit = () => {
-    console.log(title.value, content.value)
+    console.log(form.title, form.content)
 }
 </script>

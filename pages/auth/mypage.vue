@@ -36,6 +36,7 @@
 </template>
 <script setup lang="ts">
 import type { Userinfo, ApiResponse } from "@/types/interface"
+import type { AxiosInstance, AxiosResponse } from "axios"
 import Cookies from "js-cookie"
 
 const config = useRuntimeConfig()
@@ -74,8 +75,8 @@ const deactivate = async () => {
 
         const user: Userinfo = JSON.parse(userJson)
 
-        const deactivateResult = await $axios.post(
-            "/users/deactivate",
+        const deactivateResult: AxiosResponse = await $axios.post(
+            "/users/deactivate", //나중에 한 파일에서 import해오도록 수정
             {
                 user: user,
             },

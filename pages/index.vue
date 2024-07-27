@@ -32,6 +32,7 @@
                             @click="navigateTo(`/post/${post.id}`)"
                         >
                             {{ post.id }} {{ post.title }}
+                            {{ post.formatted_date }}
                         </div>
                     </div>
                 </el-card>
@@ -60,6 +61,7 @@
                     >글 목록 로드</el-button
                 >
             </div>
+            <div @click="navigateTo('/post/write')">글작성</div>
         </el-aside>
     </el-container>
 </template>
@@ -89,6 +91,7 @@ const getPostList = async () => {
         totalCount.value = postList.data.totalCount
 
         groupedPost.value = postList.data.groupedPost
+        console.log(groupedPost.value)
     } catch (error: any) {
         if (error.data && error.data.code === "E") {
             alert(`errorCode: ${error.data.errorCode}, ${error.data.message}`)

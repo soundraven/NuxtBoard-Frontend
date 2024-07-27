@@ -1,5 +1,4 @@
 import { defineNuxtPlugin } from "#app"
-import Cookies from "js-cookie"
 import axios from "axios"
 
 export default defineNuxtPlugin((nuxtApp) => {
@@ -9,6 +8,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     const api = axios.create({
         baseURL: baseURL,
         headers: {
+            //조건 걸어서 토큰 있을시 넣도록
             "Content-Type": "application/json",
         },
         timeout: 10000,
