@@ -20,34 +20,61 @@
             <el-tabs
                 v-model="activeName"
                 class="h-full pt-[6px]"
-                @tab-click="handleClick"
                 tab-position="left"
             >
-                <el-tab-pane label="Home">내가 쓴 글과 댓글 모두</el-tab-pane>
-                <el-tab-pane label="My post"
+                <el-tab-pane label="Home"> </el-tab-pane>
+                <el-tab-pane label="My post">
+                    <div class="flex justify-center">
+                        <el-table
+                            :data="postList"
+                            style="width: 100%; height: 100%"
+                            :highlight-current-row="true"
+                            class="mx-auto"
+                        >
+                            <el-table-column prop="id" label="ID" />
+                            <el-table-column prop="board_id" label="게시판" />
+                            <el-table-column prop="title" label="제목">
+                                <template #default="scope">
+                                    <a
+                                        @click="
+                                            navigateTo(`/post/${scope.row.id}`)
+                                        "
+                                        class="text-blue-500 cursor-pointer"
+                                        >{{ scope.row.title }}</a
+                                    >
+                                </template>
+                            </el-table-column>
+
+                            <el-table-column
+                                prop="registered_date"
+                                label="작성일자"
+                            />
+                        </el-table>
+                    </div>
+                </el-tab-pane>
+                <el-tab-pane label="My comment"
                     ><div>
                         <div class="flex justify-center">
                             <el-table
-                                :data="list"
+                                :data="commentList"
                                 style="width: 100%; height: 100%"
                                 :highlight-current-row="true"
                                 class="mx-auto"
                             >
                                 <el-table-column prop="id" label="ID" />
-                                <el-table-column
-                                    prop="board_id"
-                                    label="게시판"
-                                />
-                                <el-table-column prop="title" label="제목">
+                                <el-table-column prop="content" label="내용">
                                     <template #default="scope">
                                         <a
-                                            @click="goToPost(scope.row.id)"
+                                            @click="
+                                                navigateTo(
+                                                    `/post/${scope.row.post_id}`
+                                                )
+                                            "
                                             class="text-blue-500 cursor-pointer"
-                                            >{{ scope.row.title }}</a
+                                            >{{ scope.row.content }}</a
                                         >
                                     </template>
                                 </el-table-column>
-
                                 <el-table-column
                                     prop="registered_date"
                                     label="작성일자"
@@ -55,9 +82,6 @@
                             </el-table>
                         </div></div
                 ></el-tab-pane>
-                <el-tab-pane label="My comment"
-                    ><div>내가 쓴 댓글</div></el-tab-pane
-                >
                 <el-tab-pane label="Resign"
                     ><el-button type="warning" @click="dialogVisible = true"
                         >회원탈퇴
@@ -164,13 +188,13 @@ const currentPage: Ref<number> = ref(1)
 const pageSize: Ref<number> = ref(20)
 const totalCount: Ref<number> = ref(0)
 
-const list: Ref = ref([])
+const postList: Ref = ref([])
+const commentList: Ref = ref([])
 
 const getPostList = async () => {
     try {
-        console.log($indexStore.auth.user.id)
         //api 쓸때 페이지 있는 쪽에 다 쓰지 말고 어디서 함수 하나 선언해 두고 getPostList
-        const postList = await $axios.get("/posts/list", {
+        const postResult = await $axios.get("/posts/list", {
             params: {
                 currentPage: currentPage.value,
                 pageSize: pageSize.value,
@@ -178,8 +202,13 @@ const getPostList = async () => {
             },
         })
 
-        list.value = postList.data.postList
-        totalCount.value = postList.data.totalCount
+        const commentResult = await $axios.get(
+            `/comments/myCommentList/${$indexStore.auth.user.id}`
+        )
+
+        postList.value = postResult.data.postList
+        totalCount.value = postResult.data.totalCount
+        commentList.value = commentResult.data.commentList
     } catch (error: any) {
         if (error.data && error.data.code === "E") {
             alert(`errorCode: ${error.data.errorCode}, ${error.data.message}`)
