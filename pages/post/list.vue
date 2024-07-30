@@ -43,6 +43,7 @@ const { $axios, $indexStore } = useNuxtApp()
 const currentPage: Ref<number> = ref(1)
 const pageSize: Ref<number> = ref(20)
 const totalCount: Ref<number> = ref(0)
+const registeredBy: Ref<string> = ref("")
 
 const list: Ref = ref([])
 
@@ -58,6 +59,7 @@ const getPostList = async () => {
             params: {
                 currentPage: currentPage.value,
                 pageSize: pageSize.value,
+                registeredBy: registeredBy.value,
             },
         })
 

@@ -1,10 +1,62 @@
 <template>
-    <div class="flex justify-center">
-        <el-card style="max-width: 480px">
-            <template #header>
-                <div class="card-header">
-                    <span>사용자 정보 수정을 위한 공간</span>
-                    <el-button type="warning" @click="dialogVisible = true"
+    <el-container
+        class="w-full h-[800px] flex flex-col justify-center pt-[6px]"
+    >
+        <el-container
+            class="max-w-[1000px] h-full flex flex-row border-2 border-green-400 p-[6px]"
+        >
+            <el-header class="w-full h-[120px] border-2 border-blue-400 p-[6px]"
+                >닉네임
+                <span v-if="$indexStore.auth.user.username === ''"
+                    >을 정해주세요</span
+                >
+                <span v-else>
+                    {{ $indexStore.auth.user.username }}님</span
+                ></el-header
+            >
+            <el-tabs
+                v-model="activeName"
+                class="h-full pt-[6px]"
+                @tab-click="handleClick"
+                tab-position="left"
+            >
+                <el-tab-pane label="Home">내가 쓴 글과 댓글 모두</el-tab-pane>
+                <el-tab-pane label="My post"
+                    ><div>
+                        <div class="flex justify-center">
+                            <el-table
+                                :data="list"
+                                style="width: 100%; height: 100%"
+                                :highlight-current-row="true"
+                                class="mx-auto"
+                            >
+                                <el-table-column prop="id" label="ID" />
+                                <el-table-column
+                                    prop="board_id"
+                                    label="게시판"
+                                />
+                                <el-table-column prop="title" label="제목">
+                                    <template #default="scope">
+                                        <a
+                                            @click="goToPost(scope.row.id)"
+                                            class="text-blue-500 cursor-pointer"
+                                            >{{ scope.row.title }}</a
+                                        >
+                                    </template>
+                                </el-table-column>
+
+                                <el-table-column
+                                    prop="registered_date"
+                                    label="작성일자"
+                                />
+                            </el-table>
+                        </div></div
+                ></el-tab-pane>
+                <el-tab-pane label="My comment"
+                    ><div>내가 쓴 댓글</div></el-tab-pane
+                >
+                <el-tab-pane label="Resign"
+                    ><el-button type="warning" @click="dialogVisible = true"
                         >회원탈퇴
                     </el-button>
                     <el-dialog
@@ -25,14 +77,16 @@
                             </div>
                         </template>
                     </el-dialog>
-                </div>
-            </template>
-            <template #default>
-                <div>내가 쓴 글</div>
-                <div>내가 쓴 댓글</div>
-            </template>
-        </el-card>
-    </div>
+                </el-tab-pane>
+            </el-tabs>
+        </el-container>
+        <el-aside
+            style="padding: 6px"
+            class="w-[280px] min-h-[550px] flex flex-col items-center border-2 border-red-400 p-[10px] ml-[6px]"
+        >
+            <Sidebar />
+        </el-aside>
+    </el-container>
 </template>
 <script setup lang="ts">
 import type { Userinfo, ApiResponse } from "@/types/interface"
@@ -42,9 +96,6 @@ import Cookies from "js-cookie"
 definePageMeta({
     middleware: "auth",
 })
-
-const config = useRuntimeConfig()
-const api = config.public.apiBaseUrl
 
 const router = useRouter()
 
@@ -106,5 +157,36 @@ const deactivate = async () => {
     }
 }
 
-onMounted(() => {})
+const currentPage: Ref<number> = ref(1)
+const pageSize: Ref<number> = ref(20)
+const totalCount: Ref<number> = ref(0)
+
+const list: Ref = ref([])
+
+const getPostList = async () => {
+    try {
+        console.log($indexStore.auth.user.id)
+        //api 쓸때 페이지 있는 쪽에 다 쓰지 말고 어디서 함수 하나 선언해 두고 getPostList
+        const postList = await $axios.get("/posts/list", {
+            params: {
+                currentPage: currentPage.value,
+                pageSize: pageSize.value,
+                registeredBy: $indexStore.auth.user.id,
+            },
+        })
+
+        list.value = postList.data.postList
+        totalCount.value = postList.data.totalCount
+    } catch (error: any) {
+        if (error.data && error.data.code === "E") {
+            alert(`errorCode: ${error.data.errorCode}, ${error.data.message}`)
+        } else {
+            alert("Unknown error occurred. Please check and try again.")
+        }
+    }
+}
+
+onMounted(() => {
+    getPostList()
+})
 </script>

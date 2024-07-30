@@ -10,8 +10,7 @@
 import type { Userinfo } from "./types/interface"
 import Cookies from "js-cookie"
 
-const authStore = useAuthStore()
-const { $axios } = useNuxtApp()
+const { $axios, $indexStore } = useNuxtApp()
 
 const autoLogin = async () => {
     const token = Cookies.get("token")
@@ -27,7 +26,7 @@ const autoLogin = async () => {
         })
 
         const user = tryAutoLogin.data.user
-        authStore.login(user, token)
+        $indexStore.auth.login(user, token)
     } catch (error: any) {
         if (error.data && error.data.code === "E") {
             alert(`errorCode: ${error.data.errorCode}, ${error.data.message}`)
@@ -39,9 +38,7 @@ const autoLogin = async () => {
 
 onMounted(() => {
     if (process.server) return
-
     autoLogin()
-
     console.log("Component has been mounted")
 })
 </script>
