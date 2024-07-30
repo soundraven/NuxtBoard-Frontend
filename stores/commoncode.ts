@@ -1,31 +1,37 @@
 import { defineStore } from "pinia"
 
+interface Board {
+    id: number
+    name: string
+}
+
 export const useCommoncodeStore = defineStore("commoncode", {
     state: () => ({
-        boardNames: {
-            1: "공지",
-            2: "자유",
-            3: "유머",
-            4: "질문",
-            5: "자랑",
-            6: "후기",
-        } as Record<number, string>,
+        boards: [
+            { id: 1, name: "공지" },
+            { id: 2, name: "자유" },
+            { id: 3, name: "유머" },
+            { id: 4, name: "질문" },
+            { id: 5, name: "자랑" },
+            { id: 6, name: "후기" },
+        ] as Board[],
     }),
 
     getters: {
         getBoardName:
             (state) =>
-            (boardNumber: number): string | undefined => {
-                return state.boardNames[boardNumber]
+            (boardId: number): string | undefined => {
+                const board = state.boards.find((board) => board.id === boardId)
+                return board ? board.name : undefined
             },
 
         getBoardId:
             (state) =>
             (boardName: string): number | undefined => {
-                const key = Object.keys(state.boardNames).find(
-                    (key) => state.boardNames[Number(key)] === boardName
+                const board = state.boards.find(
+                    (board) => board.name === boardName
                 )
-                return key ? Number(key) : undefined
+                return board ? board.id : undefined
             },
     },
 })

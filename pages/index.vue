@@ -32,7 +32,7 @@
                             @click="navigateTo(`/post/${post.id}`)"
                         >
                             {{ post.id }} {{ post.title }}
-                            {{ post.formatted_date }}
+                            {{ getElapsedTime(post.formatted_date) }}
                         </div>
                     </div>
                 </el-card>
@@ -42,40 +42,40 @@
             style="padding: 6px"
             class="w-[280px] min-h-[550px] flex flex-col items-center border-2 border-red-400 p-[10px] ml-[6px]"
         >
-            <div class="w-full h-[200px] bg-gray-200 border-2 border-blue-400">
-                우측 광고 or 개념글
-            </div>
-            <div
-                class="w-full h-[150px] flex flex-wrap justify-around items-center border-2 mt-[6px] p-[6px] pb-[12px]"
-            >
-                <el-button
-                    v-for="navBtn in $indexStore.commoncode.boardNames"
-                    style="margin-top: 6px; margin-left: 0px"
-                    class="w-[90px]"
-                    @click="navigateTo(`/${navBtn}`)"
-                >
-                    {{ navBtn }}
-                </el-button>
-
-                <el-button type="danger" @click="getPostList"
-                    >글 목록 로드</el-button
-                >
-            </div>
-            <div @click="navigateTo('/post/write')">글작성</div>
+            <Sidebar />
         </el-aside>
     </el-container>
 </template>
 
 <script setup lang="ts">
-const { $axios, $indexStore } = useNuxtApp()
+import { Dayjs } from "dayjs"
+const { $axios, $indexStore, $dayjs } = useNuxtApp()
 
 const currentPage: Ref<number> = ref(1)
 const pageSize: Ref<number> = ref(20)
 const totalCount: Ref<number> = ref(0)
 
 const groupedPost = ref([])
+const list = ref([])
 
-const list: Ref = ref([])
+const getElapsedTime = (registeredDate: Dayjs) => {
+    const convertedTime = $dayjs(registeredDate)
+    const now = $dayjs()
+
+    const days = convertedTime.diff(now, "day") * -1
+    const hours = convertedTime.diff(now, "hour") * -1
+    const minutes = convertedTime.diff(now, "minute") * -1
+
+    if (minutes < 1) {
+        return `방금 전`
+    } else if (minutes < 24) {
+        return `${minutes}분 전`
+    } else if (hours < 24) {
+        return `${hours}시간 전`
+    } else {
+        return `${days}일 전`
+    }
+}
 
 const getPostList = async () => {
     try {

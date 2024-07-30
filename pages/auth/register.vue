@@ -64,8 +64,6 @@ const onSubmit = async () => {
             user: form,
         })
 
-        console.log(registResult)
-
         if (registResult.data.code === "S") {
             alert(`${registResult.data.message}`)
             navigateTo("/")

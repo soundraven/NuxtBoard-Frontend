@@ -39,16 +39,16 @@ import type { Userinfo, ApiResponse } from "@/types/interface"
 import type { AxiosInstance, AxiosResponse } from "axios"
 import Cookies from "js-cookie"
 
+definePageMeta({
+    middleware: "auth",
+})
+
 const config = useRuntimeConfig()
 const api = config.public.apiBaseUrl
 
 const router = useRouter()
 
 const { $axios, $indexStore } = useNuxtApp()
-
-definePageMeta({
-    middleware: "auth",
-})
 
 const dialogVisible = ref(false)
 

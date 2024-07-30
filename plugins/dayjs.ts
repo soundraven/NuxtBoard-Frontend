@@ -1,7 +1,6 @@
-import type { Context } from "@nuxt/types"
-import type { Inject } from "@nuxt/types/app"
 import dayjs from "dayjs"
+import { defineNuxtPlugin } from "#app"
 
-export default (context: Context, inject: Inject) => {
-    inject("dayjs", dayjs)
-}
+export default defineNuxtPlugin((nuxtApp) => {
+    nuxtApp.provide("dayjs", dayjs)
+})

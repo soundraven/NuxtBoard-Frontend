@@ -13,7 +13,12 @@
         "noEmit": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
-        "types": ["@nuxt/types", "@nuxtjs/tailwindcss", "nuxt"],
+        "types": [
+            "@nuxt/types",
+            "@nuxtjs/tailwindcss",
+            "nuxt",
+            "./types/dayjs"
+        ],
         "allowImportingTsExtensions": true
     },
     "exclude": ["node_modules", "dist"]

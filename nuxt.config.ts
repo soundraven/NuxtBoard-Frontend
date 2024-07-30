@@ -25,6 +25,7 @@ export default defineNuxtConfig({
         "~/plugins/element-plus.ts",
         "~/plugins/axios.ts",
         "~/plugins/indexStore.ts",
+        "~/plugins/dayjs.ts",
     ],
     modules: ["@nuxt/ui", "@element-plus/nuxt", "@pinia/nuxt"],
 
