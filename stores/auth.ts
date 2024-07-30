@@ -45,6 +45,7 @@ export const useAuthStore = defineStore<
 
             sessionStorage.removeItem("user")
             Cookies.remove("token")
+            navigateTo("/")
         },
 
         checkAuth() {

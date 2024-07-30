@@ -21,12 +21,11 @@
                 class="w-full h-full border-2 border-blue-400 mt-[6px]"
             >
                 <el-card
-                    v-for="(board, boardIndex) in $indexStore.commoncode
-                        .boardNames"
+                    v-for="(board, index) in $indexStore.commoncode.boards"
                     class="h-[200px]"
                 >
-                    {{ board }}
-                    <div v-for="(post, index) in groupedPost[boardIndex]">
+                    {{ board.name }}
+                    <div v-for="(post, index) in groupedPost[board.id]">
                         <div
                             class="hover: cursor-pointer"
                             @click="navigateTo(`/post/${post.id}`)"

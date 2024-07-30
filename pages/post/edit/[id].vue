@@ -36,12 +36,12 @@
                     <el-input
                         v-model="form.content"
                         style="width: 100%"
-                        :autosize="{ minRows: 30, maxRows: 30 }"
+                        :autosize="{ minRows: 29, maxRows: 29 }"
                         type="textarea"
                         placeholder="Please input your content"
                     />
                 </el-form-item>
-                <el-button @click="onSubmit">글 작성완료 </el-button>
+                <el-button @click="onSubmit">글 수정완료 </el-button>
             </el-form>
         </el-container>
         <el-aside
@@ -54,13 +54,15 @@
 </template>
 <script setup lang="ts">
 import Cookies from "js-cookie"
+import type { Postinfo } from "@/types/interface"
 const { $axios, $indexStore } = useNuxtApp()
+const route = useRoute()
 
 definePageMeta({
     middleware: "auth",
 })
 
-const form = reactive({ title: "", content: "", boardId: "" })
+const form = reactive({ title: "", content: "", boardId: 0, id: 0 })
 
 const options = computed(() =>
     $indexStore.commoncode.boards.map((board) => ({
@@ -68,6 +70,30 @@ const options = computed(() =>
         label: board.name,
     }))
 )
+
+const postId: string = route.params.id as string
+
+const getPostinfo = async (postId: string) => {
+    try {
+        const response = await $axios.get(`/posts/postinfo/${postId}`)
+        const postinfo: Postinfo = response.data.postinfo
+
+        form.title = postinfo.title
+        form.content = postinfo.content
+        form.boardId = postinfo.board_id
+        form.id = Number(postId)
+    } catch (error: any) {
+        if (error.data && error.data.code === "E") {
+            alert(`errorCode: ${error.data.errorCode}, ${error.data.message}`)
+        } else {
+            alert("Unknown error occurred. Please check and try again.")
+        }
+    }
+}
+
+onMounted(() => {
+    getPostinfo(postId)
+})
 
 const onSubmit = async () => {
     try {
@@ -81,7 +107,7 @@ const onSubmit = async () => {
         }
 
         const result = await $axios.post(
-            "/posts/write",
+            "/posts/edit",
             {
                 post: form,
                 user: $indexStore.auth.user,
@@ -101,7 +127,7 @@ const onSubmit = async () => {
         }
 
         alert(`${result.data.message}`)
-        navigateTo(`/post/${result.data.postId}`)
+        navigateTo(`/post/${postId}`)
     } catch (error: any) {
         if (error.data && error.data.code === "E") {
             alert(`errorCode: ${error.data.errorCode}, ${error.data.message}`)

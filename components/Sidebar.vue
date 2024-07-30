@@ -22,7 +22,9 @@
             {{ navBtn }}
         </el-button>
     </div>
-    <div @click="navigateTo('/post/write')">글작성</div>
+    <el-button type="primary" @click="navigateTo('/post/write')"
+        >글작성</el-button
+    >
 </template>
 
 <script lang="ts" setup>
