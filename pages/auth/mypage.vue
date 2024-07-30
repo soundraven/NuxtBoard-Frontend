@@ -186,6 +186,15 @@ const getPostList = async () => {
     }
 }
 
+watch(
+    () => $indexStore.auth.user.id,
+    (newId) => {
+        if (newId) {
+            getPostList()
+        }
+    }
+)
+
 onMounted(() => {
     getPostList()
 })
