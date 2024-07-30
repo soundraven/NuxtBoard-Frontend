@@ -3,7 +3,7 @@
         <el-container
             class="max-w-[1000px] h-full flex justify-center border-2 border-green-400 p-[6px]"
         >
-            <el-card class="w-[1024px] h-[860px] mx-auto">
+            <el-card class="w-[1024px] min-h-[800px] mx-auto">
                 <template #header>
                     <div>
                         {{ postinfo.title }}
@@ -11,6 +11,21 @@
                 </template>
                 <div class="min-h-[500px]">{{ postinfo.content }}</div>
                 <template #footer>
+                    <el-list>
+                        <el-list-item
+                            v-for="(comment, index) in commentList"
+                            :key="comment.id"
+                        >
+                            <el-card>
+                                <div class="comment-author">
+                                    <span class="mr-[6px]">{{
+                                        comment.registered_by
+                                    }}</span
+                                    ><span>{{ comment.content }}</span>
+                                </div>
+                            </el-card>
+                        </el-list-item>
+                    </el-list>
                     <div v-if="$indexStore.auth.isAuthenticated">
                         <el-input
                             v-model="comment"
@@ -54,11 +69,17 @@ const postId: string = route.params.id as string
 console.log(route.params.id)
 
 const postinfo: Ref<Postinfo> = ref({} as Postinfo)
+const commentList = ref([])
 
 const getPostinfo = async () => {
     try {
-        const response = await $axios.get(`/posts/postinfo/${postId}`)
-        postinfo.value = response.data.postinfo
+        const postResponse = await $axios.get(`/posts/postinfo/${postId}`)
+        const commentResponse = await $axios.get(
+            `/comments/commentList/${postId}`
+        )
+
+        postinfo.value = postResponse.data.postinfo
+        commentList.value = commentResponse.data.commentList
     } catch (error: any) {
         if (error.data && error.data.code === "E") {
             alert(`errorCode: ${error.data.errorCode}, ${error.data.message}`)
