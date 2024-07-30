@@ -5,13 +5,16 @@
         <el-container
             class="max-w-[1000px] h-full flex flex-row border-2 border-green-400 p-[6px]"
         >
-            <el-header class="w-full h-[120px] border-2 border-blue-400 p-[6px]"
-                >닉네임
-                <span v-if="$indexStore.auth.user.username === ''"
-                    >을 정해주세요</span
+            <el-header
+                class="w-full h-[120px] border-2 border-blue-400 p-[6px]"
+            >
+                <el-button
+                    type="primary"
+                    v-if="$indexStore.auth.user.username === ''"
+                    >Please set your username</el-button
                 >
                 <span v-else>
-                    {{ $indexStore.auth.user.username }}님</span
+                    {{ $indexStore.auth.user.username }}'s mypage</span
                 ></el-header
             >
             <el-tabs

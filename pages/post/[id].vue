@@ -10,7 +10,20 @@
                     </div>
                 </template>
                 <div class="min-h-[500px]">{{ postinfo.content }}</div>
-                <template #footer>Footer content</template>
+                <template #footer>
+                    <div v-if="$indexStore.auth.isAuthenticated">
+                        <el-input
+                            v-model="comment"
+                            style="width: 100%"
+                            :rows="5"
+                            type="textarea"
+                            placeholder="Please input your comment"
+                        />
+                        <el-button @click="writeComment"
+                            >댓글 작성 완료</el-button
+                        >
+                    </div>
+                </template>
             </el-card>
             <el-button
                 v-if="$indexStore.auth.user.id === postinfo.registered_by"
@@ -30,6 +43,7 @@
 <script setup lang="ts">
 import type { ApiResponse, Postinfo } from "~/types/interface"
 import type { AxiosInstance, AxiosResponse } from "axios"
+import Cookies from "js-cookie"
 
 const { $axios, $indexStore } = useNuxtApp()
 
@@ -41,7 +55,7 @@ console.log(route.params.id)
 
 const postinfo: Ref<Postinfo> = ref({} as Postinfo)
 
-const getPostinfo = async (postId: string) => {
+const getPostinfo = async () => {
     try {
         const response = await $axios.get(`/posts/postinfo/${postId}`)
         postinfo.value = response.data.postinfo
@@ -54,8 +68,53 @@ const getPostinfo = async (postId: string) => {
     }
 }
 
+const comment: Ref<string> = ref("")
+
+const writeComment = async () => {
+    console.log(comment.value)
+    try {
+        const token = Cookies.get("token")
+
+        if (!token) {
+            alert("token is missing")
+            $indexStore.auth.logout()
+            return
+        }
+
+        const result = await $axios.post(
+            "/comments/write",
+            {
+                comment: comment.value,
+                user: $indexStore.auth.user,
+                postId: postId,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        )
+
+        console.log(result)
+
+        if (result.data.code === "E" || result.data.code === "F") {
+            alert(`${result.data.message}`)
+            return
+        }
+
+        alert(`${result.data.message}`)
+        getPostinfo()
+    } catch (error: any) {
+        if (error.data && error.data.code === "E") {
+            alert(`errorCode: ${error.data.errorCode}, ${error.data.message}`)
+        } else {
+            alert("Unknown error occurred. Please check and try again.")
+        }
+    }
+}
+
 onMounted(() => {
-    getPostinfo(postId)
+    getPostinfo()
 })
 
 const goBack = () => {
