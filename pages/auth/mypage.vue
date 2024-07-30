@@ -11,12 +11,39 @@
                 <el-button
                     type="primary"
                     v-if="$indexStore.auth.user.username === ''"
+                    @click="setUsernameVisible = true"
                     >Please set your username</el-button
                 >
                 <span v-else>
                     {{ $indexStore.auth.user.username }}'s mypage</span
-                ></el-header
-            >
+                >
+                <el-dialog
+                    v-model="setUsernameVisible"
+                    title="Set your username"
+                    width="500"
+                    :before-close="handleClose"
+                >
+                    <el-input
+                        v-model="username"
+                        style="width: 300px; margin-left: 99px"
+                        maxlength="12"
+                        show-word-limit
+                        :rows="1"
+                        type="textarea"
+                        placeholder="Please input your username"
+                    />
+                    <template #footer>
+                        <div class="dialog-footer">
+                            <el-button @click="setUsernameVisible = false"
+                                >Cancel</el-button
+                            >
+                            <el-button type="primary" @click="setUsername">
+                                Confirm
+                            </el-button>
+                        </div>
+                    </template>
+                </el-dialog>
+            </el-header>
             <el-tabs
                 v-model="activeName"
                 class="h-full pt-[6px]"
@@ -129,6 +156,57 @@ const router = useRouter()
 const { $axios, $indexStore } = useNuxtApp()
 
 const dialogVisible = ref(false)
+const setUsernameVisible = ref(false)
+
+const username: Ref<string> = ref("")
+
+const setUsername = async () => {
+    try {
+        const userJson = sessionStorage.getItem("user")
+        const token = Cookies.get("token")
+
+        if (!userJson || !token) {
+            alert("Userinfo or token is missing")
+            $indexStore.auth.logout()
+            return
+        }
+
+        const setUsernameResult: AxiosResponse = await $axios.post(
+            "/users/setUsername",
+            {
+                user: $indexStore.auth.user,
+                username: username.value,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        )
+
+        if (
+            setUsernameResult.data.code === "E" ||
+            setUsernameResult.data.code === "F"
+        ) {
+            alert(`${setUsernameResult.data.message}`)
+            return
+        }
+
+        setUsernameSuccess()
+        setUsernameVisible.value = false
+        $indexStore.auth.setUsername()
+    } catch (error: any) {
+        if (error.data && error.data.code === "E") {
+            alert(`errorCode: ${error.data.errorCode}, ${error.data.message}`)
+        } else {
+            alert("Unknown error occurred. Please check and try again.")
+        }
+    }
+}
+
+const setUsernameSuccess = () => {
+    ElMessage("Username successfully set")
+}
 
 const handleClose = (done: () => void) => {
     ElMessageBox.confirm("Are you sure to close this dialog?")

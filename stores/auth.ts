@@ -15,6 +15,7 @@ export const useAuthStore = defineStore<
         login(user: Userinfo, token: string): void
         logout(): void
         checkAuth(): void
+        setUsername(): void
     }
 >("auth", {
     state: (): State => ({
@@ -55,6 +56,30 @@ export const useAuthStore = defineStore<
                 const user = JSON.parse(userString)
                 this.isAuthenticated = true
                 this.user = user
+            }
+        },
+
+        async setUsername() {
+            const { $axios } = useNuxtApp()
+            const token = Cookies.get("token")
+
+            try {
+                const result = await $axios.get("users/me", {
+                    headers: {
+                        authorization: `Bearer ${token}`,
+                    },
+                })
+
+                this.user.username = result.data.user.username
+                sessionStorage.setItem("user", JSON.stringify(this.user))
+            } catch (error: any) {
+                if (error.data && error.data.code === "E") {
+                    alert(
+                        `errorCode: ${error.data.errorCode}, ${error.data.message}`
+                    )
+                } else {
+                    alert("Unknown error occurred. Please check and try again.")
+                }
             }
         },
     },
