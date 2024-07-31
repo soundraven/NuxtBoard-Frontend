@@ -13,7 +13,7 @@
                     >
                         <el-option
                             v-for="(option, index) in options"
-                            :key="option.id"
+                            :key="option.value"
                             :label="option.label"
                             :value="option.value"
                         >

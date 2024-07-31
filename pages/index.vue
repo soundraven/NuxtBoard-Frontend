@@ -49,13 +49,14 @@
 <script setup lang="ts">
 import { Dayjs } from "dayjs"
 import { catchError, errorHandler } from "~/utils/tryCatchFunctions"
+import type { GroupedPost } from "~/types/interface"
 const { $axios, $indexStore, $dayjs } = useNuxtApp()
 
 const currentPage: Ref<number> = ref(1)
 const pageSize: Ref<number> = ref(20)
 const totalCount: Ref<number> = ref(0)
 
-const groupedPost = ref([])
+const groupedPost: Ref<GroupedPost> = ref([] as GroupedPost)
 const list = ref([])
 
 const getElapsedTime = (registeredDate: Dayjs) => {

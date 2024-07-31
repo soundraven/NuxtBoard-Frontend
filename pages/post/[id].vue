@@ -77,7 +77,7 @@
     </el-container>
 </template>
 <script setup lang="ts">
-import type { Postinfo } from "~/types/interface"
+import type { Postinfo, Commentinfo } from "~/types/interface"
 import type { AxiosResponse } from "axios"
 import Cookies from "js-cookie"
 import { catchError, errorHandler } from "~/utils/tryCatchFunctions"
@@ -89,7 +89,7 @@ const route = useRoute()
 const postId: string = route.params.id as string
 
 const postinfo: Ref<Postinfo> = ref({} as Postinfo)
-const commentList = ref([])
+const commentList: Ref<Commentinfo[]> = ref([] as Commentinfo[])
 
 const getPostinfo = async () => {
     try {
