@@ -63,7 +63,7 @@ const getPostList = async () => {
                 registeredBy: registeredBy.value,
             },
         })
-
+        //코드가 E나 F가 아닌경우 튕겨내도록 수정, E나 F가 아닌지 확인하는 부분은 utils에 빼기
         list.value = postList.data.postList
         totalCount.value = postList.data.totalCount
     } catch (error: any) {
