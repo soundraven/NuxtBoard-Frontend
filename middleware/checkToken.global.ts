@@ -16,11 +16,9 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         if (user && !token) {
             const userObject = JSON.parse(user)
             try {
-                console.log(userObject)
                 const response = await $axios.post("/users/createToken", {
                     user: userObject,
                 })
-                console.log(response)
 
                 if (!errorHandler(response)) return
 

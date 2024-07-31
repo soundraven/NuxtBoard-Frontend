@@ -71,7 +71,7 @@ export const useAuthStore = defineStore<
                     },
                 })
 
-                errorHandler(result)
+                if (!errorHandler(result)) return
 
                 this.user.username = result.data.user.username
                 sessionStorage.setItem("user", JSON.stringify(this.user))

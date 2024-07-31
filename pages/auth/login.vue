@@ -36,9 +36,9 @@
 </template>
 
 <script setup lang="ts">
-import type { Userinfo, ApiResponse } from "@/types/interface.d.ts"
+import type { Userinfo } from "@/types/interface.d.ts"
 import type { FormInstance } from "element-plus"
-import type { AxiosInstance } from "axios"
+import type { AxiosResponse } from "axios"
 import rules from "@/utils/formRules"
 import { catchError, errorHandler } from "~/utils/tryCatchFunctions"
 
@@ -65,7 +65,7 @@ const submitForm = async () => {
 
 const onSubmit = async () => {
     try {
-        const loginResult = await $axios.post("/users/login", {
+        const loginResult: AxiosResponse = await $axios.post("/users/login", {
             user: form,
         })
 

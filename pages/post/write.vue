@@ -20,7 +20,6 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-
                 <el-form-item>
                     <el-input
                         v-model="form.title"
@@ -73,10 +72,9 @@ const options = computed(() =>
 const onSubmit = async () => {
     try {
         const token = Cookies.get("token")
-        console.log(form)
 
         if (!token) {
-            alert("token is missing")
+            ElMessage("token is missing")
             $indexStore.auth.logout()
             return
         }
@@ -96,7 +94,7 @@ const onSubmit = async () => {
 
         if (!errorHandler(result)) return
 
-        alert(`${result.data.message}`)
+        ElMessage(`${result.data.message}`)
         navigateTo(`/post/${result.data.postId}`)
     } catch (error: any) {
         catchError(error)

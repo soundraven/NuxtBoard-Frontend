@@ -87,14 +87,17 @@ const { $axios, $indexStore } = useNuxtApp()
 const route = useRoute()
 
 const postId: string = route.params.id as string
-
 const postinfo: Ref<Postinfo> = ref({} as Postinfo)
+
 const commentList: Ref<Commentinfo[]> = ref([] as Commentinfo[])
+const comment: Ref<string> = ref("")
 
 const getPostinfo = async () => {
     try {
-        const postResponse = await $axios.get(`/posts/postinfo/${postId}`)
-        const commentResponse = await $axios.get(
+        const postResponse: AxiosResponse = await $axios.get(
+            `/posts/postinfo/${postId}`
+        )
+        const commentResponse: AxiosResponse = await $axios.get(
             `/comments/commentList/${postId}`
         )
 
@@ -112,7 +115,7 @@ const deletePost = async () => {
     try {
         const token = Cookies.get("token")
 
-        const deletePostResult = await $axios.post(
+        const deletePostResult: AxiosResponse = await $axios.post(
             `/posts/delete`,
             {
                 user: $indexStore.auth.user,
@@ -133,8 +136,6 @@ const deletePost = async () => {
         catchError(error)
     }
 }
-
-const comment: Ref<string> = ref("")
 
 const writeComment = async () => {
     try {
@@ -174,7 +175,7 @@ const deleteComment = async (commentId: number) => {
     try {
         const token = Cookies.get("token")
 
-        const deleteCommentResult = await $axios.post(
+        const deleteCommentResult: AxiosResponse = await $axios.post(
             `/comments/delete`,
             {
                 user: $indexStore.auth.user,

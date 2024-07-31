@@ -152,8 +152,8 @@ const router = useRouter()
 
 const { $axios, $indexStore } = useNuxtApp()
 
-const dialogVisible = ref(false)
-const setUsernameVisible = ref(false)
+const dialogVisible: Ref<boolean> = ref(false)
+const setUsernameVisible: Ref<boolean> = ref(false)
 
 const username: Ref<string> = ref("")
 
@@ -247,7 +247,7 @@ const commentList: Ref = ref([])
 const getPostList = async () => {
     const token = Cookies.get("token")
     try {
-        const postResult = await $axios.get("/posts/list", {
+        const postResult: AxiosResponse = await $axios.get("/posts/list", {
             params: {
                 currentPage: currentPage.value,
                 pageSize: pageSize.value,
@@ -258,7 +258,7 @@ const getPostList = async () => {
             },
         })
 
-        const commentResult = await $axios.get(
+        const commentResult: AxiosResponse = await $axios.get(
             `/comments/myCommentList/${$indexStore.auth.user.id}`,
             {
                 headers: {

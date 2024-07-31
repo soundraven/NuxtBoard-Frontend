@@ -56,6 +56,7 @@
 import { catchError, errorHandler } from "~/utils/tryCatchFunctions"
 import Cookies from "js-cookie"
 import type { Postinfo } from "@/types/interface"
+import type { AxiosResponse } from "axios"
 const { $axios, $indexStore } = useNuxtApp()
 const route = useRoute()
 
@@ -76,7 +77,9 @@ const postId: string = route.params.id as string
 
 const getPostinfo = async (postId: string) => {
     try {
-        const result = await $axios.get(`/posts/postinfo/${postId}`)
+        const result: AxiosResponse = await $axios.get(
+            `/posts/postinfo/${postId}`
+        )
 
         if (!errorHandler(result)) return
 

@@ -22,7 +22,6 @@
             >
                 <el-card
                     v-for="(board, index) in $indexStore.commoncode.boards"
-                    class="h-[200px]"
                 >
                     {{ board.name }}
                     <div v-for="(post, index) in groupedPost[board.id]">
@@ -50,22 +49,23 @@
 import { Dayjs } from "dayjs"
 import { catchError, errorHandler } from "~/utils/tryCatchFunctions"
 import type { GroupedPost } from "~/types/interface"
+import type { AxiosResponse } from "axios"
 const { $axios, $indexStore, $dayjs } = useNuxtApp()
 
 const currentPage: Ref<number> = ref(1)
-const pageSize: Ref<number> = ref(20)
+const pageSize: Ref<number> = ref(30)
 const totalCount: Ref<number> = ref(0)
 
 const groupedPost: Ref<GroupedPost> = ref([] as GroupedPost)
-const list = ref([])
+const list: Ref<GroupedPost> = ref([] as GroupedPost)
 
 const getElapsedTime = (registeredDate: Dayjs) => {
-    const convertedTime = $dayjs(registeredDate)
-    const now = $dayjs()
+    const convertedTime: Dayjs = $dayjs(registeredDate)
+    const now: Dayjs = $dayjs()
 
-    const days = convertedTime.diff(now, "day") * -1
-    const hours = convertedTime.diff(now, "hour") * -1
-    const minutes = convertedTime.diff(now, "minute") * -1
+    const days: number = convertedTime.diff(now, "day") * -1
+    const hours: number = convertedTime.diff(now, "hour") * -1
+    const minutes: number = convertedTime.diff(now, "minute") * -1
 
     if (minutes < 1) {
         return `방금 전`
@@ -80,7 +80,7 @@ const getElapsedTime = (registeredDate: Dayjs) => {
 
 const getPostList = async () => {
     try {
-        const postList = await $axios.get("/posts/list", {
+        const postList: AxiosResponse = await $axios.get("/posts/list", {
             params: {
                 currentPage: currentPage.value,
                 pageSize: pageSize.value,

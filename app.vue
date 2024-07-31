@@ -19,7 +19,6 @@ const autoLogin = async () => {
     if (!token) return
 
     try {
-        console.log("tryAutoLogin")
         const tryAutoLogin: AxiosResponse = await $axios.get("users/me", {
             headers: {
                 authorization: `Bearer ${token}`,
