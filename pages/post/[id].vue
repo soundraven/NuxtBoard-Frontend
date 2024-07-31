@@ -22,6 +22,16 @@
                                         comment.registered_by
                                     }}</span
                                     ><span>{{ comment.content }}</span>
+                                    <el-button
+                                        v-if="
+                                            comment.registered_by ===
+                                            $indexStore.auth.user.id
+                                        "
+                                        type="danger"
+                                        @click="deleteComment(comment.id)"
+                                    >
+                                        댓글 삭제
+                                    </el-button>
                                 </div>
                             </el-card>
                         </el-list-item>
@@ -149,6 +159,32 @@ const writeComment = async () => {
 
         ElMessage(`${result.data.message}`)
         comment.value = ""
+        getPostinfo()
+    } catch (error: any) {
+        catchError(error)
+    }
+}
+
+const deleteComment = async (commentId: number) => {
+    try {
+        const token = Cookies.get("token")
+
+        const deleteCommentResult = await $axios.post(
+            `/comments/delete`,
+            {
+                user: $indexStore.auth.user,
+                commentId: commentId,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        )
+
+        if (!errorHandler(deleteCommentResult)) return
+
+        ElMessage("Comment successfully deleted")
         getPostinfo()
     } catch (error: any) {
         catchError(error)
