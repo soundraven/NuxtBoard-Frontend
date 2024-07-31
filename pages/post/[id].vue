@@ -56,18 +56,16 @@
     </el-container>
 </template>
 <script setup lang="ts">
-import type { ApiResponse, Postinfo } from "~/types/interface"
-import type { AxiosInstance, AxiosResponse } from "axios"
+import type { Postinfo } from "~/types/interface"
+import type { AxiosResponse } from "axios"
 import Cookies from "js-cookie"
-import errorHandler from "~/utils/errorHandler"
+import { catchError, errorHandler } from "~/utils/tryCatchFunctions"
 
 const { $axios, $indexStore } = useNuxtApp()
 
 const route = useRoute()
-const router = useRouter() //추후 뒤로가기 기능을 위해 사용
 
 const postId: string = route.params.id as string
-console.log(route.params.id)
 
 const postinfo: Ref<Postinfo> = ref({} as Postinfo)
 const commentList = ref([])
@@ -79,17 +77,19 @@ const getPostinfo = async () => {
             `/comments/commentList/${postId}`
         )
 
+        if (!errorHandler(postResponse)) return
+        if (!errorHandler(commentResponse)) return
+
         postinfo.value = postResponse.data.postinfo
         commentList.value = commentResponse.data.commentList
     } catch (error: any) {
-        errorHandler(error)
+        catchError(error)
     }
 }
 
 const comment: Ref<string> = ref("")
 
 const writeComment = async () => {
-    console.log(comment.value)
     try {
         const token = Cookies.get("token")
 
@@ -99,7 +99,7 @@ const writeComment = async () => {
             return
         }
 
-        const result = await $axios.post(
+        const result: AxiosResponse = await $axios.post(
             "/comments/write",
             {
                 comment: comment.value,
@@ -113,25 +113,17 @@ const writeComment = async () => {
             }
         )
 
-        console.log(result)
+        if (!errorHandler(result)) return
 
-        if (result.data.code === "E" || result.data.code === "F") {
-            alert(`${result.data.message}`)
-            return
-        }
-
-        alert(`${result.data.message}`)
+        ElMessage(`${result.data.message}`)
+        comment.value = ""
         getPostinfo()
     } catch (error: any) {
-        errorHandler(error)
+        catchError(error)
     }
 }
 
 onMounted(() => {
     getPostinfo()
 })
-
-const goBack = () => {
-    router.push("/list")
-}
 </script>

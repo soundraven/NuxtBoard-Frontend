@@ -7,9 +7,10 @@
 </template>
 
 <script setup lang="ts">
+import type { AxiosResponse } from "axios"
 import type { Userinfo } from "./types/interface"
 import Cookies from "js-cookie"
-import errorHandler from "~/utils/errorHandler"
+import { catchError, errorHandler } from "~/utils/tryCatchFunctions"
 
 const { $axios, $indexStore } = useNuxtApp()
 
@@ -19,17 +20,16 @@ const autoLogin = async () => {
     if (!token) return
 
     try {
-        const tryAutoLogin = await $axios.get("users/me", {
+        const tryAutoLogin: AxiosResponse = await $axios.get("users/me", {
             headers: {
                 authorization: `Bearer ${token}`,
             },
         })
 
         const user: Userinfo = tryAutoLogin.data.user
-        const expires: number = tryAutoLogin.data.expires
         $indexStore.auth.login(user, token)
     } catch (error: any) {
-        errorHandler(error)
+        catchError(error)
     }
 }
 

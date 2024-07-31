@@ -29,6 +29,7 @@
 
 <script lang="ts" setup>
 import { Dayjs } from "dayjs"
+import { catchError, errorHandler } from "~/utils/tryCatchFunctions"
 const { $axios, $indexStore, $dayjs } = useNuxtApp()
 
 const currentPage: Ref<number> = ref(1)
@@ -54,11 +55,7 @@ const getPostList = async () => {
         groupedPost.value = postList.data.groupedPost
         console.log(groupedPost.value)
     } catch (error: any) {
-        if (error.data && error.data.code === "E") {
-            alert(`errorCode: ${error.data.errorCode}, ${error.data.message}`)
-        } else {
-            alert("Unknown error occurred. Please check and try again.")
-        }
+        catchError(error)
     }
 }
 

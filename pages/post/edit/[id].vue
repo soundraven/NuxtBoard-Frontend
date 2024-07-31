@@ -53,7 +53,7 @@
     </el-container>
 </template>
 <script setup lang="ts">
-import errorHandler from "~/utils/errorHandler"
+import { catchError, errorHandler } from "~/utils/tryCatchFunctions"
 import Cookies from "js-cookie"
 import type { Postinfo } from "@/types/interface"
 const { $axios, $indexStore } = useNuxtApp()
@@ -76,15 +76,18 @@ const postId: string = route.params.id as string
 
 const getPostinfo = async (postId: string) => {
     try {
-        const response = await $axios.get(`/posts/postinfo/${postId}`)
-        const postinfo: Postinfo = response.data.postinfo
+        const result = await $axios.get(`/posts/postinfo/${postId}`)
+
+        if (!errorHandler(result)) return
+
+        const postinfo: Postinfo = result.data.postinfo
 
         form.title = postinfo.title
         form.content = postinfo.content
         form.boardId = postinfo.board_id
         form.id = Number(postId)
     } catch (error: any) {
-        errorHandler(error)
+        catchError(error)
     }
 }
 
@@ -95,7 +98,6 @@ onMounted(() => {
 const onSubmit = async () => {
     try {
         const token = Cookies.get("token")
-        console.log(form)
 
         if (!token) {
             alert("token is missing")
@@ -116,17 +118,12 @@ const onSubmit = async () => {
             }
         )
 
-        console.log(result)
+        if (!errorHandler(result)) return
 
-        if (result.data.code === "E" || result.data.code === "F") {
-            alert(`${result.data.message}`)
-            return
-        }
-
-        alert(`${result.data.message}`)
+        ElMessage(`${result.data.message}`)
         navigateTo(`/post/${postId}`)
     } catch (error: any) {
-        errorHandler(error)
+        catchError(error)
     }
 }
 </script>

@@ -146,7 +146,7 @@
 import type { Userinfo, ApiResponse } from "@/types/interface"
 import type { AxiosInstance, AxiosResponse } from "axios"
 import Cookies from "js-cookie"
-import errorHandler from "~/utils/errorHandler"
+import { catchError, errorHandler } from "~/utils/tryCatchFunctions"
 
 definePageMeta({
     middleware: "auth",
@@ -185,24 +185,14 @@ const setUsername = async () => {
             }
         )
 
-        if (
-            setUsernameResult.data.code === "E" ||
-            setUsernameResult.data.code === "F"
-        ) {
-            alert(`${setUsernameResult.data.message}`)
-            return
-        }
+        if (!errorHandler(setUsernameResult)) return
 
-        setUsernameSuccess()
+        ElMessage("Username successfully set")
         setUsernameVisible.value = false
         $indexStore.auth.setUsername()
     } catch (error: any) {
-        errorHandler(error)
+        catchError(error)
     }
-}
-
-const setUsernameSuccess = () => {
-    ElMessage("Username successfully set")
 }
 
 const handleClose = (done: () => void) => {
@@ -251,7 +241,7 @@ const deactivate = async () => {
             alert("Unknown error")
         }
     } catch (error: any) {
-        errorHandler(error)
+        catchError(error)
     }
 }
 
@@ -281,7 +271,7 @@ const getPostList = async () => {
         totalCount.value = postResult.data.totalCount
         commentList.value = commentResult.data.commentList
     } catch (error: any) {
-        errorHandler(error)
+        catchError(error)
     }
 }
 

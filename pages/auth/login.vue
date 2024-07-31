@@ -40,7 +40,7 @@ import type { Userinfo, ApiResponse } from "@/types/interface.d.ts"
 import type { FormInstance } from "element-plus"
 import type { AxiosInstance } from "axios"
 import rules from "@/utils/formRules"
-import errorHandler from "~/utils/errorHandler"
+import { catchError, errorHandler } from "~/utils/tryCatchFunctions"
 
 const router = useRouter()
 const { $axios, $indexStore } = useNuxtApp()
@@ -69,18 +69,16 @@ const onSubmit = async () => {
             user: form,
         })
 
-        //코드가 S가 아닐때 리턴 시키는 방식으로 수정
-        if (loginResult.data.code === "S") {
-            const user: Userinfo = loginResult.data.user
-            const token: string = loginResult.data.token
+        if (!errorHandler(loginResult)) return
 
-            $indexStore.auth.login(user, token)
-            router.push("/")
-        } else {
-            alert("Unknown error")
-        }
+        console.log("이거되면안됨")
+        const user: Userinfo = loginResult.data.user
+        const token: string = loginResult.data.token
+
+        $indexStore.auth.login(user, token)
+        router.push("/")
     } catch (error: any) {
-        errorHandler(error)
+        catchError(error)
     }
 }
 

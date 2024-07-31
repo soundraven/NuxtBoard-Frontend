@@ -53,7 +53,7 @@
     </el-container>
 </template>
 <script setup lang="ts">
-import errorHandler from "~/utils/errorHandler"
+import { catchError, errorHandler } from "~/utils/tryCatchFunctions"
 import Cookies from "js-cookie"
 const { $axios, $indexStore } = useNuxtApp()
 
@@ -94,17 +94,12 @@ const onSubmit = async () => {
             }
         )
 
-        console.log(result)
-
-        if (result.data.code === "E" || result.data.code === "F") {
-            alert(`${result.data.message}`)
-            return
-        }
+        if (!errorHandler(result)) return
 
         alert(`${result.data.message}`)
         navigateTo(`/post/${result.data.postId}`)
     } catch (error: any) {
-        errorHandler(error)
+        catchError(error)
     }
 }
 </script>

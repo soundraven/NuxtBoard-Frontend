@@ -11,7 +11,7 @@
             <el-table-column prop="title" label="제목">
                 <template #default="scope">
                     <a
-                        @click="goToPost(scope.row.id)"
+                        @click="navigateTo(`${scope.row.id}`)"
                         class="text-blue-500 cursor-pointer"
                         >{{ scope.row.title }}</a
                     >
@@ -35,10 +35,9 @@
     </div>
 </template>
 <script setup lang="ts">
-import type { ApiResponse } from "@/types/interface"
-import errorHandler from "~/utils/errorHandler"
+import type { AxiosResponse } from "axios"
+import { catchError, errorHandler } from "~/utils/tryCatchFunctions"
 
-const router = useRouter()
 const { $axios, $indexStore } = useNuxtApp()
 
 const currentPage: Ref<number> = ref(1)
@@ -55,24 +54,21 @@ const handlePageChange = (newPage: number) => {
 
 const getPostList = async () => {
     try {
-        //api 쓸때 페이지 있는 쪽에 다 쓰지 말고 어디서 함수 하나 선언해 두고 getPostList
-        const postList = await $axios.get("/posts/list", {
+        const postList: AxiosResponse = await $axios.get("/posts/list", {
             params: {
                 currentPage: currentPage.value,
                 pageSize: pageSize.value,
                 registeredBy: registeredBy.value,
             },
         })
-        //코드가 E나 F가 아닌경우 튕겨내도록 수정, E나 F가 아닌지 확인하는 부분은 utils에 빼기
+
+        if (!errorHandler(postList)) return
+
         list.value = postList.data.postList
         totalCount.value = postList.data.totalCount
     } catch (error: any) {
-        errorHandler(error)
+        catchError(error)
     }
-}
-
-const goToPost = (id: number) => {
-    router.push(`/post/${id}`)
 }
 
 onMounted(() => {

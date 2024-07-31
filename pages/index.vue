@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 import { Dayjs } from "dayjs"
-import errorHandler from "~/utils/errorHandler"
+import { catchError, errorHandler } from "~/utils/tryCatchFunctions"
 const { $axios, $indexStore, $dayjs } = useNuxtApp()
 
 const currentPage: Ref<number> = ref(1)
@@ -79,7 +79,6 @@ const getElapsedTime = (registeredDate: Dayjs) => {
 
 const getPostList = async () => {
     try {
-        //api 쓸때 페이지 있는 쪽에 다 쓰지 말고 어디서 함수 하나 선언해 두고 getPostList
         const postList = await $axios.get("/posts/list", {
             params: {
                 currentPage: currentPage.value,
@@ -87,13 +86,13 @@ const getPostList = async () => {
             },
         })
 
+        if (!errorHandler(postList)) return
+
         list.value = postList.data.postList
         totalCount.value = postList.data.totalCount
-
         groupedPost.value = postList.data.groupedPost
-        console.log(groupedPost.value)
     } catch (error: any) {
-        errorHandler(error)
+        catchError(error)
     }
 }
 

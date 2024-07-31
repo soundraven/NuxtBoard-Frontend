@@ -1,6 +1,6 @@
 import { defineStore } from "pinia"
 import type { Userinfo } from "../types/interface"
-import errorHandler from "~/utils/errorHandler"
+import { catchError, errorHandler } from "~/utils/tryCatchFunctions"
 import Cookies from "js-cookie"
 
 interface State {
@@ -71,10 +71,12 @@ export const useAuthStore = defineStore<
                     },
                 })
 
+                errorHandler(result)
+
                 this.user.username = result.data.user.username
                 sessionStorage.setItem("user", JSON.stringify(this.user))
             } catch (error: any) {
-                errorHandler(error)
+                catchError(error)
             }
         },
     },

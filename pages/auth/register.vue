@@ -33,10 +33,11 @@
 </template>
 
 <script setup lang="ts">
-import errorHandler from "~/utils/errorHandler"
-import type { Userinfo, ApiResponse } from "@/types/interface"
+import { catchError, errorHandler } from "~/utils/tryCatchFunctions"
+import type { Userinfo } from "@/types/interface"
 import type { FormInstance } from "element-plus"
 import rules from "@/utils/formRules"
+import type { AxiosResponse } from "axios"
 
 const { $axios } = useNuxtApp()
 
@@ -61,18 +62,19 @@ const submitForm = async () => {
 
 const onSubmit = async () => {
     try {
-        const registResult = await $axios.post("/users/register", {
-            user: form,
-        })
+        const registResult: AxiosResponse = await $axios.post(
+            "/users/register",
+            {
+                user: form,
+            }
+        )
 
-        if (registResult.data.code === "S") {
-            alert(`${registResult.data.message}`)
-            navigateTo("/")
-        } else {
-            alert("Unknown error")
-        }
+        if (!errorHandler(registResult)) return
+
+        ElMessage(`${registResult.data.message}`)
+        navigateTo("/")
     } catch (error: any) {
-        errorHandler(error)
+        catchError(error)
     }
 }
 
