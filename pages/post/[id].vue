@@ -46,6 +46,12 @@
                 @click="navigateTo(`/post/edit/${route.params.id}`)"
                 >글수정</el-button
             >
+            <el-button
+                v-if="$indexStore.auth.user.id === postinfo.registered_by"
+                type="danger"
+                @click="deletePost"
+                >글삭제</el-button
+            >
         </el-container>
         <el-aside
             style="padding: 6px"
@@ -82,6 +88,32 @@ const getPostinfo = async () => {
 
         postinfo.value = postResponse.data.postinfo
         commentList.value = commentResponse.data.commentList
+    } catch (error: any) {
+        catchError(error)
+    }
+}
+
+const deletePost = async () => {
+    try {
+        const token = Cookies.get("token")
+
+        const deletePostResult = await $axios.post(
+            `/posts/delete`,
+            {
+                user: $indexStore.auth.user,
+                postId: postId,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        )
+
+        if (!errorHandler(deletePostResult)) return
+
+        ElMessage("Post successfully deleted")
+        navigateTo("/")
     } catch (error: any) {
         catchError(error)
     }

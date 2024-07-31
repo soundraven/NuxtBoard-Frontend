@@ -71,7 +71,6 @@ const onSubmit = async () => {
 
         if (!errorHandler(loginResult)) return
 
-        console.log("이거되면안됨")
         const user: Userinfo = loginResult.data.user
         const token: string = loginResult.data.token
 
