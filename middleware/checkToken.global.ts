@@ -14,7 +14,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
         if (!user || !token) {
             $indexStore.auth.logout()
-            alert("validation failed, please login again")
+            ElMessage("validation failed, please login again")
             return navigateTo("/auth/login", { replace: true })
         }
     }

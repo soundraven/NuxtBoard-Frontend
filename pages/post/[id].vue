@@ -18,8 +18,13 @@
                         >
                             <el-card>
                                 <div class="comment-author">
-                                    <span class="mr-[6px]">{{
-                                        comment.registered_by
+                                    <span
+                                        v-if="comment.username === ''"
+                                        class="mr-[6px]"
+                                        >익명</span
+                                    >
+                                    <span v-else class="mr-[6px]">{{
+                                        comment.username
                                     }}</span
                                     ><span>{{ comment.content }}</span>
                                     <el-button

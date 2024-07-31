@@ -44,11 +44,7 @@
                     </template>
                 </el-dialog>
             </el-header>
-            <el-tabs
-                v-model="activeName"
-                class="h-full pt-[6px]"
-                tab-position="left"
-            >
+            <el-tabs class="h-full pt-[6px]" tab-position="left">
                 <el-tab-pane label="Home"> </el-tab-pane>
                 <el-tab-pane label="My post">
                     <div class="flex justify-center">
@@ -143,8 +139,8 @@
     </el-container>
 </template>
 <script setup lang="ts">
-import type { Userinfo, ApiResponse } from "@/types/interface"
-import type { AxiosInstance, AxiosResponse } from "axios"
+import type { Userinfo } from "@/types/interface"
+import type { AxiosResponse } from "axios"
 import Cookies from "js-cookie"
 import { catchError, errorHandler } from "~/utils/tryCatchFunctions"
 
@@ -219,7 +215,7 @@ const deactivate = async () => {
         const user: Userinfo = JSON.parse(userJson)
 
         const deactivateResult: AxiosResponse = await $axios.post(
-            "/users/deactivate", //나중에 한 파일에서 import해오도록 수정
+            "/users/deactivate",
             {
                 user: user,
             },
@@ -230,16 +226,12 @@ const deactivate = async () => {
             }
         )
 
-        console.log(deactivateResult.data)
+        if (!errorHandler(deactivateResult)) return
 
-        if (deactivateResult.data.code === "S") {
-            alert("Account successfully deactivated")
-            $indexStore.auth.logout()
-            dialogVisible.value = false
-            router.push("/")
-        } else {
-            alert("Unknown error")
-        }
+        ElMessage("Account successfully deactivated")
+        $indexStore.auth.logout()
+        dialogVisible.value = false
+        router.push("/")
     } catch (error: any) {
         catchError(error)
     }
@@ -253,19 +245,30 @@ const postList: Ref = ref([])
 const commentList: Ref = ref([])
 
 const getPostList = async () => {
+    const token = Cookies.get("token")
     try {
-        //api 쓸때 페이지 있는 쪽에 다 쓰지 말고 어디서 함수 하나 선언해 두고 getPostList
         const postResult = await $axios.get("/posts/list", {
             params: {
                 currentPage: currentPage.value,
                 pageSize: pageSize.value,
                 registeredBy: $indexStore.auth.user.id,
             },
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
         })
 
         const commentResult = await $axios.get(
-            `/comments/myCommentList/${$indexStore.auth.user.id}`
+            `/comments/myCommentList/${$indexStore.auth.user.id}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
         )
+
+        if (!errorHandler(postResult)) return
+        if (!errorHandler(commentResult)) return
 
         postList.value = postResult.data.postList
         totalCount.value = postResult.data.totalCount
