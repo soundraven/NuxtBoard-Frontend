@@ -16,15 +16,17 @@ const { $axios, $indexStore } = useNuxtApp()
 
 const autoLogin = async () => {
     const token = Cookies.get("token")
-
     if (!token) return
 
     try {
+        console.log("tryAutoLogin")
         const tryAutoLogin: AxiosResponse = await $axios.get("users/me", {
             headers: {
                 authorization: `Bearer ${token}`,
             },
         })
+
+        if (!errorHandler(tryAutoLogin)) return
 
         const user: Userinfo = tryAutoLogin.data.user
         $indexStore.auth.login(user, token)
