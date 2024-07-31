@@ -59,6 +59,7 @@
 import type { ApiResponse, Postinfo } from "~/types/interface"
 import type { AxiosInstance, AxiosResponse } from "axios"
 import Cookies from "js-cookie"
+import errorHandler from "~/utils/errorHandler"
 
 const { $axios, $indexStore } = useNuxtApp()
 
@@ -81,11 +82,7 @@ const getPostinfo = async () => {
         postinfo.value = postResponse.data.postinfo
         commentList.value = commentResponse.data.commentList
     } catch (error: any) {
-        if (error.data && error.data.code === "E") {
-            alert(`errorCode: ${error.data.errorCode}, ${error.data.message}`)
-        } else {
-            alert("Unknown error occurred. Please check and try again.")
-        }
+        errorHandler(error)
     }
 }
 

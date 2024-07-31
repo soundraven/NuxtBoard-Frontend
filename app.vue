@@ -9,12 +9,12 @@
 <script setup lang="ts">
 import type { Userinfo } from "./types/interface"
 import Cookies from "js-cookie"
+import errorHandler from "~/utils/errorHandler"
 
 const { $axios, $indexStore } = useNuxtApp()
 
 const autoLogin = async () => {
     const token = Cookies.get("token")
-    console.log(token)
 
     if (!token) return
 
@@ -25,14 +25,11 @@ const autoLogin = async () => {
             },
         })
 
-        const user = tryAutoLogin.data.user
+        const user: Userinfo = tryAutoLogin.data.user
+        const expires: number = tryAutoLogin.data.expires
         $indexStore.auth.login(user, token)
     } catch (error: any) {
-        if (error.data && error.data.code === "E") {
-            alert(`errorCode: ${error.data.errorCode}, ${error.data.message}`)
-        } else {
-            alert("Unknown error occurred. Please check and try again.")
-        }
+        errorHandler(error)
     }
 }
 

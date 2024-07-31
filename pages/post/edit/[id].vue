@@ -53,6 +53,7 @@
     </el-container>
 </template>
 <script setup lang="ts">
+import errorHandler from "~/utils/errorHandler"
 import Cookies from "js-cookie"
 import type { Postinfo } from "@/types/interface"
 const { $axios, $indexStore } = useNuxtApp()
@@ -83,11 +84,7 @@ const getPostinfo = async (postId: string) => {
         form.boardId = postinfo.board_id
         form.id = Number(postId)
     } catch (error: any) {
-        if (error.data && error.data.code === "E") {
-            alert(`errorCode: ${error.data.errorCode}, ${error.data.message}`)
-        } else {
-            alert("Unknown error occurred. Please check and try again.")
-        }
+        errorHandler(error)
     }
 }
 

@@ -1,5 +1,6 @@
 import { defineStore } from "pinia"
 import type { Userinfo } from "../types/interface"
+import errorHandler from "~/utils/errorHandler"
 import Cookies from "js-cookie"
 
 interface State {
@@ -28,12 +29,12 @@ export const useAuthStore = defineStore<
     }),
 
     actions: {
-        login(user: Userinfo, token: string) {
+        login(user, token) {
             this.isAuthenticated = true
             this.user = user
 
             sessionStorage.setItem("user", JSON.stringify(user))
-            Cookies.set("token", token, { expires: 7 })
+            Cookies.set("token", token, { expires: 1 })
         },
 
         logout() {
@@ -73,13 +74,7 @@ export const useAuthStore = defineStore<
                 this.user.username = result.data.user.username
                 sessionStorage.setItem("user", JSON.stringify(this.user))
             } catch (error: any) {
-                if (error.data && error.data.code === "E") {
-                    alert(
-                        `errorCode: ${error.data.errorCode}, ${error.data.message}`
-                    )
-                } else {
-                    alert("Unknown error occurred. Please check and try again.")
-                }
+                errorHandler(error)
             }
         },
     },

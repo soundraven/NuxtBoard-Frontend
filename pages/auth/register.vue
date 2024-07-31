@@ -33,6 +33,7 @@
 </template>
 
 <script setup lang="ts">
+import errorHandler from "~/utils/errorHandler"
 import type { Userinfo, ApiResponse } from "@/types/interface"
 import type { FormInstance } from "element-plus"
 import rules from "@/utils/formRules"
@@ -71,11 +72,7 @@ const onSubmit = async () => {
             alert("Unknown error")
         }
     } catch (error: any) {
-        if (error.data && error.data.code === "E") {
-            alert(`errorCode: ${error.data.errorCode}, ${error.data.message}`)
-        } else {
-            alert("Unknown error occurred. Please check and try again.")
-        }
+        errorHandler(error)
     }
 }
 

@@ -36,6 +36,7 @@
 </template>
 <script setup lang="ts">
 import type { ApiResponse } from "@/types/interface"
+import errorHandler from "~/utils/errorHandler"
 
 const router = useRouter()
 const { $axios, $indexStore } = useNuxtApp()
@@ -66,11 +67,7 @@ const getPostList = async () => {
         list.value = postList.data.postList
         totalCount.value = postList.data.totalCount
     } catch (error: any) {
-        if (error.data && error.data.code === "E") {
-            alert(`errorCode: ${error.data.errorCode}, ${error.data.message}`)
-        } else {
-            alert("Unknown error occurred. Please check and try again.")
-        }
+        errorHandler(error)
     }
 }
 
