@@ -37,7 +37,6 @@ import type { Userinfo } from "@/types/interface"
 import type { FormInstance } from "element-plus"
 import rules from "@/utils/formRules"
 import type { AxiosResponse } from "axios"
-
 const { $axios, $catchError, $errorHandler } = useNuxtApp()
 
 const registerForm = ref<FormInstance | null>(null)

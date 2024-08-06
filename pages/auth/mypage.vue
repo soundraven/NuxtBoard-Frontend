@@ -250,28 +250,29 @@ const getPostList = async () => {
     //세션스토리지에서 스토어로 긁어오는거 적용하면 문제해결
 
     try {
-        const postResult: AxiosResponse = await $axios.get("/posts/list", {
-            params: {
-                currentPage: currentPage.value,
-                pageSize: pageSize.value,
-                registeredBy: $indexStore.auth.user.id,
-            },
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        })
-        //promise.all 쓰면됨
-        const commentResult: AxiosResponse = await $axios.get(
-            `/comments/myCommentList/${$indexStore.auth.user.id}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        )
+        const [postResult, commentResult]: [AxiosResponse, AxiosResponse] =
+            await Promise.all([
+                $axios.get("/posts/list", {
+                    params: {
+                        currentPage: currentPage.value,
+                        pageSize: pageSize.value,
+                        registeredBy: $indexStore.auth.user.id,
+                    },
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }),
+                $axios.get(
+                    `/comments/myCommentList/${$indexStore.auth.user.id}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                ),
+            ])
 
-        if (!$errorHandler(postResult)) return
-        if (!$errorHandler(commentResult)) return
+        if (!$errorHandler(postResult) || !$errorHandler(commentResult)) return
 
         postList.value = postResult.data.postList
         totalCount.value = postResult.data.totalCount

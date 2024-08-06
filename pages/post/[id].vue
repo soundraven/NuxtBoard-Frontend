@@ -92,15 +92,14 @@ const comment: Ref<string> = ref("")
 
 const getPostinfo = async () => {
     try {
-        const postResponse: AxiosResponse = await $axios.get(
-            `/posts/postinfo/${postId}`
-        )
-        const commentResponse: AxiosResponse = await $axios.get(
-            `/comments/commentList/${postId}`
-        )
+        const [postResponse, commentResponse]: [AxiosResponse, AxiosResponse] =
+            await Promise.all([
+                $axios.get(`/posts/postinfo/${postId}`),
+                $axios.get(`/comments/commentList/${postId}`),
+            ])
 
-        if (!$errorHandler(postResponse)) return
-        if (!$errorHandler(commentResponse)) return
+        if (!$errorHandler(postResponse) || !$errorHandler(commentResponse))
+            return
 
         postinfo.value = postResponse.data.postinfo
         commentList.value = commentResponse.data.commentList
