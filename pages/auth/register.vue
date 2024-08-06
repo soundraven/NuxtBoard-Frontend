@@ -33,13 +33,12 @@
 </template>
 
 <script setup lang="ts">
-import { catchError, errorHandler } from "~/utils/tryCatchFunctions"
 import type { Userinfo } from "@/types/interface"
 import type { FormInstance } from "element-plus"
 import rules from "@/utils/formRules"
 import type { AxiosResponse } from "axios"
 
-const { $axios } = useNuxtApp()
+const { $axios, $catchError, $errorHandler } = useNuxtApp()
 
 const registerForm = ref<FormInstance | null>(null)
 
@@ -69,12 +68,12 @@ const onSubmit = async () => {
             }
         )
 
-        if (!errorHandler(registResult)) return
+        if (!$errorHandler(registResult)) return
 
         ElMessage(`${registResult.data.message}`)
         navigateTo("/")
     } catch (error: any) {
-        catchError(error)
+        $catchError(error)
     }
 }
 

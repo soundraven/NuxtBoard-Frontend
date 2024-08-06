@@ -53,11 +53,10 @@
     </el-container>
 </template>
 <script setup lang="ts">
-import { catchError, errorHandler } from "~/utils/tryCatchFunctions"
 import Cookies from "js-cookie"
 import type { Postinfo } from "@/types/interface"
 import type { AxiosResponse } from "axios"
-const { $axios, $indexStore } = useNuxtApp()
+const { $axios, $indexStore, $catchError, $errorHandler } = useNuxtApp()
 const route = useRoute()
 
 definePageMeta({
@@ -81,7 +80,7 @@ const getPostinfo = async (postId: string) => {
             `/posts/postinfo/${postId}`
         )
 
-        if (!errorHandler(result)) return
+        if (!$errorHandler(result)) return
 
         const postinfo: Postinfo = result.data.postinfo
 
@@ -90,7 +89,7 @@ const getPostinfo = async (postId: string) => {
         form.boardId = postinfo.board_id
         form.id = Number(postId)
     } catch (error: any) {
-        catchError(error)
+        $catchError(error)
     }
 }
 
@@ -121,12 +120,12 @@ const onSubmit = async () => {
             }
         )
 
-        if (!errorHandler(result)) return
+        if (!$errorHandler(result)) return
 
         ElMessage(`${result.data.message}`)
         navigateTo(`/post/${postId}`)
     } catch (error: any) {
-        catchError(error)
+        $catchError(error)
     }
 }
 </script>

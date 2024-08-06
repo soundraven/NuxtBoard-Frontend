@@ -36,9 +36,7 @@
 </template>
 <script setup lang="ts">
 import type { AxiosResponse } from "axios"
-import { catchError, errorHandler } from "~/utils/tryCatchFunctions"
-
-const { $axios, $indexStore } = useNuxtApp()
+const { $axios, $catchError, $errorHandler } = useNuxtApp()
 
 const currentPage: Ref<number> = ref(1)
 const pageSize: Ref<number> = ref(20)
@@ -62,12 +60,12 @@ const getPostList = async () => {
             },
         })
 
-        if (!errorHandler(postList)) return
+        if (!$errorHandler(postList)) return
 
         list.value = postList.data.postList
         totalCount.value = postList.data.totalCount
     } catch (error: any) {
-        catchError(error)
+        $catchError(error)
     }
 }
 

@@ -40,10 +40,9 @@ import type { Userinfo } from "@/types/interface.d.ts"
 import type { FormInstance } from "element-plus"
 import type { AxiosResponse } from "axios"
 import rules from "@/utils/formRules"
-import { catchError, errorHandler } from "~/utils/tryCatchFunctions"
+const { $axios, $indexStore, $catchError, $errorHandler } = useNuxtApp()
 
 const router = useRouter()
-const { $axios, $indexStore } = useNuxtApp()
 
 const loginForm = ref<FormInstance | null>(null)
 
@@ -69,7 +68,7 @@ const onSubmit = async () => {
             user: form,
         })
 
-        if (!errorHandler(loginResult)) return
+        if (!$errorHandler(loginResult)) return
 
         const user: Userinfo = loginResult.data.user
         const token: string = loginResult.data.token
@@ -77,7 +76,7 @@ const onSubmit = async () => {
         $indexStore.auth.login(user, token)
         router.push("/")
     } catch (error: any) {
-        catchError(error)
+        $catchError(error)
     }
 }
 

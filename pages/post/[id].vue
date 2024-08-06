@@ -80,9 +80,7 @@
 import type { Postinfo, Commentinfo } from "~/types/interface"
 import type { AxiosResponse } from "axios"
 import Cookies from "js-cookie"
-import { catchError, errorHandler } from "~/utils/tryCatchFunctions"
-
-const { $axios, $indexStore } = useNuxtApp()
+const { $axios, $indexStore, $catchError, $errorHandler } = useNuxtApp()
 
 const route = useRoute()
 
@@ -101,13 +99,13 @@ const getPostinfo = async () => {
             `/comments/commentList/${postId}`
         )
 
-        if (!errorHandler(postResponse)) return
-        if (!errorHandler(commentResponse)) return
+        if (!$errorHandler(postResponse)) return
+        if (!$errorHandler(commentResponse)) return
 
         postinfo.value = postResponse.data.postinfo
         commentList.value = commentResponse.data.commentList
     } catch (error: any) {
-        catchError(error)
+        $catchError(error)
     }
 }
 
@@ -128,12 +126,12 @@ const deletePost = async () => {
             }
         )
 
-        if (!errorHandler(deletePostResult)) return
+        if (!$errorHandler(deletePostResult)) return
 
         ElMessage("Post successfully deleted")
         navigateTo("/")
     } catch (error: any) {
-        catchError(error)
+        $catchError(error)
     }
 }
 
@@ -161,13 +159,13 @@ const writeComment = async () => {
             }
         )
 
-        if (!errorHandler(result)) return
+        if (!$errorHandler(result)) return
 
         ElMessage(`${result.data.message}`)
         comment.value = ""
         getPostinfo()
     } catch (error: any) {
-        catchError(error)
+        $catchError(error)
     }
 }
 
@@ -188,12 +186,12 @@ const deleteComment = async (commentId: number) => {
             }
         )
 
-        if (!errorHandler(deleteCommentResult)) return
+        if (!$errorHandler(deleteCommentResult)) return
 
         ElMessage("Comment successfully deleted")
         getPostinfo()
     } catch (error: any) {
-        catchError(error)
+        $catchError(error)
     }
 }
 

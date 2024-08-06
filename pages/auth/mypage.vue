@@ -142,7 +142,6 @@
 import type { Userinfo } from "@/types/interface"
 import type { AxiosResponse } from "axios"
 import Cookies from "js-cookie"
-import { catchError, errorHandler } from "~/utils/tryCatchFunctions"
 
 definePageMeta({
     middleware: "auth",
@@ -150,7 +149,7 @@ definePageMeta({
 
 const router = useRouter()
 
-const { $axios, $indexStore } = useNuxtApp()
+const { $axios, $indexStore, $catchError, $errorHandler } = useNuxtApp()
 
 const dialogVisible: Ref<boolean> = ref(false)
 const setUsernameVisible: Ref<boolean> = ref(false)
@@ -181,13 +180,13 @@ const setUsername = async () => {
             }
         )
 
-        if (!errorHandler(setUsernameResult)) return
+        if (!$errorHandler(setUsernameResult)) return
 
         ElMessage("Username successfully set")
         setUsernameVisible.value = false
         $indexStore.auth.setUsername()
     } catch (error: any) {
-        catchError(error)
+        $catchError(error)
     }
 }
 
@@ -226,14 +225,14 @@ const deactivate = async () => {
             }
         )
 
-        if (!errorHandler(deactivateResult)) return
+        if (!$errorHandler(deactivateResult)) return
 
         ElMessage("Account successfully deactivated")
         $indexStore.auth.logout()
         dialogVisible.value = false
         router.push("/")
     } catch (error: any) {
-        catchError(error)
+        $catchError(error)
     }
 }
 
@@ -245,7 +244,11 @@ const postList: Ref = ref([])
 const commentList: Ref = ref([])
 
 const getPostList = async () => {
+    console.log("테스트")
+    console.log(sessionStorage.getItem("user"))
     const token = Cookies.get("token")
+    //세션스토리지에서 스토어로 긁어오는거 적용하면 문제해결
+
     try {
         const postResult: AxiosResponse = await $axios.get("/posts/list", {
             params: {
@@ -257,7 +260,7 @@ const getPostList = async () => {
                 Authorization: `Bearer ${token}`,
             },
         })
-
+        //promise.all 쓰면됨
         const commentResult: AxiosResponse = await $axios.get(
             `/comments/myCommentList/${$indexStore.auth.user.id}`,
             {
@@ -267,14 +270,14 @@ const getPostList = async () => {
             }
         )
 
-        if (!errorHandler(postResult)) return
-        if (!errorHandler(commentResult)) return
+        if (!$errorHandler(postResult)) return
+        if (!$errorHandler(commentResult)) return
 
         postList.value = postResult.data.postList
         totalCount.value = postResult.data.totalCount
         commentList.value = commentResult.data.commentList
     } catch (error: any) {
-        catchError(error)
+        $catchError(error)
     }
 }
 

@@ -52,9 +52,8 @@
     </el-container>
 </template>
 <script setup lang="ts">
-import { catchError, errorHandler } from "~/utils/tryCatchFunctions"
 import Cookies from "js-cookie"
-const { $axios, $indexStore } = useNuxtApp()
+const { $axios, $indexStore, $catchError, $errorHandler } = useNuxtApp()
 
 definePageMeta({
     middleware: "auth",
@@ -63,6 +62,7 @@ definePageMeta({
 const form = reactive({ title: "", content: "", boardId: "" })
 
 const options = computed(() =>
+    //return이 필요한데 경고문이 안뜨는건 대괄호를 안열면 자동으로 return되게 되어있음 return이 축약이 되어있는거다
     $indexStore.commoncode.boards.map((board) => ({
         value: board.id,
         label: board.name,
@@ -92,12 +92,12 @@ const onSubmit = async () => {
             }
         )
 
-        if (!errorHandler(result)) return
+        if (!$errorHandler(result)) return
 
         ElMessage(`${result.data.message}`)
         navigateTo(`/post/${result.data.postId}`)
     } catch (error: any) {
-        catchError(error)
+        $catchError(error)
     }
 }
 </script>

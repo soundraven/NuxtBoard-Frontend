@@ -10,9 +10,8 @@
 import type { AxiosResponse } from "axios"
 import type { Userinfo } from "./types/interface"
 import Cookies from "js-cookie"
-import { catchError, errorHandler } from "~/utils/tryCatchFunctions"
 
-const { $axios, $indexStore } = useNuxtApp()
+const { $axios, $indexStore, $catchError, $errorHandler } = useNuxtApp()
 
 const autoLogin = async () => {
     const token = Cookies.get("token")
@@ -25,12 +24,12 @@ const autoLogin = async () => {
             },
         })
 
-        if (!errorHandler(tryAutoLogin)) return
+        if (!$errorHandler(tryAutoLogin)) return
 
         const user: Userinfo = tryAutoLogin.data.user
         $indexStore.auth.login(user, token)
     } catch (error: any) {
-        catchError(error)
+        $catchError(error)
     }
 }
 

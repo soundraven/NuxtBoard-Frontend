@@ -1,6 +1,5 @@
 import { defineStore } from "pinia"
 import type { Userinfo } from "../types/interface"
-import { catchError, errorHandler } from "~/utils/tryCatchFunctions"
 import Cookies from "js-cookie"
 
 interface State {
@@ -61,7 +60,7 @@ export const useAuthStore = defineStore<
         },
 
         async setUsername() {
-            const { $axios } = useNuxtApp()
+            const { $axios, $catchError, $errorHandler } = useNuxtApp()
             const token = Cookies.get("token")
 
             try {
@@ -71,12 +70,12 @@ export const useAuthStore = defineStore<
                     },
                 })
 
-                if (!errorHandler(result)) return
+                if (!$errorHandler(result)) return
 
                 this.user.username = result.data.user.username
                 sessionStorage.setItem("user", JSON.stringify(this.user))
             } catch (error: any) {
-                catchError(error)
+                $catchError(error)
             }
         },
     },

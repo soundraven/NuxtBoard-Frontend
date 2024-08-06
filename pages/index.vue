@@ -47,10 +47,9 @@
 
 <script setup lang="ts">
 import { Dayjs } from "dayjs"
-import { catchError, errorHandler } from "~/utils/tryCatchFunctions"
 import type { GroupedPost } from "~/types/interface"
 import type { AxiosResponse } from "axios"
-const { $axios, $indexStore, $dayjs } = useNuxtApp()
+const { $axios, $indexStore, $dayjs, $catchError, $errorHandler } = useNuxtApp()
 
 const currentPage: Ref<number> = ref(1)
 const pageSize: Ref<number> = ref(30)
@@ -87,13 +86,13 @@ const getPostList = async () => {
             },
         })
 
-        if (!errorHandler(postList)) return
+        if (!$errorHandler(postList)) return
 
         list.value = postList.data.postList
         totalCount.value = postList.data.totalCount
         groupedPost.value = postList.data.groupedPost
     } catch (error: any) {
-        catchError(error)
+        $catchError(error)
     }
 }
 
