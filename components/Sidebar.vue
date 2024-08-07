@@ -13,31 +13,34 @@
     <div
         class="w-full h-[150px] flex flex-wrap justify-around items-center border-2 mt-[6px] p-[6px] pb-[12px]"
     >
-        <el-button
-            v-for="navBtn in $indexStore.commoncode.boardNames"
+        <!-- <el-button
+            v-for="navBtn in $indexStore.commoncode.boards"
             style="margin-top: 6px; margin-left: 0px"
             class="w-[90px]"
             @click="navigateTo(`/${navBtn}`)"
         >
-            {{ navBtn }}
-        </el-button>
+            {{ navBtn }} </el-button
+        >//추후 수정 필요 -->
     </div>
     <el-button type="primary" @click="navigateTo('/post/write')"
         >글작성</el-button
     >
+    <el-button type="primary" @click="navigateTo('/post/list')"
+        >게시글 목록</el-button
+    >
 </template>
 
 <script lang="ts" setup>
-import { Dayjs } from "dayjs"
-import { catchError, errorHandler } from "~/utils/tryCatchFunctions"
-const { $axios, $indexStore, $dayjs } = useNuxtApp()
+import type { Dayjs } from "dayjs"
+import type { GroupedPost, Postinfo } from "~/types/interface"
+const { $axios, $dayjs, $catchError, $errorHandler } = useNuxtApp()
 
 const currentPage: Ref<number> = ref(1)
 const pageSize: Ref<number> = ref(20)
 const totalCount: Ref<number> = ref(0)
 
-const groupedPost = ref([])
-const list = ref([])
+const groupedPost: Ref<GroupedPost> = ref([] as GroupedPost)
+const list: Ref<Postinfo[]> = ref([] as Postinfo[])
 
 const getPostList = async () => {
     try {
@@ -49,13 +52,14 @@ const getPostList = async () => {
             },
         })
 
+        if (!$errorHandler(postList)) return
+
         list.value = postList.data.postList
         totalCount.value = postList.data.totalCount
 
         groupedPost.value = postList.data.groupedPost
-        console.log(groupedPost.value)
     } catch (error: any) {
-        catchError(error)
+        $catchError(error)
     }
 }
 
@@ -69,7 +73,7 @@ const getElapsedTime = (registeredDate: Dayjs) => {
 
     if (minutes < 1) {
         return `방금 전`
-    } else if (minutes < 24) {
+    } else if (minutes < 60) {
         return `${minutes}분 전`
     } else if (hours < 24) {
         return `${hours}시간 전`
