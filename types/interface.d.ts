@@ -30,6 +30,11 @@ interface GroupedPost {
     [key: number]: Postinfo[]
 }
 
+interface Likeinfo {
+    total_likes: number
+    total_dislikes: number
+}
+
 interface Commentinfo {
     id: number
     post_id: number
@@ -50,5 +55,12 @@ enum BoardId {
     후기 = 6,
 }
 
-export type { Userinfo, ApiResponse, Postinfo, Commentinfo, GroupedPost }
+export type {
+    Userinfo,
+    ApiResponse,
+    Postinfo,
+    Likeinfo,
+    Commentinfo,
+    GroupedPost,
+}
 export { BoardId }

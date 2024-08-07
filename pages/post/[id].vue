@@ -9,7 +9,19 @@
                         {{ postinfo.title }}
                     </div>
                 </template>
-                <div class="min-h-[500px]">{{ postinfo.content }}</div>
+                <div class="min-h-[500px]">
+                    {{ postinfo.content }}
+                </div>
+                <div>
+                    <el-button type="primary" @click="handleLike(true)"
+                        ><div>추천</div>
+                        <div>{{ likeinfo.total_likes }}</div></el-button
+                    >
+                    <el-button type="danger" @click="handleLike(false)"
+                        ><div>비추천</div>
+                        <div>{{ likeinfo.total_dislikes }}</div></el-button
+                    >
+                </div>
                 <template #footer>
                     <el-list>
                         <el-list-item
@@ -148,8 +160,8 @@
     </el-container>
 </template>
 <script setup lang="ts">
-import type { Postinfo, Commentinfo } from "~/types/interface"
-import type { AxiosResponse } from "axios"
+import type { Postinfo, Commentinfo, Likeinfo } from "~/types/interface"
+import type { Axios, AxiosResponse } from "axios"
 import Cookies from "js-cookie"
 const { $axios, $indexStore, $catchError, $errorHandler } = useNuxtApp()
 
@@ -157,6 +169,7 @@ const route = useRoute()
 
 const postId: string = route.params.id as string
 const postinfo: Ref<Postinfo> = ref({} as Postinfo)
+const likeinfo: Ref<Likeinfo> = ref({} as Likeinfo)
 
 const commentList: Ref<Commentinfo[]> = ref([] as Commentinfo[])
 const comment: Ref<string> = ref("")
@@ -190,8 +203,9 @@ const getPostinfo = async () => {
             return
 
         postinfo.value = postResponse.data.postinfo
+        likeinfo.value = postResponse.data.likeinfo
         commentList.value = commentResponse.data.commentList
-        console.log(commentList.value, "test")
+        console.log(likeinfo.value)
     } catch (error: any) {
         $catchError(error)
     }
@@ -281,8 +295,6 @@ const writeReply = async (commentId: number) => {
 
 const deletePost = async () => {
     try {
-        const token = Cookies.get("token")
-
         const deletePostResult: AxiosResponse = await $axios.post(
             `/posts/delete`,
             {
@@ -291,7 +303,7 @@ const deletePost = async () => {
             },
             {
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    requiresToken: true,
                 },
             }
         )
@@ -307,8 +319,6 @@ const deletePost = async () => {
 
 const deleteComment = async (commentId: number) => {
     try {
-        const token = Cookies.get("token")
-
         const deleteCommentResult: AxiosResponse = await $axios.post(
             `/comments/delete`,
             {
@@ -317,7 +327,7 @@ const deleteComment = async (commentId: number) => {
             },
             {
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    requiresToken: true,
                 },
             }
         )
@@ -328,6 +338,52 @@ const deleteComment = async (commentId: number) => {
         getPostinfo()
     } catch (error: any) {
         $catchError(error)
+    }
+}
+
+const handleLike = async (liked: boolean) => {
+    if (liked === true) {
+        try {
+            const like: AxiosResponse = await $axios.post(
+                "/posts/likes/like",
+                {
+                    user: $indexStore.auth.user,
+                    postId: postId,
+                },
+                {
+                    headers: {
+                        requiresToken: true,
+                    },
+                }
+            )
+
+            if (!$errorHandler(like)) return
+            ElMessage("Successfully liked")
+            getPostinfo()
+        } catch (error: any) {
+            $catchError(error)
+        }
+    } else {
+        try {
+            const dislike: AxiosResponse = await $axios.post(
+                "/posts/likes/dislike",
+                {
+                    user: $indexStore.auth.user,
+                    postId: postId,
+                },
+                {
+                    headers: {
+                        requiresToken: true,
+                    },
+                }
+            )
+
+            if (!$errorHandler(dislike)) return
+            ElMessage("Successfully liked")
+            getPostinfo()
+        } catch (error: any) {
+            $catchError(error)
+        }
     }
 }
 
