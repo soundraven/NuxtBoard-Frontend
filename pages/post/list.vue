@@ -28,7 +28,7 @@
                 <el-table-column prop="registered_date" label="작성일자" />
             </el-table>
             <p v-if="loading">Loading...</p>
-            <p v-if="noMore">No more</p>
+            <p v-if="noMore">No more Post</p>
         </div>
     </div>
 </template>

@@ -21,6 +21,10 @@
                         ><div>비추천</div>
                         <div>{{ likeinfo.total_dislikes }}</div></el-button
                     >
+                    <el-button type="danger" @click="report"
+                        ><div>신고</div>
+                        <div>{{ postinfo.report }}</div></el-button
+                    >
                 </div>
                 <template #footer>
                     <el-list>
@@ -161,11 +165,11 @@
 </template>
 <script setup lang="ts">
 import type { Postinfo, Commentinfo, Likeinfo } from "~/types/interface"
-import type { Axios, AxiosResponse } from "axios"
-import Cookies from "js-cookie"
+import type { AxiosResponse } from "axios"
 const { $axios, $indexStore, $catchError, $errorHandler } = useNuxtApp()
 
 const route = useRoute()
+const router = useRouter()
 
 const postId: string = route.params.id as string
 const postinfo: Ref<Postinfo> = ref({} as Postinfo)
@@ -201,6 +205,10 @@ const getPostinfo = async () => {
 
         if (!$errorHandler(postResponse) || !$errorHandler(commentResponse))
             return
+
+        if (postResponse.data.postinfo.active === 0) {
+            router.back()
+        }
 
         postinfo.value = postResponse.data.postinfo
         likeinfo.value = postResponse.data.likeinfo
@@ -384,6 +392,30 @@ const handleLike = async (liked: boolean) => {
         } catch (error: any) {
             $catchError(error)
         }
+    }
+}
+
+const report = async () => {
+    try {
+        const reportResult: AxiosResponse = await $axios.post(
+            `/posts/report`,
+            {
+                user: $indexStore.auth.user,
+                postId: postId,
+            },
+            {
+                headers: {
+                    requiresToken: true,
+                },
+            }
+        )
+
+        if (!$errorHandler(reportResult)) return
+
+        ElMessage(reportResult.data.message)
+        getPostinfo()
+    } catch (error: any) {
+        $catchError(error)
     }
 }
 

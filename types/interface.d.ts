@@ -24,6 +24,7 @@ interface Postinfo {
     formatted_date: Dayjs
     title: string
     content: string
+    report: number
 }
 
 interface GroupedPost {

@@ -21,6 +21,7 @@
         "typescript": "^5.4.5"
     },
     "dependencies": {
+        "@ckeditor/ckeditor5-vue": "^7.0.0",
         "@element-plus/icons-vue": "^2.3.1",
         "@nuxtjs/axios": "^5.13.6",
         "@pinia/nuxt": "^0.5.1",
@@ -30,6 +31,7 @@
         "@vue/runtime-core": "^3.4.28",
         "@vue/runtime-dom": "^3.4.28",
         "axios": "^1.7.2",
+        "ckeditor5": "^43.0.0",
         "dayjs": "^1.11.12",
         "element-plus": "^2.7.6",
         "js-cookie": "^3.0.5",
