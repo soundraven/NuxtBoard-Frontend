@@ -35,12 +35,46 @@
                                             comment.registered_by ===
                                             $indexStore.auth.user.id
                                         "
-                                        type="danger"
-                                        @click="deleteComment(comment.id)"
+                                        type="primary"
+                                        @click.stop="
+                                            onEditArea(
+                                                comment.id,
+                                                comment.content
+                                            )
+                                        "
+                                        class="z-10"
                                     >
-                                        댓글 삭제
+                                        수정
+                                    </el-button>
+                                    <el-button
+                                        v-if="
+                                            comment.registered_by ===
+                                            $indexStore.auth.user.id
+                                        "
+                                        type="danger"
+                                        @click.stop="deleteComment(comment.id)"
+                                    >
+                                        삭제
                                     </el-button>
                                 </div>
+                            </div>
+                            <div
+                                class="mt-[10px]"
+                                v-if="
+                                    editCommentInputArea &&
+                                    comment.id === editedCommentNum
+                                "
+                            >
+                                <el-input
+                                    v-model="editedComment"
+                                    style="width: 100%"
+                                    :rows="2"
+                                    type="textarea"
+                                    placeholder="Please input your comment"
+                                />
+                                <el-button @click="editComment"
+                                    >댓글 수정 완료</el-button
+                                >
                             </div>
                             <div
                                 v-if="comment.replies"
@@ -126,6 +160,9 @@ const postinfo: Ref<Postinfo> = ref({} as Postinfo)
 
 const commentList: Ref<Commentinfo[]> = ref([] as Commentinfo[])
 const comment: Ref<string> = ref("")
+const editedComment: Ref<string> = ref("")
+const editedCommentNum: Ref<number> = ref(0)
+const editCommentInputArea: Ref<boolean> = ref(false)
 const reply: Ref<string> = ref("")
 const replyInputArea: Ref<boolean> = ref(false)
 const replyComment: Ref<number> = ref(0)
@@ -133,6 +170,12 @@ const replyComment: Ref<number> = ref(0)
 const onReplyArea = (commentId: number) => {
     replyInputArea.value = !replyInputArea.value
     replyComment.value = commentId
+}
+
+const onEditArea = (commentId: number, content: string) => {
+    editCommentInputArea.value = !editCommentInputArea.value
+    editedCommentNum.value = commentId
+    editedComment.value = content
 }
 
 const getPostinfo = async () => {
@@ -156,14 +199,6 @@ const getPostinfo = async () => {
 
 const writeComment = async () => {
     try {
-        const token = Cookies.get("token")
-
-        if (!token) {
-            alert("token is missing")
-            $indexStore.auth.logout()
-            return
-        }
-
         const result: AxiosResponse = await $axios.post(
             "/comments/write",
             {
@@ -173,7 +208,7 @@ const writeComment = async () => {
             },
             {
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    requiresToken: true,
                 },
             }
         )
@@ -188,16 +223,36 @@ const writeComment = async () => {
     }
 }
 
+const editComment = async () => {
+    try {
+        const result: AxiosResponse = await $axios.post(
+            "/comments/edit",
+            {
+                comment: editedComment.value,
+                user: $indexStore.auth.user,
+                commentId: editedCommentNum.value,
+            },
+            {
+                headers: {
+                    requiresToken: true,
+                },
+            }
+        )
+
+        if (!$errorHandler(result)) return
+
+        ElMessage(`${result.data.message}`)
+        editedComment.value = ""
+        editedCommentNum.value = 0
+        editCommentInputArea.value = false
+        getPostinfo()
+    } catch (error: any) {
+        $catchError(error)
+    }
+}
+
 const writeReply = async (commentId: number) => {
     try {
-        const token = Cookies.get("token")
-
-        if (!token) {
-            alert("token is missing")
-            $indexStore.auth.logout()
-            return
-        }
-
         const result: AxiosResponse = await $axios.post(
             "/comments/write",
             {
@@ -208,7 +263,7 @@ const writeReply = async (commentId: number) => {
             },
             {
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    requiresToken: true,
                 },
             }
         )
