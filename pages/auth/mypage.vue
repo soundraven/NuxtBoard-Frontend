@@ -141,7 +141,6 @@
 <script setup lang="ts">
 import type { Userinfo } from "@/types/interface"
 import type { AxiosResponse } from "axios"
-import Cookies from "js-cookie"
 
 definePageMeta({
     middleware: "auth",
@@ -159,10 +158,9 @@ const username: Ref<string> = ref("")
 const setUsername = async () => {
     try {
         const userJson = sessionStorage.getItem("user")
-        const token = Cookies.get("token")
 
-        if (!userJson || !token) {
-            alert("Userinfo or token is missing")
+        if (!userJson) {
+            alert("Userinfo is missing")
             $indexStore.auth.logout()
             return
         }
@@ -175,7 +173,7 @@ const setUsername = async () => {
             },
             {
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    requiresToken: true,
                 },
             }
         )
@@ -203,10 +201,9 @@ const handleClose = (done: () => void) => {
 const deactivate = async () => {
     try {
         const userJson = sessionStorage.getItem("user")
-        const token = Cookies.get("token")
 
-        if (!userJson || !token) {
-            alert("Userinfo or token is missing")
+        if (!userJson) {
+            alert("Userinfo is missing")
             $indexStore.auth.logout()
             return
         }
@@ -220,7 +217,7 @@ const deactivate = async () => {
             },
             {
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    requiresToken: true,
                 },
             }
         )
@@ -244,11 +241,7 @@ const postList: Ref = ref([])
 const commentList: Ref = ref([])
 
 const getPostList = async () => {
-    console.log("테스트")
-    console.log(sessionStorage.getItem("user"))
-    const token = Cookies.get("token")
     //세션스토리지에서 스토어로 긁어오는거 적용하면 문제해결
-
     try {
         const [postResult, commentResult]: [AxiosResponse, AxiosResponse] =
             await Promise.all([
@@ -259,14 +252,14 @@ const getPostList = async () => {
                         registeredBy: $indexStore.auth.user.id,
                     },
                     headers: {
-                        Authorization: `Bearer ${token}`,
+                        requiresToken: true,
                     },
                 }),
                 $axios.get(
                     `/comments/myCommentList/${$indexStore.auth.user.id}`,
                     {
                         headers: {
-                            Authorization: `Bearer ${token}`,
+                            requiresToken: true,
                         },
                     }
                 ),

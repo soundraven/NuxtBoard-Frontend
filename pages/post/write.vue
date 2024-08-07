@@ -52,7 +52,6 @@
     </el-container>
 </template>
 <script setup lang="ts">
-import Cookies from "js-cookie"
 const { $axios, $indexStore, $catchError, $errorHandler } = useNuxtApp()
 
 definePageMeta({
@@ -71,14 +70,6 @@ const options = computed(() =>
 
 const onSubmit = async () => {
     try {
-        const token = Cookies.get("token")
-
-        if (!token) {
-            ElMessage("token is missing")
-            $indexStore.auth.logout()
-            return
-        }
-
         const result = await $axios.post(
             "/posts/write",
             {
@@ -87,7 +78,7 @@ const onSubmit = async () => {
             },
             {
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    requiresToken: true,
                 },
             }
         )

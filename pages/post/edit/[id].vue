@@ -53,7 +53,6 @@
     </el-container>
 </template>
 <script setup lang="ts">
-import Cookies from "js-cookie"
 import type { Postinfo } from "@/types/interface"
 import type { AxiosResponse } from "axios"
 const { $axios, $indexStore, $catchError, $errorHandler } = useNuxtApp()
@@ -99,14 +98,6 @@ onMounted(() => {
 
 const onSubmit = async () => {
     try {
-        const token = Cookies.get("token")
-
-        if (!token) {
-            alert("token is missing")
-            $indexStore.auth.logout()
-            return
-        }
-
         const result = await $axios.post(
             "/posts/edit",
             {
@@ -115,7 +106,7 @@ const onSubmit = async () => {
             },
             {
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    requiresToken: true,
                 },
             }
         )

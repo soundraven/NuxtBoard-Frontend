@@ -61,12 +61,11 @@ export const useAuthStore = defineStore<
 
         async setUsername() {
             const { $axios, $catchError, $errorHandler } = useNuxtApp()
-            const token = Cookies.get("token")
 
             try {
                 const result = await $axios.get("users/me", {
                     headers: {
-                        authorization: `Bearer ${token}`,
+                        requiresToken: true,
                     },
                 })
 
