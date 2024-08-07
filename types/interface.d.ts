@@ -33,10 +33,12 @@ interface GroupedPost {
 interface Commentinfo {
     id: number
     post_id: number
+    comment_id?: number
     registered_by: number
     username: string
     content: string
     registered_date: Date
+    replies: Commentinfo[]
 }
 
 enum BoardId {

@@ -16,8 +16,11 @@
                             v-for="(comment, index) in commentList"
                             :key="comment.id"
                         >
-                            <el-card>
-                                <div class="comment-author">
+                            <div
+                                class="h-[50px] border-2 border-green-400 p-[6px] mb-[6px] cursor-pointer"
+                                @click="onReplyArea(comment.id)"
+                            >
+                                <div>
                                     <span
                                         v-if="comment.username === ''"
                                         class="mr-[6px]"
@@ -38,7 +41,41 @@
                                         댓글 삭제
                                     </el-button>
                                 </div>
-                            </el-card>
+                            </div>
+                            <div
+                                v-if="comment.replies"
+                                v-for="(reply, index) in comment.replies"
+                                :key="reply.id"
+                                class="h-[50px] border-2 border-green-400 p-[6px] ml-[20px] mb-[6px]"
+                            >
+                                <span
+                                    v-if="reply.username === ''"
+                                    class="mr-[6px]"
+                                    >익명</span
+                                >
+                                <span v-else class="mr-[6px]">{{
+                                    reply.username
+                                }}</span
+                                ><span>{{ reply.content }}</span>
+                            </div>
+                            <div
+                                class="mt-[10px]"
+                                v-if="
+                                    replyInputArea &&
+                                    comment.id === replyComment
+                                "
+                            >
+                                <el-input
+                                    v-model="reply"
+                                    style="width: 100%"
+                                    :rows="2"
+                                    type="textarea"
+                                    placeholder="답글을 입력하세요"
+                                />
+                                <el-button @click="writeReply(comment.id)"
+                                    >답글 작성 완료</el-button
+                                >
+                            </div>
                         </el-list-item>
                     </el-list>
                     <div v-if="$indexStore.auth.isAuthenticated">
@@ -89,6 +126,14 @@ const postinfo: Ref<Postinfo> = ref({} as Postinfo)
 
 const commentList: Ref<Commentinfo[]> = ref([] as Commentinfo[])
 const comment: Ref<string> = ref("")
+const reply: Ref<string> = ref("")
+const replyInputArea: Ref<boolean> = ref(false)
+const replyComment: Ref<number> = ref(0)
+
+const onReplyArea = (commentId: number) => {
+    replyInputArea.value = !replyInputArea.value
+    replyComment.value = commentId
+}
 
 const getPostinfo = async () => {
     try {
@@ -103,32 +148,7 @@ const getPostinfo = async () => {
 
         postinfo.value = postResponse.data.postinfo
         commentList.value = commentResponse.data.commentList
-    } catch (error: any) {
-        $catchError(error)
-    }
-}
-
-const deletePost = async () => {
-    try {
-        const token = Cookies.get("token")
-
-        const deletePostResult: AxiosResponse = await $axios.post(
-            `/posts/delete`,
-            {
-                user: $indexStore.auth.user,
-                postId: postId,
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        )
-
-        if (!$errorHandler(deletePostResult)) return
-
-        ElMessage("Post successfully deleted")
-        navigateTo("/")
+        console.log(commentList.value, "test")
     } catch (error: any) {
         $catchError(error)
     }
@@ -163,6 +183,68 @@ const writeComment = async () => {
         ElMessage(`${result.data.message}`)
         comment.value = ""
         getPostinfo()
+    } catch (error: any) {
+        $catchError(error)
+    }
+}
+
+const writeReply = async (commentId: number) => {
+    try {
+        const token = Cookies.get("token")
+
+        if (!token) {
+            alert("token is missing")
+            $indexStore.auth.logout()
+            return
+        }
+
+        const result: AxiosResponse = await $axios.post(
+            "/comments/write",
+            {
+                reply: reply.value,
+                user: $indexStore.auth.user,
+                commentId: commentId,
+                postId: postId,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        )
+
+        if (!$errorHandler(result)) return
+
+        ElMessage(`${result.data.message}`)
+        reply.value = ""
+        replyInputArea.value = false
+        getPostinfo()
+    } catch (error: any) {
+        $catchError(error)
+    }
+}
+
+const deletePost = async () => {
+    try {
+        const token = Cookies.get("token")
+
+        const deletePostResult: AxiosResponse = await $axios.post(
+            `/posts/delete`,
+            {
+                user: $indexStore.auth.user,
+                postId: postId,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        )
+
+        if (!$errorHandler(deletePostResult)) return
+
+        ElMessage("Post successfully deleted")
+        navigateTo("/")
     } catch (error: any) {
         $catchError(error)
     }
