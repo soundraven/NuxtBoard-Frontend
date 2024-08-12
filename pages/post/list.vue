@@ -1,15 +1,17 @@
 <template>
-    <div class="flex justify-center">
+    <el-container class="flex justify-center">
         <div
             class="overflow-auto"
             style="height: 800px; width: 1000px"
             v-infinite-scroll="getPostList"
-            infinite-scroll-distance="100"
+            infinite-scroll-distance="200"
             :infinite-scroll-disabled="disabled"
+            infinite-scroll-immediate="false"
+            infinite-scroll-delay="1000"
         >
             <el-table
                 :data="list"
-                style="width: 100%; min-height: 850px"
+                style="width: 100%"
                 :highlight-current-row="true"
                 class="mx-auto"
             >
@@ -30,7 +32,13 @@
             <p v-if="loading">Loading...</p>
             <p v-if="noMore">No more Post</p>
         </div>
-    </div>
+        <el-aside
+            style="padding: 6px"
+            class="w-[280px] min-h-[550px] flex flex-col items-center border-2 border-red-400 p-[10px] ml-[6px]"
+        >
+            <Sidebar />
+        </el-aside>
+    </el-container>
 </template>
 
 <script setup lang="ts">
@@ -67,10 +75,15 @@ const getPostList = async () => {
         list.value = [...list.value, ...postList.data.postList]
         totalCount.value = postList.data.totalCount
         currentPage.value += 1
-        setTimeout(() => {
+        // setTimeout(() => {
+        //     loading.value = false
+        //     console.log(loading.value, disabled)
+        // }, 1000)
+        nextTick(() => {
             loading.value = false
             console.log(loading.value, disabled)
-        }, 1000)
+        })
+        // loading.value = false
     } catch (error: any) {
         $catchError(error)
         loading.value = false

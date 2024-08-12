@@ -1,5 +1,8 @@
 <template>
-    <el-container class="w-full flex flex-col justify-center pt-[6px]">
+    <el-container
+        v-if="postinfo != undefined"
+        class="w-full flex flex-col justify-center pt-[6px]"
+    >
         <el-container
             class="max-w-[1000px] h-full flex justify-center border-2 border-green-400 p-[6px]"
         >
@@ -11,20 +14,21 @@
                 </template>
                 <div class="min-h-[500px]">
                     {{ postinfo.content }}
+                    //v-html 써가지고 불러와야 이미지 등도 불러옴
                 </div>
                 <div>
-                    <el-button type="primary" @click="handleLike(true)"
-                        ><div>추천</div>
-                        <div>{{ likeinfo.total_likes }}</div></el-button
-                    >
-                    <el-button type="danger" @click="handleLike(false)"
-                        ><div>비추천</div>
-                        <div>{{ likeinfo.total_dislikes }}</div></el-button
-                    >
-                    <el-button type="danger" @click="report"
-                        ><div>신고</div>
-                        <div>{{ postinfo.report }}</div></el-button
-                    >
+                    <el-button type="primary" @click="handleLike(true)">
+                        <div>추천</div>
+                        <div>{{ likeinfo.total_likes }}</div>
+                    </el-button>
+                    <el-button type="danger" @click="handleLike(false)">
+                        <div>비추천</div>
+                        <div>{{ likeinfo.total_dislikes }}</div>
+                    </el-button>
+                    <el-button type="danger" @click="report">
+                        <div>신고</div>
+                        <div>{{ postinfo.report }}</div>
+                    </el-button>
                 </div>
                 <template #footer>
                     <el-list>
@@ -93,14 +97,11 @@
                                 >
                             </div>
                             <div
-                                v-if="comment.replies"
                                 v-for="(reply, index) in comment.replies"
                                 :key="reply.id"
                                 class="h-[50px] border-2 border-green-400 p-[6px] ml-[20px] mb-[6px]"
                             >
-                                <span
-                                    v-if="reply.username === ''"
-                                    class="mr-[6px]"
+                                <span v-if="!reply.username" class="mr-[6px]"
                                     >익명</span
                                 >
                                 <span v-else class="mr-[6px]">{{
@@ -172,10 +173,10 @@ const route = useRoute()
 const router = useRouter()
 
 const postId: string = route.params.id as string
-const postinfo: Ref<Postinfo> = ref({} as Postinfo)
-const likeinfo: Ref<Likeinfo> = ref({} as Likeinfo)
+const postinfo: Ref<Postinfo | undefined> = ref(undefined)
+const likeinfo: Ref<Likeinfo> = ref({})
 
-const commentList: Ref<Commentinfo[]> = ref([] as Commentinfo[])
+const commentList: Ref<Commentinfo[]> = ref([])
 const comment: Ref<string> = ref("")
 const editedComment: Ref<string> = ref("")
 const editedCommentNum: Ref<number> = ref(0)
@@ -183,6 +184,10 @@ const editCommentInputArea: Ref<boolean> = ref(false)
 const reply: Ref<string> = ref("")
 const replyInputArea: Ref<boolean> = ref(false)
 const replyComment: Ref<number> = ref(0)
+
+onMounted(() => {
+    getPostinfo()
+})
 
 const onReplyArea = (commentId: number) => {
     replyInputArea.value = !replyInputArea.value
@@ -196,6 +201,7 @@ const onEditArea = (commentId: number, content: string) => {
 }
 
 const getPostinfo = async () => {
+    //게시글이랑 댓글을 따로따로 불러오도록 쪼개기
     try {
         const [postResponse, commentResponse]: [AxiosResponse, AxiosResponse] =
             await Promise.all([
@@ -418,8 +424,4 @@ const report = async () => {
         $catchError(error)
     }
 }
-
-onMounted(() => {
-    getPostinfo()
-})
 </script>

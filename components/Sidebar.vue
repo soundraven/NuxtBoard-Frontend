@@ -1,10 +1,7 @@
 <template>
     <div class="w-full bg-gray-200 border-2 border-blue-400">
         <div v-for="(post, index) in list">
-            <div
-                class="hover: cursor-pointer"
-                @click="navigateTo(`/post/${post.id}`)"
-            >
+            <div class="cursor-pointer" @click="navigateTo(`/post/${post.id}`)">
                 {{ post.id }} {{ post.title }}
                 {{ getElapsedTime(post.registered_date) }}
             </div>
@@ -50,13 +47,12 @@ const getPostList = async () => {
                 currentPage: currentPage.value,
                 pageSize: pageSize.value,
             },
-        })
+        }) // as GeneralServerResponse<PostList[]>
 
         if (!$errorHandler(postList)) return
 
         list.value = postList.data.postList
         totalCount.value = postList.data.totalCount
-
         groupedPost.value = postList.data.groupedPost
     } catch (error: any) {
         $catchError(error)

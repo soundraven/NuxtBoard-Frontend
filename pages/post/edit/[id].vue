@@ -55,14 +55,20 @@
 <script setup lang="ts">
 import type { Postinfo } from "@/types/interface"
 import type { AxiosResponse } from "axios"
+
 const { $axios, $indexStore, $catchError, $errorHandler } = useNuxtApp()
 const route = useRoute()
+
+const form = reactive({ title: "", content: "", boardId: 0, id: 0 })
+const postId: string = route.params.id as string
 
 definePageMeta({
     middleware: "auth",
 })
 
-const form = reactive({ title: "", content: "", boardId: 0, id: 0 })
+onMounted(() => {
+    getPostinfo(postId)
+})
 
 const options = computed(() =>
     $indexStore.commoncode.boards.map((board) => ({
@@ -70,8 +76,6 @@ const options = computed(() =>
         label: board.name,
     }))
 )
-
-const postId: string = route.params.id as string
 
 const getPostinfo = async (postId: string) => {
     try {
@@ -91,10 +95,6 @@ const getPostinfo = async (postId: string) => {
         $catchError(error)
     }
 }
-
-onMounted(() => {
-    getPostinfo(postId)
-})
 
 const onSubmit = async () => {
     try {

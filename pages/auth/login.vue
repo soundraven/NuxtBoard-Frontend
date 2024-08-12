@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Userinfo } from "@/types/interface.d.ts"
+import type { UserInfo } from "@/types/interface.d.ts"
 import type { FormInstance } from "element-plus"
 import type { AxiosResponse } from "axios"
 import rules from "@/utils/formRules"
@@ -46,7 +46,7 @@ const router = useRouter()
 
 const loginForm = ref<FormInstance | null>(null)
 
-const form: Userinfo = reactive({
+const form: UserInfo = reactive({
     email: "",
     password: "",
 })
@@ -70,10 +70,11 @@ const onSubmit = async () => {
 
         if (!$errorHandler(loginResult)) return
 
-        const user: Userinfo = loginResult.data.user
-        const token: string = loginResult.data.token
+        const user: UserInfo = loginResult.data.user
+        const refreshToken: string = loginResult.data.refreshToken
+        const accessToken: string = loginResult.data.accessToken
 
-        $indexStore.auth.login(user, token)
+        $indexStore.auth.login(user, refreshToken, accessToken)
         router.push("/")
     } catch (error: any) {
         $catchError(error)

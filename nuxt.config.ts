@@ -26,6 +26,7 @@ export default defineNuxtConfig({
         "~/plugins/axios.ts",
         "~/plugins/indexStore.ts",
         "~/plugins/dayjs.ts",
+        // { src: "~/plugins/asdf.ts", mode: "client" }
     ],
     modules: ["@nuxt/ui", "@element-plus/nuxt", "@pinia/nuxt"],
 

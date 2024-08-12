@@ -1,10 +1,10 @@
 import { defineStore } from "pinia"
-import type { Userinfo } from "../types/interface"
+import type { UserInfo } from "../types/interface"
 import Cookies from "js-cookie"
 
 interface State {
     isAuthenticated: boolean
-    user: Userinfo
+    user: UserInfo
 }
 
 export const useAuthStore = defineStore<
@@ -12,9 +12,9 @@ export const useAuthStore = defineStore<
     State,
     {},
     {
-        login(user: Userinfo, token: string): void
+        login(user: UserInfo, refreshToken: string, accessToken: string): void
         logout(): void
-        checkAuth(): void
+        autoLogin(user: UserInfo): void
         setUsername(): void
     }
 >("auth", {
@@ -28,12 +28,13 @@ export const useAuthStore = defineStore<
     }),
 
     actions: {
-        login(user, token) {
+        login(user, refreshToken, accessToken) {
             this.isAuthenticated = true
             this.user = user
 
             sessionStorage.setItem("user", JSON.stringify(user))
-            Cookies.set("token", token, { expires: 1 })
+            Cookies.set("refreshToken", refreshToken, { expires: 7 })
+            Cookies.set("accessToken", accessToken, { expires: 15 / 1440 })
         },
 
         logout() {
@@ -45,17 +46,27 @@ export const useAuthStore = defineStore<
             }
 
             sessionStorage.removeItem("user")
-            Cookies.remove("token")
+            Cookies.remove("refreshToken")
+            Cookies.remove("accessToken")
             navigateTo("/")
         },
 
-        checkAuth() {
-            const userString = sessionStorage.getItem("user")
+        async autoLogin() {
+            const { $axios, $catchError, $errorHandler } = useNuxtApp()
+            try {
+                const result = await $axios.get("users/me", {
+                    headers: {
+                        requiresToken: true,
+                    },
+                })
 
-            if (userString) {
-                const user = JSON.parse(userString)
+                if (!$errorHandler(result)) return
+
                 this.isAuthenticated = true
-                this.user = user
+                this.user = result.data.user
+                Cookies.set("accessToken", result.data.accessToken)
+            } catch (error: any) {
+                $catchError(error)
             }
         },
 

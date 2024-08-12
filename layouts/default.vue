@@ -7,9 +7,9 @@
                 class="w-full max-w-[1300px] flex justify-between items-center px-[6px]"
             >
                 <div>
-                    <el-button type="primary" @click="navigateTo('/')"
-                        >Nuxtboard</el-button
-                    >
+                    <el-button type="primary" @click="navigateTo('/')">
+                        Nuxtboard
+                    </el-button>
                     <el-input
                         v-model="keyword"
                         style="width: 240px"

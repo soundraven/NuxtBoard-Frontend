@@ -1,6 +1,7 @@
 import { defineNuxtPlugin } from "#app"
 import axios from "axios"
 import Cookies from "js-cookie"
+import refreshAccessToken from "~/api/refreshAccessToken"
 
 export default defineNuxtPlugin((nuxtApp) => {
     const config = useRuntimeConfig()
@@ -9,26 +10,33 @@ export default defineNuxtPlugin((nuxtApp) => {
     const api = axios.create({
         baseURL: baseURL,
         headers: {
-            //조건 걸어서 토큰 있을시 넣도록
             "Content-Type": "application/json",
         },
         timeout: 10000,
     })
 
     api.interceptors.request.use(
-        (config) => {
-            const token = Cookies.get("token")
+        async (config) => {
+            if (config.headers.requiresToken) {
+                const accessToken = Cookies.get("accessToken")
+                const refreshToken = Cookies.get("refreshToken")
 
-            if (config.headers.requiresToken && !token) {
-                ElMessage.error("Token is missing")
-                const { $indexStore } = nuxtApp.vueApp.config.globalProperties
-                $indexStore.auth.logout()
-                return Promise.reject(new Error("Token is missing"))
+                if (accessToken) {
+                    config.headers.Authorization = `Bearer ${accessToken}`
+                } else if (refreshToken) {
+                    const newAccessToken = await refreshAccessToken(
+                        refreshToken
+                    )
+                    config.headers.Authorization = `Bearer ${newAccessToken}`
+                } else {
+                    ElMessage.error("Token is missing")
+                    const { $indexStore } =
+                        nuxtApp.vueApp.config.globalProperties
+                    $indexStore.auth.logout()
+                    return Promise.reject(new Error("Token is missing"))
+                }
             }
 
-            if (token) {
-                config.headers.Authorization = `Bearer ${token}`
-            }
             return config
         },
         (error) => {

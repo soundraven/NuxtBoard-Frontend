@@ -1,6 +1,6 @@
 <template>
     <el-container
-        class="w-full h-[800px] flex flex-col justify-center pt-[6px]"
+        class="w-full h-[800px] | flex flex-col justify-center | pt-[6px]"
     >
         <el-container
             class="max-w-[1000px] h-full flex justify-center border-2 border-green-400 p-[6px]"

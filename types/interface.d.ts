@@ -8,14 +8,14 @@ interface ApiResponse {
     token?: string
 }
 
-interface Userinfo {
+interface UserInfo {
     email: string
     password?: string
     id?: number
     username?: string
 }
 
-interface Postinfo {
+interface PostInfo {
     id: number
     board_id: number
     board_name: string
@@ -31,12 +31,12 @@ interface GroupedPost {
     [key: number]: Postinfo[]
 }
 
-interface Likeinfo {
+interface LikeInfo {
     total_likes: number
     total_dislikes: number
 }
 
-interface Commentinfo {
+interface CommentInfo {
     id: number
     post_id: number
     comment_id?: number
@@ -44,7 +44,7 @@ interface Commentinfo {
     username: string
     content: string
     registered_date: Date
-    replies: Commentinfo[]
+    replies: CommentInfo[]
 }
 
 enum BoardId {
@@ -57,11 +57,11 @@ enum BoardId {
 }
 
 export type {
-    Userinfo,
+    UserInfo,
     ApiResponse,
-    Postinfo,
-    Likeinfo,
-    Commentinfo,
+    PostInfo,
+    LikeInfo,
+    CommentInfo,
     GroupedPost,
 }
 export { BoardId }
