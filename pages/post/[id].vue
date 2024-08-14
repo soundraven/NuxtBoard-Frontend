@@ -1,6 +1,6 @@
 <template>
     <el-container
-        v-if="postinfo != undefined"
+        v-if="postInfo != undefined"
         class="w-full flex flex-col justify-center pt-[6px]"
     >
         <el-container
@@ -9,25 +9,24 @@
             <el-card class="w-[1024px] min-h-[800px] mx-auto">
                 <template #header>
                     <div>
-                        {{ postinfo.title }}
+                        {{ postInfo.title }}
                     </div>
                 </template>
                 <div class="min-h-[500px]">
-                    {{ postinfo.content }}
-                    //v-html 써가지고 불러와야 이미지 등도 불러옴
+                    {{ postInfo.content }}
                 </div>
                 <div>
                     <el-button type="primary" @click="handleLike(true)">
                         <div>추천</div>
-                        <div>{{ likeinfo.total_likes }}</div>
+                        <div>{{ likeInfo.totalLike }}</div>
                     </el-button>
                     <el-button type="danger" @click="handleLike(false)">
                         <div>비추천</div>
-                        <div>{{ likeinfo.total_dislikes }}</div>
+                        <div>{{ likeInfo.totalDislike }}</div>
                     </el-button>
                     <el-button type="danger" @click="report">
                         <div>신고</div>
-                        <div>{{ postinfo.report }}</div>
+                        <div>{{ postInfo.report }}</div>
                     </el-button>
                 </div>
                 <template #footer>
@@ -40,42 +39,48 @@
                                 class="h-[50px] border-2 border-green-400 p-[6px] mb-[6px] cursor-pointer"
                                 @click="onReplyArea(comment.id)"
                             >
-                                <div>
-                                    <span
-                                        v-if="comment.username === ''"
-                                        class="mr-[6px]"
-                                        >익명</span
-                                    >
-                                    <span v-else class="mr-[6px]">{{
-                                        comment.username
-                                    }}</span
-                                    ><span>{{ comment.content }}</span>
-                                    <el-button
-                                        v-if="
-                                            comment.registered_by ===
-                                            $indexStore.auth.user.id
-                                        "
-                                        type="primary"
-                                        @click.stop="
-                                            onEditArea(
-                                                comment.id,
-                                                comment.content
-                                            )
-                                        "
-                                        class="z-10"
-                                    >
-                                        수정
-                                    </el-button>
-                                    <el-button
-                                        v-if="
-                                            comment.registered_by ===
-                                            $indexStore.auth.user.id
-                                        "
-                                        type="danger"
-                                        @click.stop="deleteComment(comment.id)"
-                                    >
-                                        삭제
-                                    </el-button>
+                                <div class="flex justify-between">
+                                    <div>
+                                        <span
+                                            v-if="comment.userName === ''"
+                                            class="mr-[6px]"
+                                            >익명</span
+                                        >
+                                        <span v-else class="mr-[6px]">{{
+                                            comment.userName
+                                        }}</span
+                                        ><span>{{ comment.content }}</span>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <el-button
+                                            v-if="
+                                                comment.registeredBy ===
+                                                $indexStore.auth.user.id
+                                            "
+                                            type="primary"
+                                            @click.stop="
+                                                onEditArea(
+                                                    comment.id,
+                                                    comment.content
+                                                )
+                                            "
+                                            class="z-10"
+                                        >
+                                            수정
+                                        </el-button>
+                                        <el-button
+                                            v-if="
+                                                comment.registeredBy ===
+                                                $indexStore.auth.user.id
+                                            "
+                                            type="danger"
+                                            @click.stop="
+                                                deleteComment(comment.id)
+                                            "
+                                        >
+                                            삭제
+                                        </el-button>
+                                    </div>
                                 </div>
                             </div>
                             <div
@@ -93,22 +98,87 @@
                                     placeholder="Please input your comment"
                                 />
                                 <el-button @click="editComment"
-                                    >댓글 수정 완료</el-button
-                                >
+                                    >댓글 수정 완료
+                                </el-button>
                             </div>
                             <div
                                 v-for="(reply, index) in comment.replies"
                                 :key="reply.id"
                                 class="h-[50px] border-2 border-green-400 p-[6px] ml-[20px] mb-[6px]"
                             >
-                                <span v-if="!reply.username" class="mr-[6px]"
-                                    >익명</span
-                                >
-                                <span v-else class="mr-[6px]">{{
-                                    reply.username
-                                }}</span
-                                ><span>{{ reply.content }}</span>
+                                <div class="flex justify-between">
+                                    <div>
+                                        <span
+                                            v-if="!reply.userName"
+                                            class="mr-[6px]"
+                                            >익명</span
+                                        >
+                                        <span v-else class="mr-[6px]">{{
+                                            reply.userName
+                                        }}</span
+                                        ><span>{{ reply.content }}</span>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <el-button
+                                            v-if="
+                                                reply.registeredBy ===
+                                                $indexStore.auth.user.id
+                                            "
+                                            type="primary"
+                                            @click.stop="
+                                                onEditReplyArea(
+                                                    reply.id,
+                                                    reply.content
+                                                )
+                                            "
+                                            class="z-10"
+                                        >
+                                            수정
+                                        </el-button>
+                                        <el-button
+                                            v-if="
+                                                reply.registeredBy ===
+                                                $indexStore.auth.user.id
+                                            "
+                                            type="danger"
+                                            @click.stop="
+                                                deleteComment(comment.id)
+                                            "
+                                        >
+                                            삭제
+                                        </el-button>
+                                    </div>
+                                </div>
+                                <ClientOnly>
+                                    <teleport to="#replyEditPosition">
+                                        <div
+                                            v-if="
+                                                editedReplyInputArea &&
+                                                reply.id === editedReplyNum
+                                            "
+                                            class="h-auto border-2 border-green-400 p-[6px] ml-[20px] mb-[6px]"
+                                        >
+                                            <el-input
+                                                v-model="editedReply"
+                                                style="width: 100%"
+                                                :rows="2"
+                                                type="textarea"
+                                                placeholder="답글을 수정하세요"
+                                            />
+                                            <el-button
+                                                @click="
+                                                    editReply(
+                                                        comment.id,
+                                                        reply.id
+                                                    )
+                                                "
+                                                >답글 수정 완료
+                                            </el-button>
+                                        </div>
+                                    </teleport>
+                                </ClientOnly>
                             </div>
+                            <div :id="'replyEditPosition'"></div>
                             <div
                                 class="mt-[10px]"
                                 v-if="
@@ -124,8 +194,8 @@
                                     placeholder="답글을 입력하세요"
                                 />
                                 <el-button @click="writeReply(comment.id)"
-                                    >답글 작성 완료</el-button
-                                >
+                                    >답글 작성 완료
+                                </el-button>
                             </div>
                         </el-list-item>
                     </el-list>
@@ -138,23 +208,25 @@
                             placeholder="Please input your comment"
                         />
                         <el-button @click="writeComment"
-                            >댓글 작성 완료</el-button
-                        >
+                            >댓글 작성 완료
+                        </el-button>
                     </div>
                 </template>
             </el-card>
             <el-button
-                v-if="$indexStore.auth.user.id === postinfo.registered_by"
+                v-if="$indexStore.auth.user.id === postInfo.registeredBy"
                 type="primary"
                 @click="navigateTo(`/post/edit/${route.params.id}`)"
-                >글수정</el-button
             >
+                글수정
+            </el-button>
             <el-button
-                v-if="$indexStore.auth.user.id === postinfo.registered_by"
+                v-if="$indexStore.auth.user.id === postInfo.registeredBy"
                 type="danger"
                 @click="deletePost"
-                >글삭제</el-button
             >
+                글삭제
+            </el-button>
         </el-container>
         <el-aside
             style="padding: 6px"
@@ -164,8 +236,9 @@
         </el-aside>
     </el-container>
 </template>
+
 <script setup lang="ts">
-import type { Postinfo, Commentinfo, Likeinfo } from "~/types/interface"
+import type { PostInfo, CommentInfo, LikeInfo } from "~/types/interface"
 import type { AxiosResponse } from "axios"
 const { $axios, $indexStore, $catchError, $errorHandler } = useNuxtApp()
 
@@ -173,10 +246,10 @@ const route = useRoute()
 const router = useRouter()
 
 const postId: string = route.params.id as string
-const postinfo: Ref<Postinfo | undefined> = ref(undefined)
-const likeinfo: Ref<Likeinfo> = ref({})
+const postInfo: Ref<PostInfo> = ref({} as PostInfo)
+const likeInfo: Ref<LikeInfo> = ref({} as LikeInfo)
 
-const commentList: Ref<Commentinfo[]> = ref([])
+const commentList: Ref<CommentInfo[]> = ref([])
 const comment: Ref<string> = ref("")
 const editedComment: Ref<string> = ref("")
 const editedCommentNum: Ref<number> = ref(0)
@@ -184,9 +257,15 @@ const editCommentInputArea: Ref<boolean> = ref(false)
 const reply: Ref<string> = ref("")
 const replyInputArea: Ref<boolean> = ref(false)
 const replyComment: Ref<number> = ref(0)
+const editedReplyNum: Ref<number> = ref(0)
+const editedReply: Ref<string> = ref("")
+const editedReplyInputArea: Ref<boolean> = ref(false)
+
+const canTeleport: Ref<Boolean> = ref(false)
 
 onMounted(() => {
-    getPostinfo()
+    getPostInfo()
+    getCommentInfo()
 })
 
 const onReplyArea = (commentId: number) => {
@@ -200,26 +279,40 @@ const onEditArea = (commentId: number, content: string) => {
     editedComment.value = content
 }
 
-const getPostinfo = async () => {
-    //게시글이랑 댓글을 따로따로 불러오도록 쪼개기
+const onEditReplyArea = (replyId: number, content: string) => {
+    editedReplyInputArea.value = !editedReplyInputArea.value
+    editedReplyNum.value = replyId
+    editedReply.value = content
+}
+
+const getPostInfo = async () => {
     try {
-        const [postResponse, commentResponse]: [AxiosResponse, AxiosResponse] =
-            await Promise.all([
-                $axios.get(`/posts/postinfo/${postId}`),
-                $axios.get(`/comments/commentList/${postId}`),
-            ])
+        const postResponse: AxiosResponse = await $axios.get(
+            `/posts/postInfo/${postId}`
+        )
 
-        if (!$errorHandler(postResponse) || !$errorHandler(commentResponse))
-            return
+        if (!$errorHandler(postResponse)) return
 
-        if (postResponse.data.postinfo.active === 0) {
+        if (postResponse.data.postInfo.active === 0) {
             router.back()
         }
 
-        postinfo.value = postResponse.data.postinfo
-        likeinfo.value = postResponse.data.likeinfo
+        postInfo.value = postResponse.data.postInfo
+        likeInfo.value = postResponse.data.likeInfo
+    } catch (error: any) {
+        $catchError(error)
+    }
+}
+const getCommentInfo = async () => {
+    try {
+        const commentResponse: AxiosResponse = await $axios.get(
+            `/comments/commentList/${postId}`
+        )
+
+        if (!$errorHandler(commentResponse)) return
+
         commentList.value = commentResponse.data.commentList
-        console.log(likeinfo.value)
+        console.log(commentList.value)
     } catch (error: any) {
         $catchError(error)
     }
@@ -231,7 +324,6 @@ const writeComment = async () => {
             "/comments/write",
             {
                 comment: comment.value,
-                user: $indexStore.auth.user,
                 postId: postId,
             },
             {
@@ -245,7 +337,7 @@ const writeComment = async () => {
 
         ElMessage(`${result.data.message}`)
         comment.value = ""
-        getPostinfo()
+        getCommentInfo()
     } catch (error: any) {
         $catchError(error)
     }
@@ -257,7 +349,6 @@ const editComment = async () => {
             "/comments/edit",
             {
                 comment: editedComment.value,
-                user: $indexStore.auth.user,
                 commentId: editedCommentNum.value,
             },
             {
@@ -273,7 +364,7 @@ const editComment = async () => {
         editedComment.value = ""
         editedCommentNum.value = 0
         editCommentInputArea.value = false
-        getPostinfo()
+        getCommentInfo()
     } catch (error: any) {
         $catchError(error)
     }
@@ -301,7 +392,34 @@ const writeReply = async (commentId: number) => {
         ElMessage(`${result.data.message}`)
         reply.value = ""
         replyInputArea.value = false
-        getPostinfo()
+        getCommentInfo()
+    } catch (error: any) {
+        $catchError(error)
+    }
+}
+
+const editReply = async (commentId: number, replyId: number) => {
+    console.log(commentId, replyId, editedReply.value)
+    try {
+        const result: AxiosResponse = await $axios.post(
+            "/comments/edit",
+            {
+                reply: editedReply.value,
+                replyId: replyId,
+            },
+            {
+                headers: {
+                    requiresToken: true,
+                },
+            }
+        )
+
+        if (!$errorHandler(result)) return
+
+        ElMessage(`${result.data.message}`)
+        editedReply.value = ""
+        editedReplyInputArea.value = false
+        getCommentInfo()
     } catch (error: any) {
         $catchError(error)
     }
@@ -349,7 +467,7 @@ const deleteComment = async (commentId: number) => {
         if (!$errorHandler(deleteCommentResult)) return
 
         ElMessage("Comment successfully deleted")
-        getPostinfo()
+        getPostInfo()
     } catch (error: any) {
         $catchError(error)
     }
@@ -373,7 +491,7 @@ const handleLike = async (liked: boolean) => {
 
             if (!$errorHandler(like)) return
             ElMessage("Successfully liked")
-            getPostinfo()
+            getPostInfo()
         } catch (error: any) {
             $catchError(error)
         }
@@ -394,7 +512,7 @@ const handleLike = async (liked: boolean) => {
 
             if (!$errorHandler(dislike)) return
             ElMessage("Successfully liked")
-            getPostinfo()
+            getPostInfo()
         } catch (error: any) {
             $catchError(error)
         }
@@ -419,7 +537,7 @@ const report = async () => {
         if (!$errorHandler(reportResult)) return
 
         ElMessage(reportResult.data.message)
-        getPostinfo()
+        getPostInfo()
     } catch (error: any) {
         $catchError(error)
     }

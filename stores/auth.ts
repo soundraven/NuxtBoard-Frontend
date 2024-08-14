@@ -15,7 +15,7 @@ export const useAuthStore = defineStore<
         login(user: UserInfo, refreshToken: string, accessToken: string): void
         logout(): void
         autoLogin(user: UserInfo): void
-        setUsername(): void
+        setUserName(): void
     }
 >("auth", {
     state: (): State => ({
@@ -23,7 +23,7 @@ export const useAuthStore = defineStore<
         user: {
             email: "",
             id: 0,
-            username: "",
+            userName: "",
         },
     }),
 
@@ -42,7 +42,7 @@ export const useAuthStore = defineStore<
             this.user = {
                 email: "",
                 id: 0,
-                username: "",
+                userName: "",
             }
 
             sessionStorage.removeItem("user")
@@ -64,13 +64,12 @@ export const useAuthStore = defineStore<
 
                 this.isAuthenticated = true
                 this.user = result.data.user
-                Cookies.set("accessToken", result.data.accessToken)
             } catch (error: any) {
                 $catchError(error)
             }
         },
 
-        async setUsername() {
+        async setUserName() {
             const { $axios, $catchError, $errorHandler } = useNuxtApp()
 
             try {
@@ -82,7 +81,7 @@ export const useAuthStore = defineStore<
 
                 if (!$errorHandler(result)) return
 
-                this.user.username = result.data.user.username
+                this.user.userName = result.data.user.userName
                 sessionStorage.setItem("user", JSON.stringify(this.user))
             } catch (error: any) {
                 $catchError(error)

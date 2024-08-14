@@ -21,8 +21,8 @@
                         show-password
                     />
                 </el-form-item>
-                <el-form-item label="Username" prop="username" class="w-full">
-                    <el-input v-model="form.username" />
+                <el-form-item label="userName" prop="userName" class="w-full">
+                    <el-input v-model="form.userName" />
                 </el-form-item>
                 <el-button type="primary" @click="submitForm"
                     >회원가입</el-button
@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Userinfo } from "@/types/interface"
+import type { UserInfo } from "@/types/interface"
 import type { FormInstance } from "element-plus"
 import rules from "@/utils/formRules"
 import type { AxiosResponse } from "axios"
@@ -41,10 +41,10 @@ const { $axios, $catchError, $errorHandler } = useNuxtApp()
 
 const registerForm = ref<FormInstance | null>(null)
 
-const form: Userinfo = reactive({
+const form: UserInfo = reactive({
     email: "",
     password: "",
-    username: "",
+    userName: "",
 })
 
 const submitForm = async () => {

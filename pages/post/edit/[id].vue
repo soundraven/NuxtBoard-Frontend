@@ -53,7 +53,7 @@
     </el-container>
 </template>
 <script setup lang="ts">
-import type { Postinfo } from "@/types/interface"
+import type { PostInfo } from "@/types/interface"
 import type { AxiosResponse } from "axios"
 
 const { $axios, $indexStore, $catchError, $errorHandler } = useNuxtApp()
@@ -85,11 +85,11 @@ const getPostinfo = async (postId: string) => {
 
         if (!$errorHandler(result)) return
 
-        const postinfo: Postinfo = result.data.postinfo
+        const postinfo: PostInfo = result.data.postinfo
 
         form.title = postinfo.title
         form.content = postinfo.content
-        form.boardId = postinfo.board_id
+        form.boardId = postinfo.boardId
         form.id = Number(postId)
     } catch (error: any) {
         $catchError(error)

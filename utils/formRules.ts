@@ -48,17 +48,17 @@ const rules: FormRules = {
         },
     ],
 
-    username: [
+    userName: [
         {
             validator: (rule, value, callback) => {
                 if (value && value.length < 3) {
                     callback(
-                        new Error("Username must be at least 3 characters")
+                        new Error("User name must be at least 3 characters")
                     )
                 } else if (value && !/^[a-zA-Z0-9]+$/.test(value)) {
                     callback(
                         new Error(
-                            "Username must contain only alphanumeric characters"
+                            "User name must contain only alphanumeric characters"
                         )
                     )
                 } else {

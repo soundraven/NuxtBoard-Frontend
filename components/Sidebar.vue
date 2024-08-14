@@ -3,7 +3,7 @@
         <div v-for="(post, index) in list">
             <div class="cursor-pointer" @click="navigateTo(`/post/${post.id}`)">
                 {{ post.id }} {{ post.title }}
-                {{ getElapsedTime(post.registered_date) }}
+                {{ getElapsedTime(post.registeredDate) }}
             </div>
         </div>
     </div>
@@ -29,7 +29,7 @@
 
 <script lang="ts" setup>
 import type { Dayjs } from "dayjs"
-import type { GroupedPost, Postinfo } from "~/types/interface"
+import type { GroupedPost, PostInfo } from "~/types/interface"
 const { $axios, $dayjs, $catchError, $errorHandler } = useNuxtApp()
 
 const currentPage: Ref<number> = ref(1)
@@ -37,7 +37,7 @@ const pageSize: Ref<number> = ref(20)
 const totalCount: Ref<number> = ref(0)
 
 const groupedPost: Ref<GroupedPost> = ref([] as GroupedPost)
-const list: Ref<Postinfo[]> = ref([] as Postinfo[])
+const list: Ref<PostInfo[]> = ref([] as PostInfo[])
 
 const getPostList = async () => {
     try {

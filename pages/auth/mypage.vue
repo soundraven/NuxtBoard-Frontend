@@ -10,21 +10,21 @@
             >
                 <el-button
                     type="primary"
-                    v-if="$indexStore.auth.user.username === ''"
-                    @click="setUsernameVisible = true"
-                    >Please set your username</el-button
+                    v-if="$indexStore.auth.user.userName === ''"
+                    @click="setUserNameVisible = true"
+                    >Please set your User name</el-button
                 >
                 <span v-else>
-                    {{ $indexStore.auth.user.username }}'s mypage</span
+                    {{ $indexStore.auth.user.userName }}'s mypage</span
                 >
                 <el-dialog
-                    v-model="setUsernameVisible"
-                    title="Set your username"
+                    v-model="setUserNameVisible"
+                    title="Set your User name"
                     width="500"
                     :before-close="handleClose"
                 >
                     <el-input
-                        v-model="username"
+                        v-model="userName"
                         style="width: 300px; margin-left: 99px"
                         maxlength="12"
                         show-word-limit
@@ -34,10 +34,10 @@
                     />
                     <template #footer>
                         <div class="dialog-footer">
-                            <el-button @click="setUsernameVisible = false"
+                            <el-button @click="setUserNameVisible = false"
                                 >Cancel</el-button
                             >
-                            <el-button type="primary" @click="setUsername">
+                            <el-button type="primary" @click="setUserName">
                                 Confirm
                             </el-button>
                         </div>
@@ -139,7 +139,7 @@
     </el-container>
 </template>
 <script setup lang="ts">
-import type { Userinfo } from "@/types/interface"
+import type { UserInfo } from "@/types/interface"
 import type { AxiosResponse } from "axios"
 
 definePageMeta({
@@ -151,11 +151,11 @@ const router = useRouter()
 const { $axios, $indexStore, $catchError, $errorHandler } = useNuxtApp()
 
 const dialogVisible: Ref<boolean> = ref(false)
-const setUsernameVisible: Ref<boolean> = ref(false)
+const setUserNameVisible: Ref<boolean> = ref(false)
 
-const username: Ref<string> = ref("")
+const userName: Ref<string> = ref("")
 
-const setUsername = async () => {
+const setUserName = async () => {
     try {
         const userJson = sessionStorage.getItem("user")
 
@@ -165,11 +165,11 @@ const setUsername = async () => {
             return
         }
 
-        const setUsernameResult: AxiosResponse = await $axios.post(
-            "/users/setUsername",
+        const setUserNameResult: AxiosResponse = await $axios.post(
+            "/users/setUserName",
             {
                 user: $indexStore.auth.user,
-                username: username.value,
+                userName: userName.value,
             },
             {
                 headers: {
@@ -178,11 +178,11 @@ const setUsername = async () => {
             }
         )
 
-        if (!$errorHandler(setUsernameResult)) return
+        if (!$errorHandler(setUserNameResult)) return
 
-        ElMessage("Username successfully set")
-        setUsernameVisible.value = false
-        $indexStore.auth.setUsername()
+        ElMessage("User name successfully set")
+        setUserNameVisible.value = false
+        $indexStore.auth.setUserName()
     } catch (error: any) {
         $catchError(error)
     }
@@ -208,7 +208,7 @@ const deactivate = async () => {
             return
         }
 
-        const user: Userinfo = JSON.parse(userJson)
+        const user: UserInfo = JSON.parse(userJson)
 
         const deactivateResult: AxiosResponse = await $axios.post(
             "/users/deactivate",

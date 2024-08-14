@@ -1,4 +1,5 @@
 import Cookies from "js-cookie"
+import refreshAccessToken from "~/utils/refreshAccessToken"
 
 export default defineNuxtRouteMiddleware(async () => {
     if (process.server) {

@@ -1,4 +1,4 @@
-import axios, { type AxiosResponse } from "axios"
+import { type AxiosResponse } from "axios"
 import Cookies from "js-cookie"
 
 interface RefreshTokenResponse {
@@ -6,27 +6,23 @@ interface RefreshTokenResponse {
 }
 
 async function refreshAccessToken(refreshToken: string): Promise<string> {
-    const { $indexStore } = useNuxtApp()
+    const { $axios } = useNuxtApp()
 
-    try {
-        const response: AxiosResponse<RefreshTokenResponse> = await axios.post(
-            "/users/refreshToken",
-            {
-                refreshToken: refreshToken,
-            }
-        )
+    console.log("start")
 
-        const newAccessToken = response.data.newAccessToken
+    const response: AxiosResponse<RefreshTokenResponse> = await $axios.post(
+        "/users/refreshAccessToken",
+        {
+            refreshToken: refreshToken,
+        }
+    )
 
-        Cookies.set("accessToken", newAccessToken)
+    console.log(response.data)
 
-        return newAccessToken
-    } catch (error) {
-        ElMessage.error("Failed to refresh access token. Please log in again.")
-        $indexStore.auth.logout()
+    const newAccessToken = response.data.newAccessToken
+    Cookies.set("accessToken", newAccessToken, { expires: 15 / 1440 })
 
-        return Promise.reject(error)
-    }
+    return newAccessToken
 }
 
 export default refreshAccessToken

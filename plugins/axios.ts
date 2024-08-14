@@ -1,7 +1,7 @@
 import { defineNuxtPlugin } from "#app"
 import axios from "axios"
 import Cookies from "js-cookie"
-import refreshAccessToken from "~/api/refreshAccessToken"
+import refreshAccessToken from "~/utils/refreshAccessToken"
 
 export default defineNuxtPlugin((nuxtApp) => {
     const config = useRuntimeConfig()
@@ -21,19 +21,21 @@ export default defineNuxtPlugin((nuxtApp) => {
                 const accessToken = Cookies.get("accessToken")
                 const refreshToken = Cookies.get("refreshToken")
 
-                if (accessToken) {
-                    config.headers.Authorization = `Bearer ${accessToken}`
-                } else if (refreshToken) {
-                    const newAccessToken = await refreshAccessToken(
-                        refreshToken
-                    )
-                    config.headers.Authorization = `Bearer ${newAccessToken}`
-                } else {
+                if (!refreshToken) {
                     ElMessage.error("Token is missing")
                     const { $indexStore } =
                         nuxtApp.vueApp.config.globalProperties
                     $indexStore.auth.logout()
                     return Promise.reject(new Error("Token is missing"))
+                }
+
+                if (!accessToken) {
+                    const newAccessToken = await refreshAccessToken(
+                        refreshToken
+                    )
+                    config.headers.Authorization = `Bearer ${newAccessToken}`
+                } else {
+                    config.headers.Authorization = `Bearer ${accessToken}`
                 }
             }
 

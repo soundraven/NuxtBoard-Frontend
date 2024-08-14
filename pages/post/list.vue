@@ -44,7 +44,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue"
 import type { AxiosResponse } from "axios"
-import type { Postinfo } from "~/types/interface"
+import type { PostInfo } from "~/types/interface"
 const { $axios, $catchError, $errorHandler } = useNuxtApp()
 
 const currentPage = ref(1)
@@ -55,7 +55,7 @@ const loading = ref(false)
 const noMore = computed(() => list.value.length >= totalCount.value)
 const disabled = computed(() => loading.value || noMore.value)
 
-const list = ref<Postinfo[]>([])
+const list = ref<PostInfo[]>([])
 
 const getPostList = async () => {
     loading.value = true

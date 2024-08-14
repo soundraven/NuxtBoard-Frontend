@@ -12,16 +12,16 @@ interface UserInfo {
     email: string
     password?: string
     id?: number
-    username?: string
+    userName?: string
 }
 
 interface PostInfo {
     id: number
-    board_id: number
-    board_name: string
-    registered_by: number
-    registered_date: Date
-    formatted_date: Dayjs
+    boardId: number
+    boardName: string
+    registeredBy: number
+    registeredDate: Date
+    formattedDate: Dayjs
     title: string
     content: string
     report: number
@@ -32,18 +32,18 @@ interface GroupedPost {
 }
 
 interface LikeInfo {
-    total_likes: number
-    total_dislikes: number
+    totalLike: number
+    totalDislike: number
 }
 
 interface CommentInfo {
     id: number
-    post_id: number
-    comment_id?: number
-    registered_by: number
-    username: string
+    postId: number
+    commentId?: number
+    registeredBy: number
+    userName: string
     content: string
-    registered_date: Date
+    registeredDate: Date
     replies: CommentInfo[]
 }
 

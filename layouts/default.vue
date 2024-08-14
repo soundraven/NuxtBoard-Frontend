@@ -19,19 +19,21 @@
                 </div>
                 <div class="flex items-center">
                     <el-dropdown
-                        v-if="authStore.isAuthenticated"
+                        v-if="$indexStore.auth.isAuthenticated"
                         class="hover:cursor-pointer mr-[6px]"
                     >
                         <el-button>
                             {{
-                                authStore.user.username === ""
-                                    ? "Please set your username"
-                                    : authStore.user.username
+                                $indexStore.auth.user.userName === ""
+                                    ? "Please set your User name"
+                                    : $indexStore.auth.user.userName
                             }}
                         </el-button>
 
                         <template #dropdown>
-                            <el-dropdown-menu v-if="authStore.isAuthenticated">
+                            <el-dropdown-menu
+                                v-if="$indexStore.auth.isAuthenticated"
+                            >
                                 <el-dropdown-item
                                     @click="navigateTo('/auth/mypage')"
                                 >
@@ -39,7 +41,7 @@
                                 </el-dropdown-item>
                                 <el-dropdown-item
                                     divided
-                                    @click="authStore.logout"
+                                    @click="$indexStore.auth.logout"
                                 >
                                     Logout
                                 </el-dropdown-item>
@@ -61,8 +63,9 @@
 
 <script setup lang="ts">
 const keyword: Ref<string> = ref("")
-const authStore = useAuthStore()
 const colorMode = useColorMode()
+
+const { $indexStore } = useNuxtApp()
 
 const currentColorMode = ref("Sunny")
 
@@ -80,5 +83,6 @@ const setIconComponent = () => {
 }
 onMounted(() => {
     setIconComponent()
+    console.log($indexStore.auth.user)
 })
 </script>
