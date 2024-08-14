@@ -1,46 +1,38 @@
 import { defineStore } from "pinia"
+import { type AxiosResponse } from "axios"
 
 interface BoardInfo {
     boardId: number
     boardName: string
 }
 
-export const useCommoncodeStore = defineStore("commoncode", {
-    state: () => ({
-        boards: [] as BoardInfo[],
+interface State {
+    boards: BoardInfo[]
+}
+
+export const useCommoncodeStore = defineStore<
+    string,
+    State,
+    {},
+    { getBoards(): Promise<void> }
+>("commoncode", {
+    state: (): State => ({
+        boards: [],
     }),
 
-    getters: {
-        getBoardName:
-            (state) =>
-            (boardId: number): string | undefined => {
-                const board = state.boards.find(
-                    (board) => board.boardId === boardId
-                )
-                return board ? board.boardName : undefined
-            },
-
-        getBoardId:
-            (state) =>
-            (boardName: string): number | undefined => {
-                const board = state.boards.find(
-                    (board) => board.boardName === boardName
-                )
-                return board ? board.boardId : undefined
-            },
-    },
-
     actions: {
-        async getBoards() {
-            try {
-                const { $axios } = useNuxtApp()
-                const response = await $axios.get("/posts/boardInfo")
-                console.log(response.data)
-                this.boards = response.data.boardInfo
-                console.log(this.boards)
-            } catch (error) {
-                console.error("Failed to get boards:", error)
-                ElMessage.error("Failed to get board information.")
+        async getBoards(): Promise<void> {
+            if (this.boards.length === 0) {
+                try {
+                    const { $axios } = useNuxtApp()
+                    const response: AxiosResponse = await $axios.get(
+                        "/posts/boardInfo"
+                    )
+                    console.log(response.data.boardInfo)
+                    this.boards = response.data.boardInfo
+                } catch (error: any) {
+                    errorHandler(error)
+                }
             }
         },
     },

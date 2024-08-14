@@ -13,20 +13,20 @@
                 <div class="min-h-[500px]">
                     {{ postInfo.content }}
                 </div>
-                <div>
+                <div class="w-full flex justify-center">
                     <el-button type="primary" @click="handleLike(true)">
                         <div>추천</div>
-                        <div>{{ likeInfo.totalLike }}</div>
+                        <div>{{ likeInfo.totalLikes }}</div>
                     </el-button>
                     <el-button type="danger" @click="handleLike(false)">
                         <div>비추천</div>
-                        <div>{{ likeInfo.totalDislike }}</div>
-                    </el-button>
-                    <el-button type="danger" @click="report">
-                        <div>신고</div>
-                        <div>{{ postInfo.report }}</div>
+                        <div>{{ likeInfo.totalDislikes }}</div>
                     </el-button>
                 </div>
+                <el-button type="danger" @click="report">
+                    <div>신고</div>
+                    <div>{{ postInfo.report }}</div>
+                </el-button>
                 <template #footer>
                     <el-list>
                         <el-list-item
@@ -34,7 +34,7 @@
                             :key="comment.id"
                         >
                             <div
-                                class="h-[50px] border-[1px] border-[#E5EAF3] shadow-sm p-[6px] mb-[6px] cursor-pointer"
+                                class="h-[70px] flex justify-between items-center border-[1px] border-[#E5EAF3] rounded shadow-sm p-[12px] mb-[12px] cursor-pointer"
                                 :class="{
                                     'bg-[#66b1ff33]':
                                         (editCommentInputArea &&
@@ -44,52 +44,47 @@
                                 }"
                                 @click="onReplyArea(comment.id)"
                             >
-                                <div class="flex justify-between">
-                                    <div>
-                                        <span
-                                            v-if="comment.userName === ''"
-                                            class="mr-[6px]"
-                                            >익명</span
-                                        >
-                                        <span v-else class="mr-[6px]">{{
-                                            comment.userName
-                                        }}</span
-                                        ><span>{{ comment.content }}</span>
-                                    </div>
-                                    <div class="flex space-x-2">
-                                        <el-button
-                                            v-if="
-                                                comment.registeredBy ===
-                                                $indexStore.auth.user.id
-                                            "
-                                            type="primary"
-                                            @click.stop="
-                                                onEditArea(
-                                                    comment.id,
-                                                    comment.content
-                                                )
-                                            "
-                                            class="z-10"
-                                        >
-                                            수정
-                                        </el-button>
-                                        <el-button
-                                            v-if="
-                                                comment.registeredBy ===
-                                                $indexStore.auth.user.id
-                                            "
-                                            type="danger"
-                                            @click.stop="
-                                                deleteComment(comment.id)
-                                            "
-                                        >
-                                            삭제
-                                        </el-button>
-                                    </div>
+                                <div>
+                                    <span
+                                        v-if="comment.userName === ''"
+                                        class="mr-[6px]"
+                                        >익명</span
+                                    >
+                                    <span v-else class="mr-[6px]">{{
+                                        comment.userName
+                                    }}</span
+                                    ><span>{{ comment.content }}</span>
+                                </div>
+                                <div
+                                    v-if="
+                                        comment.registeredBy ===
+                                        $indexStore.auth.user.id
+                                    "
+                                    class="flex space-x-2"
+                                >
+                                    <el-button
+                                        type="primary"
+                                        @click.stop="
+                                            onEditArea(
+                                                comment.id,
+                                                comment.content
+                                            )
+                                        "
+                                        class="z-10"
+                                    >
+                                        수정
+                                    </el-button>
+                                    <el-button
+                                        type="danger"
+                                        @click.stop="deleteComment(comment.id)"
+                                    >
+                                        삭제
+                                    </el-button>
                                 </div>
                             </div>
+
                             <div
-                                class="h-auto border-[1px] border-[#E5EAF3] shadow-sm p-[6px] mb-[6px]"
+                                class="h-auto border-[1px] border-[#E5EAF3] rounded shadow-sm p-[12px] mb-[12px]"
                                 v-if="
                                     editCommentInputArea &&
                                     comment.id === editedCommentNum
@@ -109,47 +104,47 @@
                             <div
                                 v-for="(reply, index) in comment.replies"
                                 :key="reply.id"
-                                class="h-[50px] border-[1px] border-[#E5EAF3] shadow-sm p-[6px] ml-[30px] mb-[6px] cursor-pointer"
+                                class="h-[70px] flex items-center border-[1px] border-[#E5EAF3] rounded shadow-sm p-[12px] ml-[30px] mb-[12px] cursor-pointer"
                                 :class="{
                                     'bg-[#66b1ff33]':
                                         editedReplyInputArea &&
                                         reply.id === editedReplyNum,
                                 }"
                             >
-                                <div class="flex justify-between">
+                                <div
+                                    class="w-full flex justify-between items-center"
+                                >
                                     <div>
                                         <span
                                             v-if="!reply.userName"
                                             class="mr-[6px]"
                                             >익명</span
                                         >
-                                        <span v-else class="mr-[6px]">{{
+                                        <span v-else class="mr-[12px]">{{
                                             reply.userName
                                         }}</span
                                         ><span>{{ reply.content }}</span>
                                     </div>
-                                    <div class="flex space-x-2">
+                                    <div
+                                        v-if="
+                                            reply.registeredBy ===
+                                            $indexStore.auth.user.id
+                                        "
+                                        class="flex space-x-2 items-center justify-center"
+                                    >
                                         <el-button
-                                            v-if="
-                                                reply.registeredBy ===
-                                                $indexStore.auth.user.id
-                                            "
                                             type="primary"
+                                            style="my-auto"
                                             @click.stop="
                                                 onEditReplyArea(
                                                     reply.id,
                                                     reply.content
                                                 )
                                             "
-                                            class="z-10"
                                         >
                                             수정
                                         </el-button>
                                         <el-button
-                                            v-if="
-                                                reply.registeredBy ===
-                                                $indexStore.auth.user.id
-                                            "
                                             type="danger"
                                             @click.stop="
                                                 deleteComment(comment.id)
@@ -166,7 +161,7 @@
                                                 editedReplyInputArea &&
                                                 reply.id === editedReplyNum
                                             "
-                                            class="h-auto border-[1px] border-[#E5EAF3] shadow-sm p-[6px] ml-[30px] mb-[6px]"
+                                            class="h-auto border-[1px] border-[#E5EAF3] rounded shadow-sm p-[12px] ml-[30px] mb-[12x]"
                                         >
                                             <el-input
                                                 v-model="editedReply"
@@ -195,7 +190,7 @@
                                     replyInputArea &&
                                     comment.id === replyComment
                                 "
-                                class="h-auto border-[1px] border-[#E5EAF3] shadow-sm p-[6px] mb-[6px]"
+                                class="h-auto border-[1px] border-[#E5EAF3] rounded shadow-sm p-[12px] mb-[12px]"
                             >
                                 <el-input
                                     v-model="reply"
@@ -214,7 +209,7 @@
                     </el-list>
                     <div
                         v-if="$indexStore.auth.isAuthenticated"
-                        class="h-auto border-[1px] border-[#E5EAF3] shadow-sm p-[6px] mb-[6px]"
+                        class="h-auto border-[1px] border-[#E5EAF3] rounded shadow-sm p-[12px] mb-[12px]"
                     >
                         <el-input
                             v-model="comment"

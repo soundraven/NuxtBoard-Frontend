@@ -1,6 +1,6 @@
 <template>
     <div
-        class="w-[300px] border-[1px] border-[#E5EAF3] rounded shadow-sm p-[6px] ml-[12px]"
+        class="w-[300px] border-[1px] border-[#E5EAF3] rounded shadow-sm p-[12px] ml-[12px]"
     >
         최근 개념글
         <div v-for="(post, index) in list" class="w-280px mt-[6px]">
@@ -15,7 +15,7 @@
         </div>
     </div>
     <div
-        class="w-[300px] border-[1px] border-[#E5EAF3] rounded shadow-sm p-[6px] mt-[12px] ml-[12px]"
+        class="w-[300px] border-[1px] border-[#E5EAF3] rounded shadow-sm p-[12px] mt-[12px] ml-[12px]"
     >
         이 채널의 개념글
         <div v-for="(post, index) in list" class="w-280px mt-[6px]">
@@ -29,19 +29,15 @@
             </div>
         </div>
     </div>
-
-    <el-button type="primary" @click="navigateTo('/post/write')"
-        >글작성</el-button
-    >
-    <el-button type="primary" @click="navigateTo('/post/list')"
-        >게시글 목록</el-button
-    >
 </template>
 
 <script lang="ts" setup>
 import type { Dayjs } from "dayjs"
 import type { GroupedPost, PostInfo } from "~/types/interface"
+import relativeTime from "dayjs/plugin/relativeTime"
 const { $axios, $dayjs, $catchError, $errorHandler } = useNuxtApp()
+
+$dayjs.extend(relativeTime)
 
 const currentPage: Ref<number> = ref(1)
 const pageSize: Ref<number> = ref(20)
@@ -71,22 +67,7 @@ const getPostList = async () => {
 }
 
 const getElapsedTime = (registeredDate: Dayjs) => {
-    const convertedTime = $dayjs(registeredDate)
-    const now = $dayjs()
-
-    const days = Math.abs(convertedTime.diff(now, "day"))
-    const hours = Math.abs(convertedTime.diff(now, "hour"))
-    const minutes = Math.abs(convertedTime.diff(now, "minute"))
-
-    if (minutes < 1) {
-        return `방금 전`
-    } else if (minutes < 60) {
-        return `${minutes}분 전`
-    } else if (hours < 24) {
-        return `${hours}시간 전`
-    } else {
-        return `${days}일 전`
-    }
+    return $dayjs(registeredDate).fromNow()
 }
 
 onMounted(() => {

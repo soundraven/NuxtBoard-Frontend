@@ -3,10 +3,10 @@
         class="w-full h-[800px] flex flex-col justify-center pt-[6px]"
     >
         <el-container
-            class="max-w-[1000px] h-full flex flex-row border-2 border-green-400 p-[6px]"
+            class="max-w-[1000px] h-full flex flex-row border-2 border-green-400 p-[12px]"
         >
             <el-header
-                class="w-full h-[120px] border-2 border-blue-400 p-[6px]"
+                class="w-full h-[120px] border-2 border-blue-400 p-[12px]"
             >
                 <el-button
                     type="primary"

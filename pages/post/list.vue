@@ -1,37 +1,55 @@
 <template>
-    <el-container class="flex justify-center">
-        <div
-            class="overflow-auto border-[1px] border-[#E5EAF3] shadow-sm p-[6px]"
-            style="height: 1000px; width: 1000px"
-            v-infinite-scroll="getPostList"
-            infinite-scroll-distance="250"
-            :infinite-scroll-disabled="disabled"
-            infinite-scroll-immediate="false"
-            infinite-scroll-delay="1000"
-        >
-            <el-table
-                :data="list"
-                style="width: 100%"
-                :highlight-current-row="true"
-                class="mx-auto"
+    <el-container class="h-full flex flex-col justify-center">
+        <div>
+            <div
+                class="w-[1000px] h-[1200px] overflow-auto border-[1px] border-[#E5EAF3] rounded shadow-sm p-[12px]"
+                v-infinite-scroll="getPostList"
+                infinite-scroll-distance="250"
+                :infinite-scroll-disabled="disabled"
+                infinite-scroll-immediate="false"
+                infinite-scroll-delay="1000"
             >
-                <el-table-column prop="id" label="ID" />
-                <el-table-column prop="boardName" label="게시판" />
-                <el-table-column prop="title" label="제목">
-                    <template #default="scope">
-                        <a
-                            @click="navigateTo(`${scope.row.id}`)"
-                            class="text-blue-500 cursor-pointer"
-                            >{{ scope.row.title }}</a
-                        >
-                    </template>
-                </el-table-column>
-                <el-table-column prop="registeredUserName" label="작성자" />
-                <el-table-column prop="registeredDate" label="작성일자" />
-            </el-table>
-            <p v-if="loading">Loading...</p>
-            <p v-if="noMore">No more Post</p>
+                <el-tabs
+                    v-model="currentBoardId"
+                    type="card"
+                    @tab-click="changeTab"
+                    :stretch="true"
+                    class="h-[40px] rounded shadow-sm"
+                >
+                    <el-tab-pane
+                        v-for="tab in $indexStore.commoncode.boards"
+                        :key="tab.boardId"
+                        :label="tab.boardName"
+                        :name="tab.boardId"
+                    />
+                </el-tabs>
+                <el-table
+                    :data="list"
+                    :highlight-current-row="true"
+                    class="w-full border-[1px] border-t-0 border-[#E5EAF3] shadow-sm mx-auto"
+                >
+                    <el-table-column prop="id" label="ID" />
+                    <el-table-column prop="boardName" label="게시판" />
+                    <el-table-column prop="title" label="제목">
+                        <template #default="scope">
+                            <a
+                                @click="navigateTo(`${scope.row.id}`)"
+                                class="text-blue-500 cursor-pointer"
+                                >{{ scope.row.title }}</a
+                            >
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="registeredUserName" label="작성자" />
+                    <el-table-column prop="registeredDate" label="작성일자" />
+                </el-table>
+                <p v-if="loading">Loading...</p>
+                <p v-if="noMore">No more Post</p>
+            </div>
+            <div>
+                <el-button @click="goToWrite">글작성</el-button>
+            </div>
         </div>
+
         <el-aside style="width: auto">
             <Sidebar />
         </el-aside>
@@ -42,12 +60,17 @@
 import { ref, onMounted } from "vue"
 import type { AxiosResponse } from "axios"
 import type { PostInfo } from "~/types/interface"
+import type { TabsPaneContext } from "element-plus"
 const { $axios, $indexStore, $catchError, $errorHandler } = useNuxtApp()
+
+const route = useRoute()
+const router = useRouter()
 
 const currentPage = ref(1)
 const pageSize = ref(30)
 const totalCount = ref(0)
 const registeredBy = ref("")
+const currentBoardId = ref<string>((route.query.boardId as string) || "")
 
 const loading = ref(false)
 const noMore = computed(() => list.value.length >= totalCount.value)
@@ -56,13 +79,16 @@ const disabled = computed(() => loading.value || noMore.value)
 const list = ref<PostInfo[]>([])
 
 onMounted(() => {
-    getPostList()
-    $indexStore.commoncode.getBoards()
+    console.log(currentBoardId.value)
+    $indexStore.commoncode.getBoards().then(() => {
+        nextTick(() => {
+            getPostList()
+        })
+    })
 })
 
 const getPostList = async () => {
     loading.value = true
-    console.log(loading.value)
     try {
         console.log("글 불러오기")
         const postList: AxiosResponse = await $axios.get("/posts/list", {
@@ -70,6 +96,7 @@ const getPostList = async () => {
                 currentPage: currentPage.value,
                 pageSize: pageSize.value,
                 registeredBy: registeredBy.value,
+                boardId: currentBoardId.value,
             },
         })
 
@@ -87,10 +114,22 @@ const getPostList = async () => {
         loading.value = false
     }
 }
-</script>
 
-<style scoped>
-.overflow-auto {
-    overflow: auto;
+const changeTab = (pane: TabsPaneContext) => {
+    const newBoardId = pane.paneName as string
+    if (currentBoardId.value !== newBoardId) {
+        currentBoardId.value = newBoardId
+        currentPage.value = 1
+        list.value = []
+        router.push({ query: { ...route.query, boardId: newBoardId } })
+        getPostList()
+    }
 }
-</style>
+
+const goToWrite = () => {
+    navigateTo({
+        path: "/post/write",
+        query: { boardId: currentBoardId.value },
+    })
+}
+</script>

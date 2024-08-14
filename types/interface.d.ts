@@ -20,7 +20,7 @@ interface PostInfo {
     boardId: number
     boardName: string
     registeredBy: number
-    registeredDate: Date
+    registeredDate: Dayjs
     formattedDate: Dayjs
     title: string
     content: string
@@ -32,8 +32,8 @@ interface GroupedPost {
 }
 
 interface LikeInfo {
-    totalLike: number
-    totalDislike: number
+    totalLikes: number
+    totalDislikes: number
 }
 
 interface CommentInfo {

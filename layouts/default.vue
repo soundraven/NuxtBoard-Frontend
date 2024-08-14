@@ -1,7 +1,7 @@
 <template>
     <div class="bg-white dark:bg-black text-black dark:text-white">
         <div
-            class="w-screen h-[50px] flex justify-center border-b-2 border-brandColor py-[6px] mb-[6px] sticky top-0"
+            class="w-screen h-[50px] flex justify-center bg-white border-b-2 border-brandColor py-[6px] mb-[12px] sticky top-0 z-10"
         >
             <div
                 class="w-full max-w-[1320px] flex justify-between items-center px-[6px]"

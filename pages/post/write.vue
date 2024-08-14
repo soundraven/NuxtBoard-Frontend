@@ -1,9 +1,7 @@
 <template>
-    <el-container
-        class="w-full h-[800px] | flex flex-col justify-center | pt-[6px]"
-    >
+    <el-container class="w-full | flex flex-col justify-center">
         <el-container
-            class="max-w-[1000px] h-full flex justify-center border-2 border-green-400 p-[6px]"
+            class="max-w-[1000px] h-auto border-[1px] border-[#E5EAF3] rounded shadow-sm p-[12px]"
         >
             <el-form :model="form" class="w-[1000px] mx-auto mt-[6px]">
                 <el-form-item>
@@ -44,10 +42,7 @@
                 <el-button @click="onSubmit">글 작성완료 </el-button>
             </el-form>
         </el-container>
-        <el-aside
-            style="padding: 6px"
-            class="w-[280px] min-h-[550px] flex flex-col items-center border-2 border-red-400 p-[10px] ml-[6px]"
-        >
+        <el-aside style="width: auto">
             <Sidebar />
         </el-aside>
     </el-container>
@@ -56,20 +51,20 @@
 <script setup lang="ts">
 const { $axios, $indexStore, $catchError, $errorHandler } = useNuxtApp()
 
+const route = useRoute()
+
 definePageMeta({
     middleware: "auth",
 })
 
-const form = reactive({ title: "", content: "", boardId: "" })
+const form = reactive({ title: "", content: "", boardId: 0 })
 
 const options = computed(() => $indexStore.commoncode.boards)
 
 onMounted(async () => {
-    const result = await $indexStore.commoncode.getBoards()
-    if (options.value.length === 0) {
-        ElMessage.error("Failed to load board options.")
-    }
-    console.log(result)
+    await $indexStore.commoncode.getBoards()
+    const boardIdNum = Number(route.query.boardId)
+    form.boardId = boardIdNum
 })
 
 const onSubmit = async () => {

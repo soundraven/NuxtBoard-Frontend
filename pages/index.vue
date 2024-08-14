@@ -1,12 +1,12 @@
 <template>
     <el-container class="w-full flex flex-col justify-center pt-[6px]">
         <el-container
-            class="max-w-[1000px] h-full flex justify-center border-2 border-green-400 p-[6px]"
+            class="max-w-[1000px] h-full flex justify-center border-[1px] border-[#E5EAF3] rounded shadow-sm p-[12px]"
         >
             <el-header
                 height="250px"
                 style="padding: 0px"
-                class="w-full flex justify-center items-center bg-gray-200 border-2 border-blue-400"
+                class="w-full flex justify-center items-center border-[1px] border-[#E5EAF3] rounded shadow-sm p-[12px] mb-[12px]"
             >
                 광고 1을 위한 영역
             </el-header>
@@ -15,16 +15,24 @@
                     display: grid;
                     grid-template-columns: 1fr 1fr;
                     grid-template-rows: 1fr 1fr;
-                    gap: 6px;
-                    padding: 6px;
+                    gap: 12px;
+                    padding: 12px;
                 "
-                class="w-full h-full border-2 border-blue-400 mt-[6px]"
+                class="w-full border-[1px] border-[#E5EAF3] rounded shadow-sm p-[12px]"
             >
-                <el-card
+                <div
                     v-for="(board, index) in $indexStore.commoncode.boards"
+                    class="h-[300px] border-[1px] border-[#E5EAF3] rounded shadow-sm p-[12px]"
                 >
-                    {{ board.name }}
-                    <div v-for="(post, index) in groupedPost[board.id]">
+                    <a
+                        :href="`/post/list?boardId=${board.boardId}`"
+                        class="text-[22px] font-bold underline underline-offset-[4px] decoration-2 decoration-[#409EFF]"
+                        >{{ board.boardName }}</a
+                    >
+                    <div
+                        v-for="(post, index) in groupedPost[board.boardId]"
+                        class="mt-[6px]"
+                    >
                         <div
                             class="hover: cursor-pointer"
                             @click="navigateTo(`/post/${post.id}`)"
@@ -33,13 +41,10 @@
                             {{ getElapsedTime(post.formatted_date) }}
                         </div>
                     </div>
-                </el-card>
+                </div>
             </el-main>
         </el-container>
-        <el-aside
-            style="padding: 6px"
-            class="w-[280px] min-h-[550px] flex flex-col items-center border-2 border-red-400 p-[10px] ml-[6px]"
-        >
+        <el-aside style="width: auto">
             <Sidebar />
         </el-aside>
     </el-container>
@@ -60,6 +65,11 @@ const groupedPost: Ref<GroupedPost> = ref([])
 const list: Ref<GroupedPost> = ref([])
 
 $dayjs.extend(relativeTime)
+
+onMounted(async () => {
+    getPostList()
+    await $indexStore.commoncode.getBoards()
+})
 
 const getElapsedTime = (registeredDate: Dayjs) => {
     const convertedTime: Dayjs = $dayjs(registeredDate)
@@ -84,8 +94,4 @@ const getPostList = async () => {
         $catchError(error)
     }
 }
-
-onMounted(() => {
-    getPostList()
-})
 </script>
