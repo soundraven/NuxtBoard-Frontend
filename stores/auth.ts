@@ -14,7 +14,7 @@ export const useAuthStore = defineStore<
     {
         login(user: UserInfo, refreshToken: string, accessToken: string): void
         logout(): void
-        autoLogin(user: UserInfo): void
+        autoLogin(): void
         setUserName(): void
     }
 >("auth", {

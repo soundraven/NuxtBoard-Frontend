@@ -13,9 +13,10 @@
                     >
                         <el-option
                             v-for="(option, index) in options"
-                            :key="option.value"
-                            :label="option.label"
-                            :value="option.value"
+                            :key="option.boardId"
+                            :label="option.boardName"
+                            :value="option.boardId"
+                            v-if="options.length > 0"
                         >
                         </el-option>
                     </el-select>
@@ -51,6 +52,7 @@
         </el-aside>
     </el-container>
 </template>
+
 <script setup lang="ts">
 const { $axios, $indexStore, $catchError, $errorHandler } = useNuxtApp()
 
@@ -60,15 +62,22 @@ definePageMeta({
 
 const form = reactive({ title: "", content: "", boardId: "" })
 
-const options = computed(() =>
-    //return이 필요한데 경고문이 안뜨는건 대괄호를 안열면 자동으로 return되게 되어있음 return이 축약이 되어있는거다
-    $indexStore.commoncode.boards.map((board) => ({
-        value: board.id,
-        label: board.name,
-    }))
-)
+const options = computed(() => $indexStore.commoncode.boards)
+
+onMounted(async () => {
+    const result = await $indexStore.commoncode.getBoards()
+    if (options.value.length === 0) {
+        ElMessage.error("Failed to load board options.")
+    }
+    console.log(result)
+})
 
 const onSubmit = async () => {
+    if (!form.boardId) {
+        ElMessage.error("Please select a board.")
+        return
+    }
+
     try {
         const result = await $axios.post(
             "/posts/write",

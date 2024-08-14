@@ -47,15 +47,6 @@ interface CommentInfo {
     replies: CommentInfo[]
 }
 
-enum BoardId {
-    공지 = 1,
-    자유 = 2,
-    유머 = 3,
-    질문 = 4,
-    자랑 = 5,
-    후기 = 6,
-}
-
 export type {
     UserInfo,
     ApiResponse,
@@ -64,4 +55,3 @@ export type {
     CommentInfo,
     GroupedPost,
 }
-export { BoardId }

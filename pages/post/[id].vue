@@ -1,11 +1,9 @@
 <template>
     <el-container
         v-if="postInfo != undefined"
-        class="w-full flex flex-col justify-center pt-[6px]"
+        class="w-screen flex flex-col justify-center"
     >
-        <el-container
-            class="max-w-[1000px] h-full flex justify-center border-2 border-green-400 p-[6px]"
-        >
+        <el-container class="max-w-[1000px] h-full flex justify-center">
             <el-card class="w-[1024px] min-h-[800px] mx-auto">
                 <template #header>
                     <div>
@@ -36,7 +34,14 @@
                             :key="comment.id"
                         >
                             <div
-                                class="h-[50px] border-2 border-green-400 p-[6px] mb-[6px] cursor-pointer"
+                                class="h-[50px] border-[1px] border-[#E5EAF3] shadow-sm p-[6px] mb-[6px] cursor-pointer"
+                                :class="{
+                                    'bg-[#66b1ff33]':
+                                        (editCommentInputArea &&
+                                            comment.id === editedCommentNum) ||
+                                        (replyInputArea &&
+                                            comment.id === replyComment),
+                                }"
                                 @click="onReplyArea(comment.id)"
                             >
                                 <div class="flex justify-between">
@@ -84,7 +89,7 @@
                                 </div>
                             </div>
                             <div
-                                class="mt-[10px]"
+                                class="h-auto border-[1px] border-[#E5EAF3] shadow-sm p-[6px] mb-[6px]"
                                 v-if="
                                     editCommentInputArea &&
                                     comment.id === editedCommentNum
@@ -104,7 +109,12 @@
                             <div
                                 v-for="(reply, index) in comment.replies"
                                 :key="reply.id"
-                                class="h-[50px] border-2 border-green-400 p-[6px] ml-[20px] mb-[6px]"
+                                class="h-[50px] border-[1px] border-[#E5EAF3] shadow-sm p-[6px] ml-[30px] mb-[6px] cursor-pointer"
+                                :class="{
+                                    'bg-[#66b1ff33]':
+                                        editedReplyInputArea &&
+                                        reply.id === editedReplyNum,
+                                }"
                             >
                                 <div class="flex justify-between">
                                     <div>
@@ -156,7 +166,7 @@
                                                 editedReplyInputArea &&
                                                 reply.id === editedReplyNum
                                             "
-                                            class="h-auto border-2 border-green-400 p-[6px] ml-[20px] mb-[6px]"
+                                            class="h-auto border-[1px] border-[#E5EAF3] shadow-sm p-[6px] ml-[30px] mb-[6px]"
                                         >
                                             <el-input
                                                 v-model="editedReply"
@@ -172,6 +182,7 @@
                                                         reply.id
                                                     )
                                                 "
+                                                class="mt-[6px]"
                                                 >답글 수정 완료
                                             </el-button>
                                         </div>
@@ -180,11 +191,11 @@
                             </div>
                             <div :id="'replyEditPosition'"></div>
                             <div
-                                class="mt-[10px]"
                                 v-if="
                                     replyInputArea &&
                                     comment.id === replyComment
                                 "
+                                class="h-auto border-[1px] border-[#E5EAF3] shadow-sm p-[6px] mb-[6px]"
                             >
                                 <el-input
                                     v-model="reply"
@@ -193,13 +204,18 @@
                                     type="textarea"
                                     placeholder="답글을 입력하세요"
                                 />
-                                <el-button @click="writeReply(comment.id)"
+                                <el-button
+                                    @click="writeReply(comment.id)"
+                                    class="mt-[6px]"
                                     >답글 작성 완료
                                 </el-button>
                             </div>
                         </el-list-item>
                     </el-list>
-                    <div v-if="$indexStore.auth.isAuthenticated">
+                    <div
+                        v-if="$indexStore.auth.isAuthenticated"
+                        class="h-auto border-[1px] border-[#E5EAF3] shadow-sm p-[6px] mb-[6px]"
+                    >
                         <el-input
                             v-model="comment"
                             style="width: 100%"
@@ -228,10 +244,7 @@
                 글삭제
             </el-button>
         </el-container>
-        <el-aside
-            style="padding: 6px"
-            class="w-[280px] min-h-[550px] flex flex-col items-center border-2 border-red-400 p-[10px] ml-[6px]"
-        >
+        <el-aside style="width: auto">
             <Sidebar />
         </el-aside>
     </el-container>
@@ -260,8 +273,6 @@ const replyComment: Ref<number> = ref(0)
 const editedReplyNum: Ref<number> = ref(0)
 const editedReply: Ref<string> = ref("")
 const editedReplyInputArea: Ref<boolean> = ref(false)
-
-const canTeleport: Ref<Boolean> = ref(false)
 
 onMounted(() => {
     getPostInfo()

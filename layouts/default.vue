@@ -1,10 +1,10 @@
 <template>
     <div class="bg-white dark:bg-black text-black dark:text-white">
         <div
-            class="w-screen h-[50px] flex justify-center border-b-2 border-brandColor py-[6px] sticky top-0"
+            class="w-screen h-[50px] flex justify-center border-b-2 border-brandColor py-[6px] mb-[6px] sticky top-0"
         >
             <div
-                class="w-full max-w-[1300px] flex justify-between items-center px-[6px]"
+                class="w-full max-w-[1320px] flex justify-between items-center px-[6px]"
             >
                 <div>
                     <el-button type="primary" @click="navigateTo('/')">

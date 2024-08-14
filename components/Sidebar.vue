@@ -1,24 +1,35 @@
 <template>
-    <div class="w-full bg-gray-200 border-2 border-blue-400">
-        <div v-for="(post, index) in list">
-            <div class="cursor-pointer" @click="navigateTo(`/post/${post.id}`)">
+    <div
+        class="w-[300px] border-[1px] border-[#E5EAF3] rounded shadow-sm p-[6px] ml-[12px]"
+    >
+        최근 개념글
+        <div v-for="(post, index) in list" class="w-280px mt-[6px]">
+            <div
+                v-if="index < 5"
+                class="cursor-pointer"
+                @click="navigateTo(`/post/${post.id}`)"
+            >
                 {{ post.id }} {{ post.title }}
                 {{ getElapsedTime(post.registeredDate) }}
             </div>
         </div>
     </div>
     <div
-        class="w-full h-[150px] flex flex-wrap justify-around items-center border-2 mt-[6px] p-[6px] pb-[12px]"
+        class="w-[300px] border-[1px] border-[#E5EAF3] rounded shadow-sm p-[6px] mt-[12px] ml-[12px]"
     >
-        <!-- <el-button
-            v-for="navBtn in $indexStore.commoncode.boards"
-            style="margin-top: 6px; margin-left: 0px"
-            class="w-[90px]"
-            @click="navigateTo(`/${navBtn}`)"
-        >
-            {{ navBtn }} </el-button
-        >//추후 수정 필요 -->
+        이 채널의 개념글
+        <div v-for="(post, index) in list" class="w-280px mt-[6px]">
+            <div
+                v-if="index < 5"
+                class="cursor-pointer"
+                @click="navigateTo(`/post/${post.id}`)"
+            >
+                {{ post.id }} {{ post.title }}
+                {{ getElapsedTime(post.registeredDate) }}
+            </div>
+        </div>
     </div>
+
     <el-button type="primary" @click="navigateTo('/post/write')"
         >글작성</el-button
     >
