@@ -49,18 +49,11 @@ const list: Ref<PostInfo[]> = ref([] as PostInfo[])
 const getPostList = async () => {
     try {
         //api 쓸때 페이지 있는 쪽에 다 쓰지 말고 어디서 함수 하나 선언해 두고 getPostList
-        const postList = await $axios.get("/posts/list", {
-            params: {
-                currentPage: currentPage.value,
-                pageSize: pageSize.value,
-            },
-        }) // as GeneralServerResponse<PostList[]>
+        const postList = await $axios.get("/posts/trendPosts") // as GeneralServerResponse<PostList[]>
 
         if (!$errorHandler(postList)) return
 
-        list.value = postList.data.postList
-        totalCount.value = postList.data.totalCount
-        groupedPost.value = postList.data.groupedPost
+        list.value = postList.data.trendPosts
     } catch (error: any) {
         $catchError(error)
     }
