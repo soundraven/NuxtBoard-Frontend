@@ -1,9 +1,9 @@
 <template>
-  <el-container class="w-full | flex flex-col justify-center">
+  <div class="w-full | flex justify-center">
     <el-container
-      class="max-w-[1000px] h-auto border-[1px] border-[#E5EAF3] rounded shadow-sm p-[12px]"
+      class="min-w-[1000px] max-w-[1000px] flex-wrap border border-[rgb(229,234,243)] rounded shadow-sm p-[12px]"
     >
-      <el-form :model="form" class="w-[1000px] mx-auto mt-[6px]">
+      <el-form :model="form" class="w-full mx-auto">
         <el-form-item>
           <el-select
             v-model="form.boardId"
@@ -31,21 +31,20 @@
           />
         </el-form-item>
         <el-form-item>
-          <el-input
-            v-model="form.content"
-            style="width: 100%"
-            :autosize="{ minRows: 30, maxRows: 30 }"
-            type="textarea"
-            placeholder="Please input your content"
+          <rich-editor
+            :value="form.content"
+            @input="(e: any) => (form.content = e)"
           />
         </el-form-item>
-        <el-button @click="onSubmit">글 작성완료 </el-button>
       </el-form>
+      <el-button @click="onSubmit" class="w-[120px] ml-auto"
+        >글 작성완료
+      </el-button>
     </el-container>
     <el-aside style="width: auto">
       <Sidebar />
     </el-aside>
-  </el-container>
+  </div>
 </template>
 
 <script setup lang="ts">

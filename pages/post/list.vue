@@ -16,7 +16,7 @@
         />
       </el-tabs>
       <div
-        class="w-[1000px] h-[1200px] overflow-auto border-[1px] border-[#E5EAF3] rounded shadow-sm p-[12px]"
+        class="w-[1000px] h-[1000px] overflow-auto border-[1px] border-[#E5EAF3] rounded shadow-sm p-[12px]"
         v-infinite-scroll="getPostList"
         infinite-scroll-distance="250"
         :infinite-scroll-disabled="disabled"
