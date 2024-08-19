@@ -1,38 +1,38 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import tailwindcss from "tailwindcss"
-import autoprefixer from "autoprefixer"
+import tailwindcss from "tailwindcss";
+import autoprefixer from "autoprefixer";
 
 export default defineNuxtConfig({
-    devtools: { enabled: true },
+  devtools: { enabled: true },
 
-    runtimeConfig: {
-        public: {
-            apiBaseUrl: process.env.VITE_API_BASE_URL,
-        },
+  runtimeConfig: {
+    public: {
+      apiBaseUrl: process.env.VITE_API_BASE_URL,
     },
+  },
 
-    css: ["@/assets/css/tailwind.css", "element-plus/dist/index.css"],
+  css: ["@/assets/css/tailwind.css", "element-plus/dist/index.css"],
 
-    vite: {
-        css: {
-            postcss: {
-                plugins: [tailwindcss(), autoprefixer()],
-            },
-        },
+  vite: {
+    plugins: ["~/plugins/ckeditor.ts"],
+    css: {
+      postcss: {
+        plugins: [tailwindcss(), autoprefixer()],
+      },
     },
+  },
 
-    plugins: [
-        "~/plugins/element-plus.ts",
-        "~/plugins/axios.ts",
-        "~/plugins/indexStore.ts",
-        "~/plugins/dayjs.ts",
-        // { src: "~/plugins/asdf.ts", mode: "client" }
-    ],
-    modules: ["@nuxt/ui", "@element-plus/nuxt", "@pinia/nuxt"],
+  plugins: [
+    "~/plugins/element-plus.ts",
+    "~/plugins/axios.ts",
+    "~/plugins/indexStore.ts",
+    "~/plugins/dayjs.ts",
+  ],
+  modules: ["@nuxt/ui", "@element-plus/nuxt", "@pinia/nuxt"],
 
-    typescript: {
-        strict: true,
-    },
+  typescript: {
+    strict: true,
+  },
 
-    compatibilityDate: "2024-07-15",
-})
+  compatibilityDate: "2024-07-15",
+});

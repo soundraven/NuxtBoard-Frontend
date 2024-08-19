@@ -1,40 +1,37 @@
 <template>
     <el-container class="w-full flex flex-col justify-center pt-[6px]">
         <el-container
-            class="max-w-[1000px] h-full flex justify-center border-[1px] border-[#E5EAF3] rounded shadow-sm p-[12px]"
+            class="max-w-[1000px] h-full flex justify-center border border-[#E5EAF3] rounded shadow-sm p-[12px]"
         >
             <el-header
                 height="250px"
                 style="padding: 0px"
-                class="w-full flex justify-center items-center border-[1px] border-[#E5EAF3] rounded shadow-sm p-[12px] mb-[12px]"
+                class="w-full flex justify-center items-center border border-[#E5EAF3] rounded shadow-sm p-[12px] mb-[12px]"
             >
                 광고 1을 위한 영역
             </el-header>
             <el-main
-                style="
-                    display: grid;
-                    grid-template-columns: 1fr 1fr;
-                    grid-template-rows: 1fr 1fr;
-                    gap: 12px;
-                    padding: 12px;
-                "
-                class="w-full border-[1px] border-[#E5EAF3] rounded shadow-sm p-[12px]"
+                style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px"
+                class="w-full border border-[#E5EAF3] rounded shadow-sm p-[12px]"
             >
                 <div
                     v-for="(board, index) in $indexStore.commoncode.boards"
-                    class="h-[300px] border-[1px] border-[#E5EAF3] rounded shadow-sm p-[12px]"
+                    :key="index"
+                    class="h-[300px] border border-[#E5EAF3] rounded shadow-sm p-[12px]"
                 >
                     <a
                         :href="`/post/list?boardId=${board.boardId}`"
                         class="text-[22px] font-bold underline underline-offset-[4px] decoration-2 decoration-[#409EFF]"
-                        >{{ board.boardName }}</a
                     >
+                        {{ board.boardName }}
+                    </a>
                     <div
                         v-for="(post, index) in groupedPost[board.boardId]"
+                        :key="index"
                         class="mt-[6px]"
                     >
                         <div
-                            class="hover: cursor-pointer"
+                            class="cursor-pointer"
                             @click="navigateTo(`/post/${post.id}`)"
                         >
                             {{ post.id }} {{ post.title }}
