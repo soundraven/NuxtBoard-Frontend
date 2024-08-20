@@ -1,26 +1,26 @@
 <template>
-  <el-container class="w-full | flex flex-col justify-center | pt-[6px]">
+  <div class="w-full flex justify-center">
     <el-container
-      class="max-w-[1000px] h-full | flex justify-center | border border-[#E5EAF3] rounded shadow-sm | p-[12px]"
+      class="max-w-[1000px] h-full flex justify-center border-l border-r border-border-darkerBorder dark:border-darkBorder-darkerBorder dark:bg-darkBackground-lighterFill p-[12px] md:mx-[12px]"
     >
       <el-header
         height="250px"
         style="padding: 0px"
-        class="w-full | flex justify-center items-center | border border-[#E5EAF3] rounded shadow-sm | p-[12px] mb-[12px]"
+        class="border border-border-darkerBorder dark:border-darkBorder-darkerBorder rounded shadow-sm bg-background-basicWhite dark:bg-darkBackground-darkerFill p-[12px] hidden lg:block"
       >
-        광고 1을 위한 영역
       </el-header>
       <el-main
-        class="columns-2 gap-3 w-full border border-[#E5EAF3] rounded shadow-sm p-3"
+        style="padding: 0"
+        class="w-full mt-[12px] xl:columns-[300px] lg:columns-[300px] md:columns-[340px] sm:columns-[240px]"
       >
         <div
           v-for="(board, index) in $indexStore.commoncode.boards"
           :key="index"
-          class="break-inside-avoid-column | border border-[#E5EAF3] rounded shadow-sm | p-[12px] mb-[12px]"
+          class="break-inside-avoid-column border border-border-darkerBorder dark:border-darkBorder-darkerBorder rounded shadow-sm bg-background-basicWhite dark:bg-darkBackground-darkerFill p-[12px] mb-[12px]"
         >
           <div
             @click="navigateTo(`/post/list?boardId=${board.boardId}`)"
-            class="w-[50px] text-[22px] font-bold underline underline-offset-[4px] decoration-2 decoration-[#409EFF] cursor-pointer"
+            class="w-[50px] text-[22px] font-bold underline underline-offset-[4px] decoration-2 decoration-success cursor-pointer"
           >
             {{ board.boardName }}
           </div>
@@ -29,9 +29,16 @@
             :key="index"
             class="mt-[6px]"
           >
-            <div class="cursor-pointer" @click="navigateTo(`/post/${post.id}`)">
-              {{ post.id }} {{ post.title }}
-              {{ getElapsedTime(post.formatted_date) }}
+            <div
+              class="flex justify-between text-[14px] cursor-pointer"
+              @click="navigateTo(`/post/${post.id}`)"
+            >
+              <span class="xl:w-[170px] truncate ... md:w-[180px] sm:w-[160px]"
+                >{{ post.id }} {{ post.title }}</span
+              >
+              <span class="ml-[12px]">{{
+                getElapsedTime(post.formatted_date)
+              }}</span>
             </div>
           </div>
         </div>
@@ -40,7 +47,7 @@
     <el-aside style="width: auto">
       <Sidebar />
     </el-aside>
-  </el-container>
+  </div>
 </template>
 
 <script setup lang="ts">

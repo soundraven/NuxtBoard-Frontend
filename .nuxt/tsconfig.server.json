@@ -101,9 +101,6 @@
       "#ui-colors": [
         "./ui.colors"
       ],
-      "#icon-collections": [
-        "./icon-collections"
-      ],
       "#color-mode-options": [
         "./color-mode-options"
       ],
@@ -115,6 +112,9 @@
       ],
       "#tailwind-config": [
         "./tailwind"
+      ],
+      "#nuxt-icon-server-bundle": [
+        "./nuxt-icon-server-bundle"
       ]
     },
     "lib": [
@@ -125,7 +125,7 @@
   },
   "include": [
     "./types/nitro-nuxt.d.ts",
-    "../node_modules/nuxt-icon/runtime/server",
+    "../node_modules/@nuxt/icon/runtime/server",
     "../node_modules/@nuxtjs/color-mode/runtime/server",
     "../node_modules/@nuxtjs/tailwindcss/runtime/server",
     "../node_modules/@nuxt/ui/runtime/server",

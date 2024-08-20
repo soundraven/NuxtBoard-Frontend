@@ -1,10 +1,10 @@
 <template>
   <el-container v-if="postInfo" class="w-screen flex flex-col justify-center">
     <el-container
-      class="max-w-[1000px] h-full flex justify-center border-[#E5EAF3] rounded shadow-sm"
+      class="max-w-[1000px] h-full flex justify-center border border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-basicWhite dark:bg-darkBackground-lighterFill p-[12px]"
     >
       <div
-        class="w-[1000px] min-h-[800px] border-[#E5EAF3] rounded shadow-sm mx-auto"
+        class="w-[1000px] min-h-[800px] border border-border-darkerBorder dark:border-darkBorder-darkerBorder rounded shadow-sm mx-auto"
       >
         <div>
           {{ postInfo.title }}

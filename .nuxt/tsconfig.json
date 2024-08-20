@@ -89,9 +89,6 @@
       "#ui-colors": [
         "./ui.colors.mjs"
       ],
-      "#icon-collections": [
-        "./icon-collections.mjs"
-      ],
       "#color-mode-options": [
         "./color-mode-options.mjs"
       ],
@@ -152,7 +149,7 @@
     "./nuxt.d.ts",
     "../.config/nuxt.*",
     "../**/*",
-    "../node_modules/nuxt-icon/runtime",
+    "../node_modules/@nuxt/icon/runtime",
     "../node_modules/@nuxtjs/color-mode/runtime",
     "../node_modules/@nuxtjs/tailwindcss/runtime",
     "../node_modules/@nuxt/ui/runtime",
@@ -166,7 +163,7 @@
     "../dist",
     "../node_modules",
     "../node_modules/nuxt/node_modules",
-    "../node_modules/nuxt-icon/runtime/server",
+    "../node_modules/@nuxt/icon/runtime/server",
     "../node_modules/@nuxtjs/color-mode/runtime/server",
     "../node_modules/@nuxtjs/tailwindcss/runtime/server",
     "../node_modules/@nuxt/ui/runtime/server",
