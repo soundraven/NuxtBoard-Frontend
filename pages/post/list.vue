@@ -1,12 +1,17 @@
 <template>
   <el-container class="h-full flex flex-col justify-center">
-    <div>
+    <div class="w-[1000px] mr-[12px]">
+      <div
+        class="w-full h-[100px] border border-border-darkerBorder dark:border-darkBorder-darkerBorder shadow-sm bg-background-basicWhite dark:bg-darkBackground-darkerFill p-[12px] mb-[12px]"
+      >
+        채널 정보
+      </div>
       <el-tabs
         v-model="currentBoardId"
         type="card"
         @tab-click="changeTab"
         :stretch="true"
-        class="h-[40px] rounded shadow-sm"
+        class="h-[40px] border border-border-darkerBorder dark:border-darkBorder-darkerBorder shadow-sm bg-background-basicWhite dark:bg-darkBackground-darkerFill"
       >
         <el-tab-pane
           v-for="tab in $indexStore.commoncode.boards"
@@ -16,7 +21,7 @@
         />
       </el-tabs>
       <div
-        class="w-[1000px] h-[1000px] overflow-auto border-[1px] border-[#E5EAF3] rounded shadow-sm p-[12px]"
+        class="w-full h-[1000px] overflow-auto border-[1px] border-[#E5EAF3] rounded shadow-sm"
         v-infinite-scroll="getPostList"
         infinite-scroll-distance="250"
         :infinite-scroll-disabled="disabled"

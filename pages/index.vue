@@ -1,7 +1,7 @@
 <template>
-  <div class="w-full flex justify-center">
+  <div class="w-full h-full flex justify-center">
     <el-container
-      class="max-w-[1000px] h-full flex justify-center border-l border-r border-border-darkerBorder dark:border-darkBorder-darkerBorder dark:bg-darkBackground-lighterFill p-[12px] md:mx-[12px]"
+      class="max-w-[1000px] h-full flex justify-center border-l border-r border-border-darkerBorder dark:border-darkBorder-darkerBorder dark:bg-darkBackground-lighterFill p-[12px] mx-[12px]"
     >
       <el-header
         height="250px"
@@ -11,7 +11,7 @@
       </el-header>
       <el-main
         style="padding: 0"
-        class="w-full mt-[12px] xl:columns-[300px] lg:columns-[300px] md:columns-[340px] sm:columns-[240px]"
+        class="w-full h-full mt-[12px] xl:columns-[300px] lg:columns-[300px] md:columns-[340px] sm:columns-[240px]"
       >
         <div
           v-for="(board, index) in $indexStore.commoncode.boards"
@@ -33,7 +33,7 @@
               class="flex justify-between text-[14px] cursor-pointer"
               @click="navigateTo(`/post/${post.id}`)"
             >
-              <span class="xl:w-[170px] truncate ... md:w-[180px] sm:w-[160px]"
+              <span class="xl:w-[170px] truncate ... md:w-[170px] sm:w-[150px]"
                 >{{ post.id }} {{ post.title }}</span
               >
               <span class="ml-[12px]">{{

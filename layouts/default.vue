@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-full bg-background-pageBackground dark:bg-darkBackground-pageBackground text-text-primaryText dark:text-darkText-primaryText"
+    class="w-full min-h-screen bg-background-pageBackground dark:bg-darkBackground-pageBackground text-text-primaryText dark:text-darkText-primaryText"
   >
     <div
       class="h-[50px] flex justify-center bg-brandColor dark:bg-darkBackground-lighterFill border border-brandColor dark:border-darkBorder-darkerBorder py-[6px] sticky top-0 z-10"
@@ -8,11 +8,13 @@
       <div class="w-full max-w-[1320px] flex justify-between items-center">
         <div class="flex items-center">
           <el-button @click="navigateTo('/')">Nuxtboard</el-button>
-          <el-input
-            v-model="keyword"
-            class="w-[240px] ml-[6px]"
-            placeholder="검색"
-          />
+          <div class="hidden sm:block">
+            <el-input
+              v-model="keyword"
+              class="w-[240px] ml-[6px]"
+              placeholder="검색"
+            />
+          </div>
         </div>
         <div class="flex items-center">
           <el-dropdown
@@ -47,7 +49,9 @@
             class="ml-[6px] bg-background-darkerFill dark:bg-darkBackground-darkerFill text-white"
             @click="toggleColorMode"
           >
-            <el-icon><component :is="currentColorIcon" /></el-icon>
+            <client-only>
+              <el-icon><component :is="currentColorIcon" /></el-icon>
+            </client-only>
           </el-button>
         </div>
       </div>

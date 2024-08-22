@@ -111,7 +111,10 @@
         "./vue-router"
       ],
       "#tailwind-config": [
-        "./tailwind"
+        "./tailwind.config"
+      ],
+      "#tailwind-config/*": [
+        "./tailwind.config/*"
       ],
       "#nuxt-icon-server-bundle": [
         "./nuxt-icon-server-bundle"
