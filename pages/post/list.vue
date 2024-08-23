@@ -2,10 +2,8 @@
   <el-container class="h-full flex flex-col justify-center">
     <div class="w-[1000px] mr-[12px]">
       <div
-        class="w-full h-[100px] border border-border-darkerBorder dark:border-darkBorder-darkerBorder shadow-sm bg-background-basicWhite dark:bg-darkBackground-darkerFill p-[12px] mb-[12px]"
-      >
-        채널 정보
-      </div>
+        class="w-full h-[150px] border border-border-darkerBorder dark:border-darkBorder-darkerBorder shadow-sm bg-background-basicWhite dark:bg-darkBackground-darkerFill p-[12px]"
+      ></div>
       <el-tabs
         v-model="currentBoardId"
         type="card"
@@ -21,9 +19,9 @@
         />
       </el-tabs>
       <div
-        class="w-full h-[1000px] overflow-auto border-[1px] border-[#E5EAF3] rounded shadow-sm"
+        class="w-full h-[660px] overflow-auto border-[1px] border-[#E5EAF3] rounded shadow-sm"
         v-infinite-scroll="getPostList"
-        infinite-scroll-distance="250"
+        infinite-scroll-distance="500"
         :infinite-scroll-disabled="disabled"
         infinite-scroll-immediate="false"
         infinite-scroll-delay="1000"
@@ -33,9 +31,14 @@
           :highlight-current-row="true"
           class="w-full border-[1px] border-t-0 border-[#E5EAF3] shadow-sm mx-auto"
         >
-          <el-table-column prop="id" label="ID" />
-          <el-table-column prop="boardName" label="게시판" />
-          <el-table-column prop="title" label="제목">
+          <el-table-column prop="id" label="ID" width="50" align="center" />
+          <el-table-column
+            prop="boardName"
+            label="게시판"
+            width="100"
+            align="center"
+          />
+          <el-table-column prop="title" label="제목" width="480" align="center">
             <template #default="scope">
               <a
                 @click="navigateTo(`${scope.row.id}`)"
@@ -44,13 +47,23 @@
               >
             </template>
           </el-table-column>
-          <el-table-column prop="registeredUserName" label="작성자" />
-          <el-table-column prop="registeredDate" label="작성일자" />
+          <el-table-column
+            prop="registeredUserName"
+            label="작성자"
+            width="100"
+            align="center"
+          />
+          <el-table-column
+            prop="formattedDate"
+            label="작성일자"
+            width="250"
+            align="center"
+          />
         </el-table>
         <p v-if="loading">Loading...</p>
         <p v-if="noMore">No more Post</p>
       </div>
-      <div>
+      <div class="flex justify-end | mt-[12px]">
         <el-button @click="goToWrite">글작성</el-button>
       </div>
     </div>

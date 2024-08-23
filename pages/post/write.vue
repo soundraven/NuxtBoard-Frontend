@@ -5,10 +5,12 @@
     >
       <el-form :model="form" class="w-full mx-[12px]">
         <div
+          v-if="form.boardId && $indexStore.commoncode.boards[form.boardId]"
           class="w-full h-[100px] | flex items-center | text-[22px] font-bold | border-b border-border-darkerBorder dark:border-darkBorder-darkerBorder px-[12px]"
         >
           {{ $indexStore.commoncode.boards[form.boardId].boardName }} 게시판
         </div>
+
         <el-form-item class="mt-[12px]">
           <el-select
             v-model="form.boardId"
