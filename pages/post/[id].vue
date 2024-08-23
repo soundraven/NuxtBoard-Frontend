@@ -71,6 +71,7 @@
               type="primary"
               @click="handleLike(true)"
               class="w-[90px] min-h-[60px]"
+              :class="likeAnimationClass"
             >
               <div>추천</div>
               <div>{{ likeInfo.totalLikes }}</div>
@@ -80,6 +81,7 @@
               type="danger"
               @click="handleLike(false)"
               class="w-[90px] min-h-[60px]"
+              :class="dislikeAnimationClass"
             >
               <div>비추</div>
               <div>{{ likeInfo.totalDislikes }}</div>
@@ -130,12 +132,13 @@
                     icon="edit"
                     type="primary"
                     @click.stop="onEditArea(comment.id, comment.content)"
-                    class="z-10"
+                    class="z-10 !w-[10px] !h-[20px]"
                   />
                   <el-button
                     icon="delete"
                     type="danger"
                     @click.stop="deleteComment(comment.id)"
+                    class="z-10 !w-[10px] !h-[20px]"
                   />
                 </div>
               </div>
@@ -153,7 +156,7 @@
                 v-model="editedComment"
                 :rows="2"
                 type="textarea"
-                placeholder="Please input your comment"
+                placeholder="댓글을 입력해주세요"
               />
               <el-button class="ml-auto mt-[12px]" @click="editComment">
                 댓글 수정
@@ -188,11 +191,13 @@
                       type="primary"
                       style="my-auto"
                       @click.stop="onEditReplyArea(reply.id, reply.content)"
+                      class="z-10 !w-[10px] !h-[20px]"
                     />
                     <el-button
                       icon="delete"
                       type="danger"
                       @click.stop="deleteComment(comment.id)"
+                      class="z-10 !w-[10px] !h-[20px]"
                     />
                   </div>
                 </div>
@@ -254,7 +259,7 @@
             v-model="comment"
             :rows="2"
             type="textarea"
-            placeholder="Please input your comment"
+            placeholder="댓글을 입력해주세요"
           />
           <div class="flex justify-end | mt-[12px]">
             <el-button @click="writeComment">댓글 작성</el-button>
@@ -272,7 +277,8 @@
 import type { PostInfo, CommentInfo, LikeInfo } from "~/types/interface";
 import type { AxiosResponse } from "axios";
 import DOMPurify from "dompurify";
-import "element-plus/theme-chalk/dark/css-vars.css";
+
+import "animate.css";
 
 const { $axios, $indexStore, $catchError, $errorHandler } = useNuxtApp();
 
@@ -285,6 +291,9 @@ const likeInfo: Ref<LikeInfo> = ref({} as LikeInfo);
 const sanitizedContent = computed(() =>
   DOMPurify.sanitize(postInfo.value.content)
 );
+
+const likeAnimationClass = ref("");
+const dislikeAnimationClass = ref("");
 
 const commentList: Ref<CommentInfo[]> = ref([]);
 const comment: Ref<string> = ref("");
@@ -305,17 +314,23 @@ onMounted(() => {
 
 const onReplyArea = (commentId: number) => {
   replyInputArea.value = !replyInputArea.value;
+  editedReplyInputArea.value = false;
+  editCommentInputArea.value = false;
   replyComment.value = commentId;
 };
 
 const onEditArea = (commentId: number, content: string) => {
   editCommentInputArea.value = !editCommentInputArea.value;
+  editedReplyInputArea.value = false;
+  replyInputArea.value = false;
   editedCommentNum.value = commentId;
   editedComment.value = content;
 };
 
 const onEditReplyArea = (replyId: number, content: string) => {
   editedReplyInputArea.value = !editedReplyInputArea.value;
+  replyInputArea.value = false;
+  editCommentInputArea.value = false;
   editedReplyNum.value = replyId;
   editedReply.value = content;
 };
@@ -518,8 +533,8 @@ const deleteComment = async (commentId: number) => {
   }
 };
 
-const handleLike = async (liked: boolean) => {
-  if (liked) {
+const handleLike = async (like: boolean) => {
+  if (like) {
     try {
       const like: AxiosResponse = await $axios.post(
         "/posts/likes/like",
@@ -534,8 +549,23 @@ const handleLike = async (liked: boolean) => {
         }
       );
 
+      if (like.data.code !== "S") {
+        ElMessage.error(like.data.message);
+        likeAnimationClass.value = "animate__animated animate__shakeX";
+        setTimeout(() => {
+          likeAnimationClass.value = "";
+        }, 1000);
+        return;
+      }
+
       if (!$errorHandler(like)) return;
+
       ElMessage("Successfully liked");
+      likeAnimationClass.value = "animate__animated animate__bounce";
+      setTimeout(() => {
+        likeAnimationClass.value = "";
+      }, 1000);
+
       getPostInfo();
     } catch (error: any) {
       $catchError(error);
@@ -555,8 +585,21 @@ const handleLike = async (liked: boolean) => {
         }
       );
 
+      if (dislike.data.code !== "S") {
+        ElMessage.error(dislike.data.message);
+        dislikeAnimationClass.value = "animate__animated animate__shakeX";
+        setTimeout(() => {
+          dislikeAnimationClass.value = "";
+        }, 1000);
+        return;
+      }
+
       if (!$errorHandler(dislike)) return;
       ElMessage("Successfully liked");
+      dislikeAnimationClass.value = "animate__animated animate__bounce";
+      setTimeout(() => {
+        dislikeAnimationClass.value = "";
+      }, 1000);
       getPostInfo();
     } catch (error: any) {
       $catchError(error);

@@ -32,6 +32,7 @@
     "@vue/compiler-sfc": "^3.4.28",
     "@vue/runtime-core": "^3.4.28",
     "@vue/runtime-dom": "^3.4.28",
+    "animate.css": "^4.1.1",
     "axios": "^1.7.2",
     "dayjs": "^1.11.12",
     "dompurify": "^3.1.6",
