@@ -255,6 +255,14 @@ const getPostInfo = async () => {
 
     postInfo.value = postResponse.data.postInfo;
     likeInfo.value = postResponse.data.likeInfo;
+
+    const boardId = postInfo.value.boardId;
+    if (boardId) {
+      router.replace({
+        path: route.path,
+        query: { ...route.query, boardId: boardId.toString() },
+      });
+    }
   } catch (error: any) {
     $catchError(error);
   }

@@ -16,10 +16,11 @@
       </div>
     </div>
     <div
+      v-if="$route.path !== '/'"
       class="w-[300px] border border-border-darkerBorder dark:border-darkBorder-darkerBorder rounded shadow-sm bg-background-basicWhite dark:bg-darkBackground-darkerFill p-[12px] mt-[12px]"
     >
       이 채널의 개념글
-      <div v-for="(post, index) in list" class="w-[280px] mt-[6px]">
+      <div v-for="(post, index) in trendList" class="w-[280px] mt-[6px]">
         <div
           v-if="index < 5"
           class="cursor-pointer"
@@ -35,27 +36,28 @@
 
 <script lang="ts" setup>
 import type { Dayjs } from "dayjs";
-import type { GroupedPost, PostInfo } from "~/types/interface";
-import relativeTime from "dayjs/plugin/relativeTime";
+import type { PostInfo } from "~/types/interface";
+
 const { $axios, $dayjs, $catchError, $errorHandler } = useNuxtApp();
+const route = useRoute();
 
-$dayjs.extend(relativeTime);
-
-const currentPage: Ref<number> = ref(1);
-const pageSize: Ref<number> = ref(20);
-const totalCount: Ref<number> = ref(0);
-
-const groupedPost: Ref<GroupedPost> = ref([] as GroupedPost);
 const list: Ref<PostInfo[]> = ref([] as PostInfo[]);
+const trendList: Ref<PostInfo[]> = ref([] as PostInfo[]);
+
+onMounted(() => {
+  getPostList();
+});
 
 const getPostList = async () => {
   try {
+    const boardId = route.query.boardId;
     //api 쓸때 페이지 있는 쪽에 다 쓰지 말고 어디서 함수 하나 선언해 두고 getPostList
-    const postList = await $axios.get("/posts/trendPosts"); // as GeneralServerResponse<PostList[]>
+    const postList = await $axios.get(`/posts/trendPosts?boardId=${boardId}`); // as GeneralServerResponse<PostList[]>
 
     if (!$errorHandler(postList)) return;
 
     list.value = postList.data.trendPosts;
+    trendList.value = postList.data.currentBoardTrendPosts;
   } catch (error: any) {
     $catchError(error);
   }
@@ -65,9 +67,14 @@ const getElapsedTime = (registeredDate: Dayjs) => {
   return $dayjs(registeredDate).fromNow();
 };
 
-onMounted(() => {
-  getPostList();
-});
+watch(
+  () => route.query.boardId,
+  (newBoardId, oldBoardId) => {
+    if (newBoardId !== oldBoardId) {
+      getPostList();
+    }
+  }
+);
 </script>
 
 <style></style>

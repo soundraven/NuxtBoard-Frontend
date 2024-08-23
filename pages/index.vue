@@ -52,7 +52,6 @@
 
 <script setup lang="ts">
 import { Dayjs } from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import type { GroupedPost } from "~/types/interface";
 import type { AxiosResponse } from "axios";
 const { $axios, $indexStore, $dayjs, $catchError, $errorHandler } =
@@ -64,8 +63,6 @@ const totalCount: Ref<number> = ref(0);
 
 const groupedPost: Ref<GroupedPost> = ref([]);
 const list: Ref<GroupedPost> = ref([]);
-
-$dayjs.extend(relativeTime);
 
 onMounted(async () => {
   getPostList();

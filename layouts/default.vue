@@ -21,15 +21,18 @@
             v-if="$indexStore.auth.isAuthenticated"
             class="hover:cursor-pointer mr-[6px]"
           >
-            <el-badge is-dot>
-              <el-button>
-                {{
-                  $indexStore.auth.user.userName === ""
-                    ? "닉네임을 지정해 주세요"
-                    : $indexStore.auth.user.userName
-                }}
-              </el-button>
+            <el-badge
+              v-if="
+                $indexStore.auth.isAuthenticated &&
+                $indexStore.auth.user.userName === ''
+              "
+              is-dot
+            >
+              <el-button>닉네임을 지정해 주세요</el-button>
             </el-badge>
+            <el-button v-else>
+              {{ $indexStore.auth.user.userName }}
+            </el-button>
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item @click="navigateTo('/auth/mypage')">
