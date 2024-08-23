@@ -7,11 +7,13 @@
       <div v-for="(post, index) in list" class="w-[280px] mt-[6px]">
         <div
           v-if="index < 5"
-          class="cursor-pointer"
+          class="text-[14px] | flex justify-between | cursor-pointer"
           @click="navigateTo(`/post/${post.id}`)"
         >
-          {{ post.id }} {{ post.title }}
-          {{ getElapsedTime(post.registeredDate) }}
+          {{ post.title }}
+          <span class="truncate ...">
+            {{ getElapsedTime(post.registeredDate) }}
+          </span>
         </div>
       </div>
     </div>
@@ -23,11 +25,13 @@
       <div v-for="(post, index) in trendList" class="w-[280px] mt-[6px]">
         <div
           v-if="index < 5"
-          class="cursor-pointer"
+          class="text-[14px] | flex justify-between | cursor-pointer"
           @click="navigateTo(`/post/${post.id}`)"
         >
-          {{ post.id }} {{ post.title }}
-          {{ getElapsedTime(post.registeredDate) }}
+          <span> {{ post.title }}</span>
+          <span>
+            {{ getElapsedTime(post.registeredDate) }}
+          </span>
         </div>
       </div>
     </div>

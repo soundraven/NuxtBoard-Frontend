@@ -33,12 +33,12 @@
               class="flex justify-between text-[14px] cursor-pointer"
               @click="navigateTo(`/post/${post.id}`)"
             >
-              <span class="xl:w-[170px] truncate ... md:w-[170px] sm:w-[150px]"
-                >{{ post.id }} {{ post.title }}</span
-              >
-              <span class="ml-[12px]">{{
-                getElapsedTime(post.formatted_date)
-              }}</span>
+              <span class="xl:w-[170px] truncate ... md:w-[170px] sm:w-[150px]">
+                {{ post.title }}
+              </span>
+              <span class="ml-[12px]">
+                {{ getElapsedTime(post.formatted_date) }}
+              </span>
             </div>
           </div>
         </div>

@@ -1,152 +1,227 @@
 <template>
   <el-container v-if="postInfo" class="w-screen flex flex-col justify-center">
     <el-container
-      class="max-w-[1000px] h-full flex justify-center border border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-basicWhite dark:bg-darkBackground-lighterFill p-[12px]"
+      class="max-w-[1000px] h-full | flex justify-center | border border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-basicWhite dark:bg-darkBackground-lighterFill | mr-[12px]"
     >
-      <div
-        class="w-[1000px] min-h-[800px] border border-border-darkerBorder dark:border-darkBorder-darkerBorder rounded shadow-sm mx-auto"
-      >
-        <div>
-          {{ postInfo.title }}
-        </div>
-        <el-button
-          v-if="$indexStore.auth.user.id === postInfo.registeredBy"
-          type="primary"
-          @click="navigateTo(`/post/edit/${route.params.id}`)"
+      <div class="w-[1000px] min-h-[800px]">
+        <div
+          class="h-[100px] | flex items-center | text-[22px] font-bold | border-b border-border-darkerBorder dark:border-darkBorder-darkerBorder px-[12px]"
         >
-          글수정
-        </el-button>
-        <el-button
-          v-if="$indexStore.auth.user.id === postInfo.registeredBy"
-          type="danger"
-          @click="deletePost"
-        >
-          글삭제
-        </el-button>
-        <client-only>
-          <div class="min-h-[500px]" v-html="sanitizedContent"></div>
-        </client-only>
-        <div class="w-full flex justify-center">
-          <el-button type="primary" @click="handleLike(true)">
-            <div>추천</div>
-            <div>{{ likeInfo.totalLikes }}</div>
-          </el-button>
-          <el-button type="danger" @click="handleLike(false)">
-            <div>비추천</div>
-            <div>{{ likeInfo.totalDislikes }}</div>
-          </el-button>
+          {{ postInfo.boardName }} 게시판
         </div>
-        <el-button type="danger" @click="report">
-          <div>신고</div>
-          <div>{{ postInfo.report }}</div>
-        </el-button>
-
-        <el-list>
-          <el-list-item
-            v-for="(comment, index) in commentList"
-            :key="comment.id"
+        <div class="px-[12px]">
+          <div
+            class="h-[40px] | flex justify-between items-center | text-[18px] | border-y border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-darkerFill dark:bg-darkBackground-darkerFill | mt-[12px] px-[12px]"
           >
+            <span class="font-bold">{{ postInfo.title }}</span>
+            <div>
+              <el-button
+                v-if="$indexStore.auth.user.id === postInfo.registeredBy"
+                icon="edit"
+                type="primary"
+                @click="navigateTo(`/post/edit/${route.params.id}`)"
+                class="!w-[30px] !h-[30px]"
+              />
+              <el-button
+                v-if="$indexStore.auth.user.id === postInfo.registeredBy"
+                icon="delete"
+                type="danger"
+                @click="deletePost"
+                class="!w-[30px] !h-[30px]"
+              />
+            </div>
+          </div>
+          <div
+            class="h-[30px] | flex justify-between items-center | border-b border-border-darkerBorder dark:border-darkBorder-darkerBorder | p-[12px]"
+          >
+            <span class="text-[15px]">{{ postInfo.registeredByUserName }}</span>
+            <div class="text-[13px]">
+              <span class="font-bold">추천: </span>
+              <span
+                class="bg-background-darkerFill dark:bg-darkBackground-darkerFill ml-[6px]"
+              >
+                {{ likeInfo.totalLikes }}
+              </span>
+              <span class="font-bold ml-[6px]">비추천: </span>
+              <span
+                class="bg-background-darkerFill dark:bg-darkBackground-darkerFill ml-[6px]"
+              >
+                {{ likeInfo.totalDislikes }}
+              </span>
+              <span class="font-bold ml-[6px]">댓글: </span>
+              <span
+                class="bg-background-darkerFill dark:bg-darkBackground-darkerFill ml-[6px]"
+              >
+                {{ commentList.length }}
+              </span>
+              <span class="font-bold ml-[6px]">작성일: </span>
+              <span
+                class="bg-background-darkerFill dark:bg-darkBackground-darkerFill ml-[6px]"
+              >
+                {{ postInfo.formattedDate }}
+              </span>
+            </div>
+          </div>
+          <client-only>
+            <div class="min-h-[600px] p-[12px]" v-html="sanitizedContent"></div>
+          </client-only>
+          <div class="w-full h-full flex justify-center | mb-[12px]">
+            <el-button
+              icon="medal"
+              type="primary"
+              @click="handleLike(true)"
+              class="w-[90px] min-h-[60px]"
+            >
+              <div>추천</div>
+              <div>{{ likeInfo.totalLikes }}</div>
+            </el-button>
+            <el-button
+              icon="Remove"
+              type="danger"
+              @click="handleLike(false)"
+              class="w-[90px] min-h-[60px]"
+            >
+              <div>비추</div>
+              <div>{{ likeInfo.totalDislikes }}</div>
+            </el-button>
+          </div>
+          <div
+            class="h-[40px] | flex justify-end items-center | border-t border-b border-border-darkerBorder dark:border-darkBorder-darkerBorder"
+          >
+            <el-button icon="bell" type="danger" @click="report">
+              <div>{{ postInfo.report }}</div>
+            </el-button>
+          </div>
+          <div
+            class="h-[40px] | flex items-center | border-b border-border-darkerBorder dark:border-darkBorder-darkerBorder | p-[12px]"
+          >
+            댓글: [{{ commentList.length }}]
+          </div>
+        </div>
+        <div v-for="(comment, index) in commentList" :key="comment.id" class="">
+          <div class="w-[1000px] | px-[24px]">
             <div
-              class="h-[70px] flex justify-between items-center border border-[#E5EAF3] rounded shadow-sm p-[12px] mb-[12px] cursor-pointer"
+              class="w-[950px] h-[60px] | flex flex-col justify-between items-center | border border-border-darkerBorder dark:border-darkBorder-darkerBorder | mt-[12px] mx-auto cursor-pointer"
               :class="{
-                'bg-[#66b1ff33]':
+                'bg-background-lightFill dark:bg-darkBackground-lightFill':
                   (editCommentInputArea && comment.id === editedCommentNum) ||
                   (replyInputArea && comment.id === replyComment),
               }"
               @click="onReplyArea(comment.id)"
             >
-              <div>
-                <span v-if="comment.userName === ''" class="mr-[6px]"
-                  >익명</span
+              <div
+                class="w-full h-[25px] | flex justify-between items-center | border-b border-dashed border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-darkerFill dark:bg-darkBackground-darkerFill | px-[12px]"
+              >
+                <span
+                  v-if="comment.userName === ''"
+                  class="text-[15px] | mr-[6px]"
                 >
-                <span v-else class="mr-[6px]">{{ comment.userName }}</span
-                ><span>{{ comment.content }}</span>
+                  익명
+                </span>
+                <span v-else class="text-[15px] | mr-[6px]">
+                  {{ comment.userName }}
+                </span>
+                <div
+                  v-if="comment.registeredBy === $indexStore.auth.user.id"
+                  class="flex space-x-2 items-center"
+                >
+                  <span class="text-[14px]">{{ comment.formattedDate }}</span>
+                  <el-button
+                    icon="edit"
+                    type="primary"
+                    @click.stop="onEditArea(comment.id, comment.content)"
+                    class="z-10"
+                  />
+                  <el-button
+                    icon="delete"
+                    type="danger"
+                    @click.stop="deleteComment(comment.id)"
+                  />
+                </div>
               </div>
               <div
-                v-if="comment.registeredBy === $indexStore.auth.user.id"
-                class="flex space-x-2"
+                class="w-full h-[35px] | flex justify-start items-center | text-[15px] | p-[12px]"
               >
-                <el-button
-                  type="primary"
-                  @click.stop="onEditArea(comment.id, comment.content)"
-                  class="z-10"
-                >
-                  수정
-                </el-button>
-                <el-button
-                  type="danger"
-                  @click.stop="deleteComment(comment.id)"
-                >
-                  삭제
-                </el-button>
+                <span>{{ comment.content }}</span>
               </div>
             </div>
-
             <div
-              class="h-auto border border-[#E5EAF3] rounded shadow-sm p-[12px] mb-[12px]"
+              class="w-[950px] h-auto | flex flex-col | pt-[12px]"
               v-if="editCommentInputArea && comment.id === editedCommentNum"
             >
               <el-input
                 v-model="editedComment"
-                style="width: 100%"
                 :rows="2"
                 type="textarea"
                 placeholder="Please input your comment"
               />
-              <el-button @click="editComment">댓글 수정 완료 </el-button>
+              <el-button class="ml-auto mt-[12px]" @click="editComment">
+                댓글 수정
+              </el-button>
             </div>
             <div
               v-for="(reply, index) in comment.replies"
               :key="reply.id"
-              class="h-[70px] flex items-center border border-[#E5EAF3] rounded shadow-sm p-[12px] ml-[30px] mb-[12px] cursor-pointer"
+              class="w-[900px] h-[60px] | flex flex-col justify-between items-center | border border-border-darkerBorder dark:border-darkBorder-darkerBorder | mt-[12px] ml-auto"
               :class="{
-                'bg-[#66b1ff33]':
+                'bg-background-lightFill dark:bg-darkBackground-lightFill':
                   editedReplyInputArea && reply.id === editedReplyNum,
               }"
             >
-              <div class="w-full flex justify-between items-center">
-                <div>
-                  <span v-if="!reply.userName" class="mr-[6px]">익명</span>
-                  <span v-else class="mr-[12px]">{{ reply.userName }}</span
-                  ><span>{{ reply.content }}</span>
-                </div>
-                <div
-                  v-if="reply.registeredBy === $indexStore.auth.user.id"
-                  class="flex space-x-2 items-center justify-center"
-                >
-                  <el-button
-                    type="primary"
-                    style="my-auto"
-                    @click.stop="onEditReplyArea(reply.id, reply.content)"
+              <div
+                class="w-full h-[25px] | flex justify-between items-center | border-b border-dashed border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-darkerFill dark:bg-darkBackground-darkerFill | px-[12px]"
+              >
+                <div class="w-full | flex justify-between items-center |">
+                  <span v-if="!reply.userName" class="text-[15px] | mr-[12px]"
+                    >익명
+                  </span>
+                  <span v-else class="text-[15px] | mr-[12px]">
+                    {{ reply.userName }}
+                  </span>
+                  <div
+                    v-if="reply.registeredBy === $indexStore.auth.user.id"
+                    class="flex space-x-2 items-center"
                   >
-                    수정
-                  </el-button>
-                  <el-button
-                    type="danger"
-                    @click.stop="deleteComment(comment.id)"
-                  >
-                    삭제
-                  </el-button>
+                    <span class="text-[14px]">{{ reply.formattedDate }}</span>
+                    <el-button
+                      icon="Edit"
+                      type="primary"
+                      style="my-auto"
+                      @click.stop="onEditReplyArea(reply.id, reply.content)"
+                    />
+                    <el-button
+                      icon="delete"
+                      type="danger"
+                      @click.stop="deleteComment(comment.id)"
+                    />
+                  </div>
                 </div>
+              </div>
+              <div
+                class="w-full h-[35px] | flex justify-start items-center | text-[15px] | p-[12px]"
+              >
+                <span>{{ reply.content }}</span>
               </div>
               <ClientOnly>
                 <teleport to="#replyEditPosition">
                   <div
                     v-if="editedReplyInputArea && reply.id === editedReplyNum"
-                    class="h-auto border-[1px] border-[#E5EAF3] rounded shadow-sm p-[12px] ml-[30px] mb-[12x]"
+                    class="w-[900px] h-auto | flex flex-col | pt-[12px] ml-auto"
                   >
                     <el-input
                       v-model="editedReply"
-                      style="width: 100%"
                       :rows="2"
                       type="textarea"
                       placeholder="답글을 수정하세요"
                     />
-                    <el-button
-                      @click="editReply(comment.id, reply.id)"
-                      class="mt-[6px]"
-                      >답글 수정 완료
-                    </el-button>
+                    <div class="flex justify-end mt-[12px]">
+                      <el-button
+                        @click="editReply(comment.id, reply.id)"
+                        class="mt-[6px]"
+                      >
+                        답글 수정
+                      </el-button>
+                    </div>
                   </div>
                 </teleport>
               </ClientOnly>
@@ -154,7 +229,7 @@
             <div :id="'replyEditPosition'"></div>
             <div
               v-if="replyInputArea && comment.id === replyComment"
-              class="h-auto border-[1px] border-[#E5EAF3] rounded shadow-sm p-[12px] mb-[12px]"
+              class="w-[950px] h-auto | mt-[12px] ml-auto"
             >
               <el-input
                 v-model="reply"
@@ -163,24 +238,27 @@
                 type="textarea"
                 placeholder="답글을 입력하세요"
               />
-              <el-button @click="writeReply(comment.id)" class="mt-[6px]"
-                >답글 작성 완료
-              </el-button>
+              <div class="flex justify-end | mt-[12px]">
+                <el-button @click="writeReply(comment.id)">
+                  답글 작성
+                </el-button>
+              </div>
             </div>
-          </el-list-item>
-        </el-list>
+          </div>
+        </div>
         <div
           v-if="$indexStore.auth.isAuthenticated"
-          class="h-auto border-[1px] border-[#E5EAF3] rounded shadow-sm p-[12px] mb-[12px]"
+          class="w-[950px] h-auto mt-[12px] ml-[24px]"
         >
           <el-input
             v-model="comment"
-            style="width: 100%"
-            :rows="5"
+            :rows="2"
             type="textarea"
             placeholder="Please input your comment"
           />
-          <el-button @click="writeComment">댓글 작성 완료 </el-button>
+          <div class="flex justify-end | mt-[12px]">
+            <el-button @click="writeComment">댓글 작성</el-button>
+          </div>
         </div>
       </div>
     </el-container>
@@ -194,6 +272,7 @@
 import type { PostInfo, CommentInfo, LikeInfo } from "~/types/interface";
 import type { AxiosResponse } from "axios";
 import DOMPurify from "dompurify";
+import "element-plus/theme-chalk/dark/css-vars.css";
 
 const { $axios, $indexStore, $catchError, $errorHandler } = useNuxtApp();
 
@@ -263,6 +342,8 @@ const getPostInfo = async () => {
         query: { ...route.query, boardId: boardId.toString() },
       });
     }
+
+    console.log(postInfo.value);
   } catch (error: any) {
     $catchError(error);
   }
