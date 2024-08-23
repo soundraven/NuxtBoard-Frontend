@@ -62,6 +62,6 @@ const emitInput = (e) => {
 
 <style>
 .ck-editor__editable {
-  height: 780px;
+  height: 600px;
 }
 </style>

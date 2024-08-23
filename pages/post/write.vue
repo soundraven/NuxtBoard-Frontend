@@ -1,13 +1,18 @@
 <template>
   <div class="w-full | flex justify-center">
     <el-container
-      class="min-w-[1000px] max-w-[1000px] flex-wrap border border-[rgb(229,234,243)] rounded shadow-sm p-[12px]"
+      class="max-w-[1000px] h-screen | flex justify-center | border border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-basicWhite dark:bg-darkBackground-lighterFill | mr-[12px]"
     >
-      <el-form :model="form" class="w-full mx-auto">
-        <el-form-item>
+      <el-form :model="form" class="w-full mx-[12px]">
+        <div
+          class="w-full h-[100px] | flex items-center | text-[22px] font-bold | border-b border-border-darkerBorder dark:border-darkBorder-darkerBorder px-[12px]"
+        >
+          {{ $indexStore.commoncode.boards[form.boardId].boardName }} 게시판
+        </div>
+        <el-form-item class="mt-[12px]">
           <el-select
             v-model="form.boardId"
-            placeholder="please select your board"
+            placeholder="게시판을 선택해 주세요"
           >
             <el-option
               v-for="(option, index) in options"
@@ -27,7 +32,7 @@
             show-word-limit
             :rows="1"
             type="textarea"
-            placeholder="Please input your title"
+            placeholder="제목을 입력해 주세요"
           />
         </el-form-item>
         <el-form-item>
@@ -36,10 +41,10 @@
             @input="(e: any) => (form.content = e)"
           />
         </el-form-item>
+        <div class="flex justify-end">
+          <el-button @click="onSubmit" class="w-[80px] ml-auto">작성</el-button>
+        </div>
       </el-form>
-      <el-button @click="onSubmit" class="w-[120px] ml-auto"
-        >글 작성완료
-      </el-button>
     </el-container>
     <el-aside style="width: auto">
       <Sidebar />
