@@ -1,17 +1,16 @@
-import type { AxiosResponse } from "axios"
+import type { AxiosResponse } from "axios";
+import type { GeneralServerResponse } from "~/types/interface";
 
 declare module "#app" {
-    interface NuxtApp {
-        $catchError: (error: any) => void
-        $errorHandler: (result: AxiosResponse) => boolean
-    }
+  interface NuxtApp {
+    $catchError: (error: any) => void;
+  }
 }
 
 declare module "@vue/runtime-core" {
-    interface ComponentCustomProperties {
-        $catchError: (error: any) => void
-        $errorHandler: (result: AxiosResponse) => boolean
-    }
+  interface ComponentCustomProperties {
+    $catchError: (error: any) => void;
+  }
 }
 
-export {}
+export {};

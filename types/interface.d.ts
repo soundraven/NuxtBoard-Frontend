@@ -1,11 +1,9 @@
 import type { Dayjs } from "dayjs";
 
-interface ApiResponse {
-  code: string;
+interface GeneralServerResponse<T = undefined> {
+  success: boolean;
   message: string;
-  errorCode?: string;
-  user?: Userinfo;
-  token?: string;
+  data?: T;
 }
 
 interface UserInfo {
@@ -26,10 +24,11 @@ interface PostInfo {
   content: string;
   report: number;
   registeredByUserName: string;
+  active: number;
 }
 
 interface GroupedPost {
-  [key: number]: Postinfo[];
+  [key: number]: PostInfo[];
 }
 
 interface LikeInfo {
@@ -51,9 +50,9 @@ interface CommentInfo {
 
 export type {
   UserInfo,
-  ApiResponse,
   PostInfo,
   LikeInfo,
   CommentInfo,
   GroupedPost,
+  GeneralServerResponse,
 };

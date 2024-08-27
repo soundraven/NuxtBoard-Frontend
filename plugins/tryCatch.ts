@@ -1,26 +1,20 @@
-import type { AxiosResponse } from "axios"
-
 export default defineNuxtPlugin((nuxtApp) => {
-    const catchError = (error: any) => {
-        if (error.data && error.data.code === "E") {
-            return ElMessage.error(error.data.message)
-        } else {
-            return ElMessage({
-                message: "Unknown error occurred. Please check and try again.",
-                type: "error",
-            })
-        }
+  const catchError = (error: any) => {
+    if (error.response && error.response.data) {
+      // API 응답에 기반한 에러 메시지 처리
+      return ElMessage.error(
+        error.response.data.message || "An error occurred."
+      );
+    } else if (error.message) {
+      // 네트워크 오류 또는 기타 일반적인 오류 메시지 처리
+      return ElMessage.error(error.message);
+    } else {
+      // 알 수 없는 오류 처리
+      return ElMessage.error(
+        "Unknown error occurred. Please check and try again."
+      );
     }
+  };
 
-    const errorHandler = (result: AxiosResponse) => {
-        if (result.data.code === "E" || result.data.code === "F") {
-            ElMessage.error(result.data.message)
-            return false
-        }
-
-        return true
-    }
-
-    nuxtApp.provide("catchError", catchError)
-    nuxtApp.provide("errorHandler", errorHandler)
-})
+  nuxtApp.provide("catchError", catchError);
+});

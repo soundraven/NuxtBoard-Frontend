@@ -280,7 +280,7 @@ import DOMPurify from "dompurify";
 
 import "animate.css";
 
-const { $axios, $indexStore, $catchError, $errorHandler } = useNuxtApp();
+const { $indexStore, $apiGet, $apiPost } = useNuxtApp();
 
 const route = useRoute();
 const router = useRouter();
@@ -336,281 +336,165 @@ const onEditReplyArea = (replyId: number, content: string) => {
 };
 
 const getPostInfo = async () => {
-  try {
-    const postResponse: AxiosResponse = await $axios.get(
-      `/posts/postInfo/${postId}`
-    );
+  const response = await $apiGet<{ postInfo: PostInfo; likeInfo: LikeInfo }>(
+    `/posts/postInfo/${postId}`
+  );
 
-    if (!$errorHandler(postResponse)) return;
+  console.log(response);
 
-    if (postResponse.data.postInfo.active === 0) {
-      router.back();
-    }
+  if (response.data?.postInfo.active === 0) {
+    router.back();
+  }
 
-    postInfo.value = postResponse.data.postInfo;
-    likeInfo.value = postResponse.data.likeInfo;
+  if (response.data?.postInfo && response.data?.likeInfo) {
+    postInfo.value = response.data?.postInfo;
+    likeInfo.value = response.data?.likeInfo;
+  }
 
-    const boardId = postInfo.value.boardId;
-    if (boardId) {
-      router.replace({
-        path: route.path,
-        query: { ...route.query, boardId: boardId.toString() },
-      });
-    }
+  const boardId = postInfo.value.boardId;
 
-    console.log(postInfo.value);
-  } catch (error: any) {
-    $catchError(error);
+  if (boardId) {
+    router.replace({
+      path: route.path,
+      query: { ...route.query, boardId: boardId.toString() },
+    });
   }
 };
 
 const getCommentInfo = async () => {
-  try {
-    const commentResponse: AxiosResponse = await $axios.get(
-      `/comments/commentList/${postId}`
-    );
+  const response = await $apiGet<{ commentList: CommentInfo[] }>(
+    `/comments/commentList/${postId}`
+  );
 
-    if (!$errorHandler(commentResponse)) return;
-
-    commentList.value = commentResponse.data.commentList;
-  } catch (error: any) {
-    $catchError(error);
+  if (response.data?.commentList) {
+    commentList.value = response.data?.commentList;
   }
 };
 
 const writeComment = async () => {
-  try {
-    const result: AxiosResponse = await $axios.post(
-      "/comments/write",
-      {
-        comment: comment.value,
-        postId: postId,
+  const result = await $apiPost(
+    "/comments/write",
+    {
+      comment: comment.value,
+      postId: postId,
+    },
+    {
+      headers: {
+        requiresToken: true,
       },
-      {
-        headers: {
-          requiresToken: true,
-        },
-      }
-    );
+    }
+  );
 
-    if (!$errorHandler(result)) return;
-
-    ElMessage(`${result.data.message}`);
-    comment.value = "";
-    getCommentInfo();
-  } catch (error: any) {
-    $catchError(error);
-  }
+  ElMessage(`${result.message}`);
+  comment.value = "";
+  getCommentInfo();
 };
 
 const editComment = async () => {
-  try {
-    const result: AxiosResponse = await $axios.post(
-      "/comments/edit",
-      {
-        comment: editedComment.value,
-        commentId: editedCommentNum.value,
+  const result = await $apiPost(
+    "/comments/edit",
+    {
+      comment: editedComment.value,
+      commentId: editedCommentNum.value,
+    },
+    {
+      headers: {
+        requiresToken: true,
       },
-      {
-        headers: {
-          requiresToken: true,
-        },
-      }
-    );
+    }
+  );
 
-    if (!$errorHandler(result)) return;
-
-    ElMessage(`${result.data.message}`);
-    editedComment.value = "";
-    editedCommentNum.value = 0;
-    editCommentInputArea.value = false;
-    getCommentInfo();
-  } catch (error: any) {
-    $catchError(error);
-  }
+  ElMessage(`${result.message}`);
+  editedComment.value = "";
+  editedCommentNum.value = 0;
+  editCommentInputArea.value = false;
+  getCommentInfo();
 };
 
 const writeReply = async (commentId: number) => {
-  try {
-    const result: AxiosResponse = await $axios.post(
-      "/comments/write",
-      {
-        reply: reply.value,
-        user: $indexStore.auth.user,
-        commentId: commentId,
-        postId: postId,
+  const result = await $apiPost(
+    "/comments/write",
+    {
+      reply: reply.value,
+      user: $indexStore.auth.user,
+      commentId: commentId,
+      postId: postId,
+    },
+    {
+      headers: {
+        requiresToken: true,
       },
-      {
-        headers: {
-          requiresToken: true,
-        },
-      }
-    );
+    }
+  );
 
-    if (!$errorHandler(result)) return;
-
-    ElMessage(`${result.data.message}`);
-    reply.value = "";
-    replyInputArea.value = false;
-    getCommentInfo();
-  } catch (error: any) {
-    $catchError(error);
-  }
+  ElMessage(`${result.message}`);
+  reply.value = "";
+  replyInputArea.value = false;
+  getCommentInfo();
 };
 
 const editReply = async (commentId: number, replyId: number) => {
   console.log(commentId, replyId, editedReply.value);
-  try {
-    const result: AxiosResponse = await $axios.post(
-      "/comments/edit",
-      {
-        reply: editedReply.value,
-        replyId: replyId,
+
+  const result = await $apiPost(
+    "/comments/edit",
+    {
+      reply: editedReply.value,
+      replyId: replyId,
+    },
+    {
+      headers: {
+        requiresToken: true,
       },
-      {
-        headers: {
-          requiresToken: true,
-        },
-      }
-    );
+    }
+  );
 
-    if (!$errorHandler(result)) return;
-
-    ElMessage(`${result.data.message}`);
-    editedReply.value = "";
-    editedReplyInputArea.value = false;
-    getCommentInfo();
-  } catch (error: any) {
-    $catchError(error);
-  }
+  ElMessage(`${result.message}`);
+  editedReply.value = "";
+  editedReplyInputArea.value = false;
+  getCommentInfo();
 };
 
 const deletePost = async () => {
-  try {
-    const deletePostResult: AxiosResponse = await $axios.post(
-      `/posts/delete`,
-      {
-        user: $indexStore.auth.user,
-        postId: postId,
+  const result = await $apiPost(
+    `/posts/delete`,
+    {
+      user: $indexStore.auth.user,
+      postId: postId,
+    },
+    {
+      headers: {
+        requiresToken: true,
       },
-      {
-        headers: {
-          requiresToken: true,
-        },
-      }
-    );
+    }
+  );
 
-    if (!$errorHandler(deletePostResult)) return;
-
-    ElMessage("Post successfully deleted");
-    navigateTo("/");
-  } catch (error: any) {
-    $catchError(error);
-  }
+  ElMessage(`${result.message}`);
+  navigateTo("/");
 };
 
 const deleteComment = async (commentId: number) => {
-  try {
-    const deleteCommentResult: AxiosResponse = await $axios.post(
-      `/comments/delete`,
-      {
-        user: $indexStore.auth.user,
-        commentId: commentId,
+  const result = await $apiPost(
+    `/comments/delete`,
+    {
+      user: $indexStore.auth.user,
+      commentId: commentId,
+    },
+    {
+      headers: {
+        requiresToken: true,
       },
-      {
-        headers: {
-          requiresToken: true,
-        },
-      }
-    );
+    }
+  );
 
-    if (!$errorHandler(deleteCommentResult)) return;
-
-    ElMessage("Comment successfully deleted");
-    getPostInfo();
-  } catch (error: any) {
-    $catchError(error);
-  }
+  ElMessage(`${result.message}`);
+  getPostInfo();
 };
 
 const handleLike = async (like: boolean) => {
   if (like) {
-    try {
-      const like: AxiosResponse = await $axios.post(
-        "/posts/likes/like",
-        {
-          user: $indexStore.auth.user,
-          postId: postId,
-        },
-        {
-          headers: {
-            requiresToken: true,
-          },
-        }
-      );
-
-      if (like.data.code !== "S") {
-        ElMessage.error(like.data.message);
-        likeAnimationClass.value = "animate__animated animate__shakeX";
-        setTimeout(() => {
-          likeAnimationClass.value = "";
-        }, 1000);
-        return;
-      }
-
-      if (!$errorHandler(like)) return;
-
-      ElMessage("Successfully liked");
-      likeAnimationClass.value = "animate__animated animate__bounce";
-      setTimeout(() => {
-        likeAnimationClass.value = "";
-      }, 1000);
-
-      getPostInfo();
-    } catch (error: any) {
-      $catchError(error);
-    }
-  } else {
-    try {
-      const dislike: AxiosResponse = await $axios.post(
-        "/posts/likes/dislike",
-        {
-          user: $indexStore.auth.user,
-          postId: postId,
-        },
-        {
-          headers: {
-            requiresToken: true,
-          },
-        }
-      );
-
-      if (dislike.data.code !== "S") {
-        ElMessage.error(dislike.data.message);
-        dislikeAnimationClass.value = "animate__animated animate__shakeX";
-        setTimeout(() => {
-          dislikeAnimationClass.value = "";
-        }, 1000);
-        return;
-      }
-
-      if (!$errorHandler(dislike)) return;
-      ElMessage("Successfully liked");
-      dislikeAnimationClass.value = "animate__animated animate__bounce";
-      setTimeout(() => {
-        dislikeAnimationClass.value = "";
-      }, 1000);
-      getPostInfo();
-    } catch (error: any) {
-      $catchError(error);
-    }
-  }
-};
-
-const report = async () => {
-  try {
-    const reportResult: AxiosResponse = await $axios.post(
-      `/posts/report`,
+    const result = await $apiPost(
+      "/posts/likes/like",
       {
         user: $indexStore.auth.user,
         postId: postId,
@@ -622,12 +506,66 @@ const report = async () => {
       }
     );
 
-    if (!$errorHandler(reportResult)) return;
+    if (!result.success) {
+      likeAnimationClass.value = "animate__animated animate__shakeX";
+      setTimeout(() => {
+        likeAnimationClass.value = "";
+      }, 1000);
+      return;
+    }
 
-    ElMessage(reportResult.data.message);
+    ElMessage("Successfully liked");
+    likeAnimationClass.value = "animate__animated animate__bounce";
+    setTimeout(() => {
+      likeAnimationClass.value = "";
+    }, 1000);
     getPostInfo();
-  } catch (error: any) {
-    $catchError(error);
+  } else {
+    const result = await $apiPost(
+      "/posts/likes/dislike",
+      {
+        user: $indexStore.auth.user,
+        postId: postId,
+      },
+      {
+        headers: {
+          requiresToken: true,
+        },
+      }
+    );
+
+    if (!result.success) {
+      dislikeAnimationClass.value = "animate__animated animate__shakeX";
+      setTimeout(() => {
+        dislikeAnimationClass.value = "";
+      }, 1000);
+      return;
+    }
+
+    ElMessage("Successfully liked");
+    dislikeAnimationClass.value = "animate__animated animate__bounce";
+    setTimeout(() => {
+      dislikeAnimationClass.value = "";
+    }, 1000);
+    getPostInfo();
   }
+};
+
+const report = async () => {
+  const reportResult = await $apiPost(
+    `/posts/report`,
+    {
+      user: $indexStore.auth.user,
+      postId: postId,
+    },
+    {
+      headers: {
+        requiresToken: true,
+      },
+    }
+  );
+
+  ElMessage(`${reportResult.message}`);
+  getPostInfo();
 };
 </script>

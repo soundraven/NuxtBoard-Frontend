@@ -37,7 +37,7 @@
         </el-form-item>
         <el-form-item>
           <rich-editor
-            :value="form.content"
+            v-model="test"
             @input="(e: string) => (form.content = e)"
           />
         </el-form-item>
@@ -53,13 +53,15 @@
 </template>
 <script setup lang="ts">
 import type { PostInfo } from "@/types/interface";
-import type { AxiosResponse } from "axios";
+import api from "@/utils/generalServerResponse";
 
 const { $axios, $indexStore, $catchError, $errorHandler } = useNuxtApp();
 const route = useRoute();
 
 const form = reactive({ title: "", content: "", boardId: 0, id: 0 });
 const postId: string = route.params.id as string;
+
+const test = "test";
 
 definePageMeta({
   middleware: "auth",
@@ -73,13 +75,12 @@ const options = computed(() => $indexStore.commoncode.boards);
 
 const getPostInfo = async (postId: string) => {
   try {
-    console.log(postId);
-    const result: AxiosResponse = await $axios.get(`/posts/postinfo/${postId}`);
+    // const result = await $axios.get(`/posts/postinfo/${postId}`);
+    const result = await api<PostInfo>("get", `/posts/postinfo/${postId}`);
 
     if (!$errorHandler(result)) return;
 
     const postInfo: PostInfo = result.data.postInfo;
-    console.log(postInfo);
 
     form.title = postInfo.title;
     form.content = postInfo.content;
@@ -93,22 +94,29 @@ const getPostInfo = async (postId: string) => {
 
 const onSubmit = async () => {
   try {
-    const result = await $axios.post(
-      "/posts/edit",
-      {
-        post: form,
-        user: $indexStore.auth.user,
+    // const result = await $axios.post(
+    //   "/posts/edit",
+    //   {
+    //     post: form,
+    //     user: $indexStore.auth.user,
+    //   },
+    //   {
+    //     headers: {
+    //       requiresToken: true,
+    //     },
+    //   }
+    // );
+    const result = await api("post", "/posts/edit", {
+      post: form,
+      user: $indexStore.auth.user,
+      headers: {
+        requiresToken: true,
       },
-      {
-        headers: {
-          requiresToken: true,
-        },
-      }
-    );
+    });
 
     if (!$errorHandler(result)) return;
 
-    ElMessage(`${result.data.message}`);
+    ElMessage(`${result.message}`);
     navigateTo(`/post/${postId}`);
   } catch (error: any) {
     $catchError(error);

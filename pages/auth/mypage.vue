@@ -81,7 +81,14 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="My post">
-          <div class="flex justify-center">
+          <div
+            class="w-full h-[660px] overflow-auto border border-border-darkerBorder dark:border-darkBorder-darkerBorder rounded shadow-sm"
+            v-infinite-scroll="getPostList"
+            infinite-scroll-distance="500"
+            :infinite-scroll-disabled="disabled"
+            infinite-scroll-immediate="false"
+            infinite-scroll-delay="1000"
+          >
             <el-table
               :data="postList"
               style="width: 100%; height: 100%"
@@ -102,11 +109,20 @@
 
               <el-table-column prop="registered_date" label="작성일자" />
             </el-table>
+            <p v-if="loading">Loading...</p>
+            <p v-if="noMore">No more Post</p>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="My comment"
-          ><div>
-            <div class="flex justify-center">
+        <el-tab-pane label="My comment">
+          <div>
+            <div
+              class="w-full h-[660px] overflow-auto border border-border-darkerBorder dark:border-darkBorder-darkerBorder rounded shadow-sm"
+              v-infinite-scroll="getPostList"
+              infinite-scroll-distance="400"
+              :infinite-scroll-disabled="disabled"
+              infinite-scroll-immediate="false"
+              infinite-scroll-delay="1000"
+            >
               <el-table
                 :data="commentList"
                 style="width: 100%; height: 100%"
@@ -125,12 +141,23 @@
                 </el-table-column>
                 <el-table-column prop="registered_date" label="작성일자" />
               </el-table>
-            </div></div
-        ></el-tab-pane>
+              <p v-if="loading">Loading...</p>
+              <p v-if="noMore">No more Post</p>
+            </div>
+          </div>
+        </el-tab-pane>
         <el-tab-pane label="Resign">
-          <el-button type="warning" @click="dialogVisible = true">
-            회원탈퇴
-          </el-button>
+          <div class="flex justify-center items-center">
+            <el-button
+              type="warning"
+              @click="dialogVisible = true"
+              class="!w-[300px] !h-[200px] | mt-[200px]"
+            >
+              <el-icon :size="100">
+                <WarningFilled />
+              </el-icon>
+            </el-button>
+          </div>
           <el-dialog
             v-model="dialogVisible"
             title="Account Delete"
@@ -156,8 +183,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import type { UserInfo } from "@/types/interface";
-import type { AxiosResponse } from "axios";
+import type { CommentInfo, PostInfo, UserInfo } from "@/types/interface";
 
 definePageMeta({
   middleware: "auth",
@@ -165,7 +191,7 @@ definePageMeta({
 
 const router = useRouter();
 
-const { $axios, $indexStore, $catchError, $errorHandler } = useNuxtApp();
+const { $indexStore, $catchError, $apiGet, $apiPost } = useNuxtApp();
 
 const dialogVisible: Ref<boolean> = ref(false);
 const setUserNameVisible: Ref<boolean> = ref(false);
@@ -179,6 +205,10 @@ const totalCount: Ref<number> = ref(0);
 const postList: Ref = ref([]);
 const commentList: Ref = ref([]);
 
+const loading = ref(false);
+const noMore = computed(() => postList.value.length >= totalCount.value);
+const disabled = computed(() => loading.value || noMore.value);
+
 const setUserName = async () => {
   try {
     const userJson = sessionStorage.getItem("user");
@@ -189,7 +219,7 @@ const setUserName = async () => {
       return;
     }
 
-    const setUserNameResult: AxiosResponse = await $axios.post(
+    const setUserNameResult = await $apiPost(
       "/users/setUserName",
       {
         user: $indexStore.auth.user,
@@ -201,8 +231,6 @@ const setUserName = async () => {
         },
       }
     );
-
-    if (!$errorHandler(setUserNameResult)) return;
 
     ElMessage("User name successfully set");
     setUserNameVisible.value = false;
@@ -217,9 +245,7 @@ const handleClose = (done: () => void) => {
     .then(() => {
       done();
     })
-    .catch(() => {
-      // catch error
-    });
+    .catch(() => {});
 };
 
 const deactivate = async () => {
@@ -234,19 +260,24 @@ const deactivate = async () => {
 
     const user: UserInfo = JSON.parse(userJson);
 
-    const deactivateResult: AxiosResponse = await $axios.post(
-      "/users/deactivate",
-      {
-        user: user,
+    // const deactivateResult: AxiosResponse = await $axios.post(
+    //   "/users/deactivate",
+    //   {
+    //     user: user,
+    //   },
+    //   {
+    //     headers: {
+    //       requiresToken: true,
+    //     },
+    //   }
+    // );
+    const deactivateResult = await $api("post", "/users/deactivate", {
+      //TODO S/F 구분
+      user: user,
+      headers: {
+        requiresToken: true,
       },
-      {
-        headers: {
-          requiresToken: true,
-        },
-      }
-    );
-
-    if (!$errorHandler(deactivateResult)) return;
+    });
 
     ElMessage("Account successfully deactivated");
     $indexStore.auth.logout();
@@ -258,36 +289,67 @@ const deactivate = async () => {
 };
 
 const getPostList = async () => {
+  loading.value = true;
   try {
-    const [postResult, commentResult]: [AxiosResponse, AxiosResponse] =
-      await Promise.all([
-        $axios.get("/posts/list", {
+    // const [postResult, commentResult]: [AxiosResponse, AxiosResponse] =
+    //   await Promise.all([
+    //     $axios.get("/posts/list", {
+    //       params: {
+    //         currentPage: currentPage.value,
+    //         pageSize: pageSize.value,
+    //         registeredBy: $indexStore.auth.user.id,
+    //       },
+    //       headers: {
+    //         requiresToken: true,
+    //       },
+    //     }),
+    //     $axios.get(`/comments/myCommentList/${$indexStore.auth.user.id}`, {
+    //       params: {
+    //         registeredBy: $indexStore.auth.user.id,
+    //       },
+    //       headers: {
+    //         requiresToken: true,
+    //       },
+    //     }),
+    //   ]);
+    const [postResult, commentResult] = await Promise.all([
+      $apiGet<{ postList: PostInfo[]; totalCount: number }>(
+        "/posts/list",
+        {
+          currentPage: currentPage.value,
+          pageSize: pageSize.value,
+          registeredBy: $indexStore.auth.user.id,
+        },
+        {
+          headers: {
+            requiresToken: true,
+          },
+        }
+      ),
+      $api<CommentInfo[]>(
+        "get",
+        `/comments/myCommentList/${$indexStore.auth.user.id}`,
+        {
           params: {
-            currentPage: currentPage.value,
-            pageSize: pageSize.value,
             registeredBy: $indexStore.auth.user.id,
           },
           headers: {
             requiresToken: true,
           },
-        }),
-        $axios.get(`/comments/myCommentList/${$indexStore.auth.user.id}`, {
-          params: {
-            registeredBy: $indexStore.auth.user.id,
-          },
-          headers: {
-            requiresToken: true,
-          },
-        }),
-      ]);
+        }
+      ),
+    ]);
 
-    if (!$errorHandler(postResult) || !$errorHandler(commentResult)) return;
+    postList.value = postResult.data?.postList || [];
+    totalCount.value = postResult.data?.totalCount || 0;
+    commentList.value = commentResult.data;
 
-    postList.value = postResult.data.postList;
-    totalCount.value = postResult.data.totalCount;
-    commentList.value = commentResult.data.commentList;
+    nextTick(() => {
+      loading.value = false;
+    });
   } catch (error: any) {
     $catchError(error);
+    loading.value = false;
   }
 };
 

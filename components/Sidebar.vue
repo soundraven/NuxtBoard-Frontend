@@ -42,7 +42,8 @@
 import type { Dayjs } from "dayjs";
 import type { PostInfo } from "~/types/interface";
 
-const { $axios, $dayjs, $catchError, $errorHandler } = useNuxtApp();
+const { $dayjs, $apiGet } = useNuxtApp();
+
 const route = useRoute();
 
 const list: Ref<PostInfo[]> = ref([] as PostInfo[]);
@@ -53,18 +54,15 @@ onMounted(() => {
 });
 
 const getPostList = async () => {
-  try {
-    const boardId = route.query.boardId;
-    //api 쓸때 페이지 있는 쪽에 다 쓰지 말고 어디서 함수 하나 선언해 두고 getPostList
-    const postList = await $axios.get(`/posts/trendPosts?boardId=${boardId}`); // as GeneralServerResponse<PostList[]>
+  const boardId = route.query.boardId;
 
-    if (!$errorHandler(postList)) return;
+  const result = await $apiGet<{
+    trendPosts: PostInfo[];
+    currentBoardTrendPosts: PostInfo[];
+  }>(`/posts/trendPosts?boardId=${boardId}`);
 
-    list.value = postList.data.trendPosts;
-    trendList.value = postList.data.currentBoardTrendPosts;
-  } catch (error: any) {
-    $catchError(error);
-  }
+  list.value = result.data?.trendPosts || [];
+  trendList.value = result.data?.currentBoardTrendPosts || [];
 };
 
 const getElapsedTime = (registeredDate: Dayjs) => {

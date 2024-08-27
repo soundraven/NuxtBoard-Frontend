@@ -37,7 +37,7 @@
                 {{ post.title }}
               </span>
               <span class="ml-[12px]">
-                {{ getElapsedTime(post.formatted_date) }}
+                {{ getElapsedTime(post.formattedDate) }}
               </span>
             </div>
           </div>
@@ -53,9 +53,7 @@
 <script setup lang="ts">
 import { Dayjs } from "dayjs";
 import type { GroupedPost } from "~/types/interface";
-import type { AxiosResponse } from "axios";
-const { $axios, $indexStore, $dayjs, $catchError, $errorHandler } =
-  useNuxtApp();
+const { $indexStore, $dayjs, $apiGet } = useNuxtApp();
 
 const currentPage: Ref<number> = ref(1);
 const pageSize: Ref<number> = ref(60);
@@ -75,21 +73,17 @@ const getElapsedTime = (registeredDate: Dayjs) => {
 };
 
 const getPostList = async () => {
-  try {
-    const postList: AxiosResponse = await $axios.get("/posts/list", {
-      params: {
-        currentPage: currentPage.value,
-        pageSize: pageSize.value,
-      },
-    });
+  const result = await $apiGet<{
+    postList: GroupedPost;
+    totalCount: number;
+    groupedPost: GroupedPost;
+  }>("/posts/list", {
+    currentPage: currentPage.value,
+    pageSize: pageSize.value,
+  });
 
-    if (!$errorHandler(postList)) return;
-
-    list.value = postList.data.postList;
-    totalCount.value = postList.data.totalCount;
-    groupedPost.value = postList.data.groupedPost;
-  } catch (error: any) {
-    $catchError(error);
-  }
+  list.value = result.data?.postList || [];
+  totalCount.value = result.data?.totalCount || 0;
+  groupedPost.value = result.data?.groupedPost || [];
 };
 </script>
