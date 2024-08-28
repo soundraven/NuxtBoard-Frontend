@@ -7,11 +7,15 @@
 </template>
 
 <script setup lang="ts">
+import Cookies from "js-cookie";
+
 const { $indexStore } = useNuxtApp();
 
 onMounted(() => {
   if (process.server) return;
-  $indexStore.auth.autoLogin();
+  if (Cookies.get("refreshToken") || Cookies.get("accessToken")) {
+    $indexStore.auth.autoLogin();
+  }
   console.log("Component has been mounted");
 });
 </script>

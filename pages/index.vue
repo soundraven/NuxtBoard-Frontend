@@ -52,7 +52,7 @@
 
 <script setup lang="ts">
 import { Dayjs } from "dayjs";
-import type { GroupedPost } from "~/types/interface";
+import type { GroupedPost, PostInfo } from "~/types/interface";
 const { $indexStore, $dayjs, $apiGet } = useNuxtApp();
 
 const currentPage: Ref<number> = ref(1);
@@ -60,11 +60,11 @@ const pageSize: Ref<number> = ref(60);
 const totalCount: Ref<number> = ref(0);
 
 const groupedPost: Ref<GroupedPost> = ref([]);
-const list: Ref<GroupedPost> = ref([]);
+const list: Ref<PostInfo[]> = ref([]);
 
 onMounted(async () => {
-  getPostList();
   await $indexStore.commoncode.getBoards();
+  getPostList();
 });
 
 const getElapsedTime = (registeredDate: Dayjs) => {
@@ -74,7 +74,7 @@ const getElapsedTime = (registeredDate: Dayjs) => {
 
 const getPostList = async () => {
   const result = await $apiGet<{
-    postList: GroupedPost;
+    postList: PostInfo[];
     totalCount: number;
     groupedPost: GroupedPost;
   }>("/posts/list", {

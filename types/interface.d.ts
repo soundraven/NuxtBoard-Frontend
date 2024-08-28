@@ -13,6 +13,11 @@ interface UserInfo {
   userName?: string;
 }
 
+interface BoardInfo {
+  boardId: number;
+  boardName: string;
+}
+
 interface PostInfo {
   id: number;
   boardId: number;
@@ -50,6 +55,7 @@ interface CommentInfo {
 
 export type {
   UserInfo,
+  BoardInfo,
   PostInfo,
   LikeInfo,
   CommentInfo,

@@ -5,10 +5,10 @@
     >
       <el-form :model="form" class="w-full mx-[12px]">
         <div
-          v-if="form.boardId && $indexStore.commoncode.boards[form.boardId]"
+          v-if="form.boardId && $indexStore.commoncode.boards"
           class="w-full h-[100px] | flex items-center | text-[22px] font-bold | border-b border-border-darkerBorder dark:border-darkBorder-darkerBorder px-[12px]"
         >
-          {{ $indexStore.commoncode.boards[form.boardId].boardName }} 게시판
+          {{ boardName }} 게시판
         </div>
 
         <el-form-item class="mt-[12px]">
@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-const { $axios, $indexStore, $catchError, $errorHandler } = useNuxtApp();
+const { $indexStore, $apiPost } = useNuxtApp();
 
 const route = useRoute();
 
@@ -64,6 +64,13 @@ definePageMeta({
 });
 
 const form = reactive({ title: "", content: "", boardId: 0 });
+
+const boardName = computed(
+  () =>
+    $indexStore.commoncode.boards.find(
+      (board) => board.boardId === form.boardId
+    )?.boardName
+);
 
 const options = computed(() => $indexStore.commoncode.boards);
 
@@ -79,26 +86,20 @@ const onSubmit = async () => {
     return;
   }
 
-  try {
-    const result = await $axios.post(
-      "/posts/write",
-      {
-        post: form,
-        user: $indexStore.auth.user,
+  const result = await $apiPost<{ postId: number }>(
+    "/posts/write",
+    {
+      post: form,
+      user: $indexStore.auth.user,
+    },
+    {
+      headers: {
+        requiresToken: true,
       },
-      {
-        headers: {
-          requiresToken: true,
-        },
-      }
-    );
+    }
+  );
 
-    if (!$errorHandler(result)) return;
-
-    ElMessage(`${result.data.message}`);
-    navigateTo(`/post/${result.data.postId}`);
-  } catch (error: any) {
-    $catchError(error);
-  }
+  ElMessage(`${result.message}`);
+  navigateTo(`/post/${result.data?.postId}`);
 };
 </script>

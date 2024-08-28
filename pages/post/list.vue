@@ -75,11 +75,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import type { AxiosResponse } from "axios";
 import type { PostInfo } from "~/types/interface";
 import type { TabsPaneContext } from "element-plus";
-const { $axios, $indexStore, $catchError, $errorHandler } = useNuxtApp();
+const { $indexStore, $apiGet } = useNuxtApp();
 
 const route = useRoute();
 const router = useRouter();
@@ -94,44 +92,41 @@ const loading = ref(false);
 const noMore = computed(() => list.value.length >= totalCount.value);
 const disabled = computed(() => loading.value || noMore.value);
 
-const list = ref<PostInfo[]>([]);
+const list: Ref<PostInfo[]> = ref([]);
 
-onMounted(() => {
+onMounted(async () => {
   const boardId = Number(route.query.boardId);
   if (boardId) {
     currentBoardId.value = boardId;
   }
 
-  $indexStore.commoncode.getBoards().then(() => {
-    getPostList();
-  });
+  await $indexStore.commoncode.getBoards();
+  getPostList();
+  console.log(list.value);
 });
 
 const getPostList = async () => {
   loading.value = true;
-  try {
-    const postList: AxiosResponse = await $axios.get("/posts/list", {
-      params: {
-        currentPage: currentPage.value,
-        pageSize: pageSize.value,
-        registeredBy: registeredBy.value,
-        boardId: currentBoardId.value,
-      },
-    });
 
-    if (!$errorHandler(postList)) return;
+  const result = await $apiGet<{ postList: PostInfo[]; totalCount: number }>(
+    "/posts/list",
+    {
+      currentPage: currentPage.value,
+      pageSize: pageSize.value,
+      registeredBy: registeredBy.value,
+      boardId: currentBoardId.value,
+    }
+  );
 
-    list.value = [...list.value, ...postList.data.postList];
-    totalCount.value = postList.data.totalCount;
+  if (result.data) {
+    list.value = [...list.value, ...result.data.postList];
+    totalCount.value = result.data.totalCount;
     currentPage.value += 1;
-
-    nextTick(() => {
-      loading.value = false;
-    });
-  } catch (error: any) {
-    $catchError(error);
-    loading.value = false;
   }
+
+  nextTick(() => {
+    loading.value = false;
+  });
 };
 
 const changeTab = (pane: TabsPaneContext) => {

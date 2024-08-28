@@ -76,8 +76,4 @@ const currentColorIcon = computed(() => {
 const toggleColorMode = () => {
   colorMode.preference = colorMode.preference === "dark" ? "light" : "dark";
 };
-
-onMounted(() => {
-  console.log($indexStore.auth.user);
-});
 </script>

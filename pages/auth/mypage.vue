@@ -209,6 +209,10 @@ const loading = ref(false);
 const noMore = computed(() => postList.value.length >= totalCount.value);
 const disabled = computed(() => loading.value || noMore.value);
 
+onMounted(async () => {
+  getPostList();
+});
+
 const setUserName = async () => {
   try {
     const userJson = sessionStorage.getItem("user");
@@ -260,24 +264,17 @@ const deactivate = async () => {
 
     const user: UserInfo = JSON.parse(userJson);
 
-    // const deactivateResult: AxiosResponse = await $axios.post(
-    //   "/users/deactivate",
-    //   {
-    //     user: user,
-    //   },
-    //   {
-    //     headers: {
-    //       requiresToken: true,
-    //     },
-    //   }
-    // );
-    const deactivateResult = await $api("post", "/users/deactivate", {
-      //TODO S/F 구분
-      user: user,
-      headers: {
-        requiresToken: true,
+    const deactivateResult = await $apiPost(
+      "/users/deactivate",
+      {
+        user: user,
       },
-    });
+      {
+        headers: {
+          requiresToken: true,
+        },
+      }
+    );
 
     ElMessage("Account successfully deactivated");
     $indexStore.auth.logout();
@@ -290,79 +287,50 @@ const deactivate = async () => {
 
 const getPostList = async () => {
   loading.value = true;
-  try {
-    // const [postResult, commentResult]: [AxiosResponse, AxiosResponse] =
-    //   await Promise.all([
-    //     $axios.get("/posts/list", {
-    //       params: {
-    //         currentPage: currentPage.value,
-    //         pageSize: pageSize.value,
-    //         registeredBy: $indexStore.auth.user.id,
-    //       },
-    //       headers: {
-    //         requiresToken: true,
-    //       },
-    //     }),
-    //     $axios.get(`/comments/myCommentList/${$indexStore.auth.user.id}`, {
-    //       params: {
-    //         registeredBy: $indexStore.auth.user.id,
-    //       },
-    //       headers: {
-    //         requiresToken: true,
-    //       },
-    //     }),
-    //   ]);
-    const [postResult, commentResult] = await Promise.all([
-      $apiGet<{ postList: PostInfo[]; totalCount: number }>(
-        "/posts/list",
-        {
-          currentPage: currentPage.value,
-          pageSize: pageSize.value,
-          registeredBy: $indexStore.auth.user.id,
+
+  const registeredByJson = sessionStorage.getItem("user");
+  const parsedRegisteredBy = registeredByJson
+    ? JSON.parse(registeredByJson)
+    : null;
+
+  if (!parsedRegisteredBy) {
+    ElMessage.error("User info not found");
+    return;
+  }
+
+  const [postResult, commentResult] = await Promise.all([
+    $apiGet<{ postList: PostInfo[]; totalCount: number }>(
+      "/posts/list",
+      {
+        currentPage: currentPage.value,
+        pageSize: pageSize.value,
+        registeredBy: parsedRegisteredBy.id,
+      },
+      {
+        headers: {
+          requiresToken: true,
         },
-        {
-          headers: {
-            requiresToken: true,
-          },
-        }
-      ),
-      $api<CommentInfo[]>(
-        "get",
-        `/comments/myCommentList/${$indexStore.auth.user.id}`,
-        {
-          params: {
-            registeredBy: $indexStore.auth.user.id,
-          },
-          headers: {
-            requiresToken: true,
-          },
-        }
-      ),
-    ]);
+      }
+    ),
+    $apiGet<{ commentList: CommentInfo[] }>(
+      `/comments/myCommentList/${$indexStore.auth.user.id}`,
+      {
+        registeredBy: parsedRegisteredBy.id,
+      },
+      {
+        headers: {
+          requiresToken: true,
+        },
+      }
+    ),
+  ]);
 
-    postList.value = postResult.data?.postList || [];
-    totalCount.value = postResult.data?.totalCount || 0;
-    commentList.value = commentResult.data;
+  postList.value = postResult.data?.postList;
+  totalCount.value = postResult.data?.totalCount || 0;
+  commentList.value = commentResult.data?.commentList;
 
-    nextTick(() => {
-      loading.value = false;
-    });
-  } catch (error: any) {
-    $catchError(error);
+  nextTick(() => {
     loading.value = false;
-  }
+  });
 };
-
-watch(
-  () => $indexStore.auth.user.id,
-  (newId) => {
-    if (newId) {
-      getPostList();
-    }
-  }
-);
-
-onMounted(() => {
-  getPostList();
-});
 </script>
