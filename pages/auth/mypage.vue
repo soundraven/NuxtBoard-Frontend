@@ -84,14 +84,13 @@
           <div
             class="w-full h-[660px] overflow-auto border border-border-darkerBorder dark:border-darkBorder-darkerBorder rounded shadow-sm"
             v-infinite-scroll="getPostList"
-            infinite-scroll-distance="500"
+            infinite-scroll-distance="400"
             :infinite-scroll-disabled="disabled"
-            infinite-scroll-immediate="false"
-            infinite-scroll-delay="1000"
+            infinite-scroll-immediate="true"
+            infinite-scroll-delay="500"
           >
             <el-table
               :data="postList"
-              style="width: 100%; height: 100%"
               :highlight-current-row="true"
               class="mx-auto"
             >
@@ -106,7 +105,6 @@
                   >
                 </template>
               </el-table-column>
-
               <el-table-column prop="registered_date" label="작성일자" />
             </el-table>
             <p v-if="loading">Loading...</p>
@@ -125,7 +123,6 @@
             >
               <el-table
                 :data="commentList"
-                style="width: 100%; height: 100%"
                 :highlight-current-row="true"
                 class="mx-auto"
               >
@@ -135,8 +132,8 @@
                     <a
                       @click="navigateTo(`/post/${scope.row.post_id}`)"
                       class="text-blue-500 cursor-pointer"
-                      >{{ scope.row.content }}</a
-                    >
+                      >{{ scope.row.content }}
+                    </a>
                   </template>
                 </el-table-column>
                 <el-table-column prop="registered_date" label="작성일자" />
@@ -213,6 +210,55 @@ onMounted(async () => {
   getPostList();
 });
 
+const getPostList = async () => {
+  loading.value = true;
+
+  const registeredByJson = sessionStorage.getItem("user");
+  const parsedRegisteredBy = registeredByJson
+    ? JSON.parse(registeredByJson)
+    : null;
+
+  if (!parsedRegisteredBy) {
+    ElMessage.error("User info not found");
+    return;
+  }
+
+  const [postResult, commentResult] = await Promise.all([
+    $apiGet<{ postList: PostInfo[]; totalCount: number }>(
+      "/posts/list",
+      {
+        currentPage: currentPage.value,
+        pageSize: pageSize.value,
+        registeredBy: parsedRegisteredBy.id,
+      },
+      {
+        headers: {
+          requiresToken: true,
+        },
+      }
+    ),
+    $apiGet<{ commentList: CommentInfo[] }>(
+      `/comments/myCommentList/${parsedRegisteredBy.id}`,
+      {
+        registeredBy: parsedRegisteredBy.id,
+      },
+      {
+        headers: {
+          requiresToken: true,
+        },
+      }
+    ),
+  ]);
+
+  postList.value = postResult.data?.postList;
+  totalCount.value = postResult.data?.totalCount || 0;
+  commentList.value = commentResult.data?.commentList;
+
+  nextTick(() => {
+    loading.value = false;
+  });
+};
+
 const setUserName = async () => {
   try {
     const userJson = sessionStorage.getItem("user");
@@ -283,54 +329,5 @@ const deactivate = async () => {
   } catch (error: any) {
     $catchError(error);
   }
-};
-
-const getPostList = async () => {
-  loading.value = true;
-
-  const registeredByJson = sessionStorage.getItem("user");
-  const parsedRegisteredBy = registeredByJson
-    ? JSON.parse(registeredByJson)
-    : null;
-
-  if (!parsedRegisteredBy) {
-    ElMessage.error("User info not found");
-    return;
-  }
-
-  const [postResult, commentResult] = await Promise.all([
-    $apiGet<{ postList: PostInfo[]; totalCount: number }>(
-      "/posts/list",
-      {
-        currentPage: currentPage.value,
-        pageSize: pageSize.value,
-        registeredBy: parsedRegisteredBy.id,
-      },
-      {
-        headers: {
-          requiresToken: true,
-        },
-      }
-    ),
-    $apiGet<{ commentList: CommentInfo[] }>(
-      `/comments/myCommentList/${$indexStore.auth.user.id}`,
-      {
-        registeredBy: parsedRegisteredBy.id,
-      },
-      {
-        headers: {
-          requiresToken: true,
-        },
-      }
-    ),
-  ]);
-
-  postList.value = postResult.data?.postList;
-  totalCount.value = postResult.data?.totalCount || 0;
-  commentList.value = commentResult.data?.commentList;
-
-  nextTick(() => {
-    loading.value = false;
-  });
 };
 </script>

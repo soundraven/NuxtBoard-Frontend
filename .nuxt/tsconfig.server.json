@@ -89,9 +89,6 @@
       "public": [
         "../public"
       ],
-      "public/*": [
-        "../public/*"
-      ],
       "#ui": [
         "../node_modules/@nuxt/ui/dist/runtime"
       ],

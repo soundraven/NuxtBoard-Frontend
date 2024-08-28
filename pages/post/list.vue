@@ -1,5 +1,5 @@
 <template>
-  <el-container class="h-full flex flex-col justify-center">
+  <el-container class="h-screen flex flex-col justify-center">
     <div class="w-[1000px] mr-[12px]">
       <div
         class="w-full h-[150px] border border-border-darkerBorder dark:border-darkBorder-darkerBorder shadow-sm bg-background-basicWhite dark:bg-darkBackground-darkerFill p-[12px]"
@@ -19,7 +19,7 @@
         />
       </el-tabs>
       <div
-        class="w-full h-[660px] overflow-auto border-[1px] border-[#E5EAF3] rounded shadow-sm"
+        class="w-full h-[800px] overflow-auto border-[1px] border-[#E5EAF3] rounded shadow-sm"
         v-infinite-scroll="getPostList"
         infinite-scroll-distance="500"
         :infinite-scroll-disabled="disabled"
