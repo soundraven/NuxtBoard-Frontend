@@ -285,7 +285,10 @@ const router = useRouter();
 
 const postId: string = route.params.id as string;
 const postInfo: Ref<PostInfo> = ref({} as PostInfo);
-const likeInfo: Ref<LikeInfo> = ref({} as LikeInfo);
+const likeInfo: Ref<LikeInfo> = ref({
+  totalLikes: 0,
+  totalDislikes: 0,
+} as LikeInfo);
 const sanitizedContent = computed(() =>
   DOMPurify.sanitize(postInfo.value.content)
 );
@@ -510,7 +513,7 @@ const handleLike = async (like: boolean) => {
       return;
     }
 
-    ElMessage("Successfully liked");
+    ElMessage(`${result.message}`);
     likeAnimationClass.value = "animate__animated animate__bounce";
     setTimeout(() => {
       likeAnimationClass.value = "";
@@ -538,7 +541,7 @@ const handleLike = async (like: boolean) => {
       return;
     }
 
-    ElMessage("Successfully liked");
+    ElMessage(`${result.message}`);
     dislikeAnimationClass.value = "animate__animated animate__bounce";
     setTimeout(() => {
       dislikeAnimationClass.value = "";

@@ -37,10 +37,12 @@
             placeholder="제목을 입력해 주세요"
           />
         </el-form-item>
-        <el-form-item>
-          <rich-editor
-            :value="form.content"
-            @input="(e: any) => (form.content = e)"
+        <el-form-item class="bg-red-50 w-full">
+          <ckeditor
+            v-if="editor"
+            :editor="editor"
+            v-model="form.content"
+            class="!w-full !h-[600px]"
           />
         </el-form-item>
         <div class="flex justify-end">
@@ -56,8 +58,11 @@
 
 <script setup lang="ts">
 const { $indexStore, $apiPost } = useNuxtApp();
+import type ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 const route = useRoute();
+
+const editor = ref<typeof ClassicEditor | null>(null);
 
 definePageMeta({
   middleware: "auth",
@@ -75,6 +80,11 @@ const boardName = computed(
 const options = computed(() => $indexStore.commoncode.boards);
 
 onMounted(async () => {
+  const { default: ClassicEditor } = await import(
+    "@ckeditor/ckeditor5-build-classic"
+  );
+  editor.value = ClassicEditor;
+
   await $indexStore.commoncode.getBoards();
   const boardIdNum = Number(route.query.boardId);
   form.boardId = boardIdNum;
@@ -103,3 +113,12 @@ const onSubmit = async () => {
   navigateTo(`/post/${result.data?.postId}`);
 };
 </script>
+
+<style>
+.ck.ck-editor {
+  width: 100%;
+}
+.ck-editor__editable {
+  height: 800px;
+}
+</style>

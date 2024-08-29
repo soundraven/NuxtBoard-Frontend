@@ -37,9 +37,11 @@
           />
         </el-form-item>
         <el-form-item>
-          <rich-editor
+          <ckeditor
+            v-if="editor"
+            :editor="editor"
             v-model="form.content"
-            @input="(e: string) => (form.content = e)"
+            class="!w-full !h-[600px]"
           />
         </el-form-item>
         <div class="flex justify-end">
@@ -58,6 +60,8 @@ import type { PostInfo } from "@/types/interface";
 const { $indexStore, $apiGet, $apiPost } = useNuxtApp();
 const route = useRoute();
 
+const editor = ref<typeof ClassicEditor | null>(null);
+
 const form = reactive({ title: "", content: "", boardId: 0, id: 0 });
 const postId: string = route.params.id as string;
 
@@ -72,7 +76,12 @@ definePageMeta({
   middleware: "auth",
 });
 
-onMounted(() => {
+onMounted(async () => {
+  const { default: ClassicEditor } = await import(
+    "@ckeditor/ckeditor5-build-classic"
+  );
+  editor.value = ClassicEditor;
+
   getPostInfo(postId);
   const boardIdNum = Number(route.query.boardId);
   form.boardId = boardIdNum;
@@ -113,3 +122,12 @@ const onSubmit = async () => {
   navigateTo(`/post/${postId}`);
 };
 </script>
+
+<style>
+.ck.ck-editor {
+  width: 100%;
+}
+.ck-editor__editable {
+  height: 800px;
+}
+</style>
