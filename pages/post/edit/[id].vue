@@ -44,6 +44,26 @@
             class="!w-full !h-[600px]"
           />
         </el-form-item>
+        <el-form-item>
+          <el-upload
+            class="w-full"
+            drag
+            :action="uploadActionUrl"
+            multiple
+            :on-success="handleFileUploadSuccess"
+            :file-list="fileList"
+          >
+            <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+            <div class="el-upload__text">
+              파일을 이곳에 드래그하거나 클릭하여 업로드
+            </div>
+            <template #tip>
+              <div class="el-upload__tip">
+                jpg/png files with a size less than 500kb
+              </div>
+            </template>
+          </el-upload>
+        </el-form-item>
         <div class="flex justify-end">
           <el-button @click="onSubmit" class="w-[80px] ml-auto">작성</el-button>
         </div>
@@ -55,15 +75,32 @@
   </div>
 </template>
 <script setup lang="ts">
-import type { PostInfo } from "@/types/interface";
+import type { PostInfo, UploadResponse } from "@/types/interface";
+import type ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import type { UploadFile } from "element-plus";
+import type { FormType } from "~/types/interface";
 
 const { $indexStore, $apiGet, $apiPost } = useNuxtApp();
+
+const config = useRuntimeConfig();
+const baseURL = config.public.apiBaseUrl;
+const uploadActionUrl = computed(() => `${baseURL}/posts/upload`);
+
 const route = useRoute();
 
 const editor = ref<typeof ClassicEditor | null>(null);
 
-const form = reactive({ title: "", content: "", boardId: 0, id: 0 });
+const form = reactive<FormType>({
+  title: "",
+  content: "",
+  boardId: 0,
+  id: 0,
+  files: [],
+});
+
 const postId: string = route.params.id as string;
+
+const fileList: Ref<UploadFile[]> = ref([]);
 
 const boardName = computed(
   () =>
@@ -101,10 +138,33 @@ const getPostInfo = async (postId: string) => {
     form.content = postInfo.content;
     form.boardId = postInfo.boardId;
     form.id = Number(postId);
+    form.files = postInfo.files;
   }
+
+  fileList.value = postInfo?.files
+    ? postInfo.files.map((fileUrl, index) => ({
+        name: fileUrl.split("/").pop() || `File-${index + 1}`,
+        url: fileUrl,
+        status: "success" as const,
+        uid: Date.now() + index,
+      }))
+    : [];
 };
 
 const onSubmit = async () => {
+  if (!form.boardId) {
+    ElMessage.error("게시판을 선택해 주세요.");
+    return;
+  }
+  if (!form.title.trim()) {
+    ElMessage.error("제목을 입력해 주세요.");
+    return;
+  }
+  if (!form.content.trim()) {
+    ElMessage.error("내용을 입력해 주세요.");
+    return;
+  }
+
   const result = await $apiPost(
     "/posts/edit",
     {
@@ -121,6 +181,24 @@ const onSubmit = async () => {
   ElMessage(`${result.message}`);
   navigateTo(`/post/${postId}`);
 };
+
+const handleFileUploadSuccess = (response: UploadResponse) => {
+  ElMessage.success("File uploaded successfully!");
+
+  // 서버 응답에서 파일 URL과 이름을 추출
+  const uploadedFiles = response.files.map((file) => ({
+    name: file.originalName,
+    url: file.url,
+    status: "success" as const, // 업로드 성공 상태
+    uid: Date.now() + Math.floor(Math.random() * 1000),
+  }));
+  console.log(uploadedFiles);
+  // 파일 URL을 form.files에 저장
+  form.files = [...form.files, ...uploadedFiles.map((file) => file.url)];
+
+  // fileList는 여전히 유지
+  fileList.value = [...fileList.value, ...uploadedFiles];
+};
 </script>
 
 <style>
@@ -128,6 +206,6 @@ const onSubmit = async () => {
   width: 100%;
 }
 .ck-editor__editable {
-  height: 800px;
+  height: 650px;
 }
 </style>

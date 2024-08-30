@@ -1,7 +1,7 @@
 <template>
   <div class="w-full | flex justify-center">
     <el-container
-      class="max-w-[1000px] h-screen | flex justify-center | border border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-basicWhite dark:bg-darkBackground-lighterFill | mr-[12px]"
+      class="max-w-[1000px] h-full | flex justify-center | border border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-basicWhite dark:bg-darkBackground-lighterFill | mr-[12px]"
     >
       <el-form :model="form" class="w-full mx-[12px]">
         <div
@@ -38,14 +38,29 @@
           />
         </el-form-item>
         <el-form-item class="bg-red-50 w-full">
-          <ckeditor
-            v-if="editor"
-            :editor="editor"
-            v-model="form.content"
-            class="!w-full !h-[600px]"
-          />
+          <ckeditor v-if="editor" :editor="editor" v-model="form.content" />
         </el-form-item>
-        <div class="flex justify-end">
+        <el-form-item>
+          <el-upload
+            class="w-full"
+            drag
+            :action="uploadActionUrl"
+            multiple
+            :on-success="handleFileUploadSuccess"
+            :file-list="fileList"
+          >
+            <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+            <div class="el-upload__text">
+              파일을 이곳에 드래그하거나 클릭하여 업로드
+            </div>
+            <template #tip>
+              <div class="el-upload__tip">
+                jpg/png files with a size less than 500kb
+              </div>
+            </template>
+          </el-upload>
+        </el-form-item>
+        <div class="flex justify-end | mb-[12px]">
           <el-button @click="onSubmit" class="w-[80px] ml-auto">작성</el-button>
         </div>
       </el-form>
@@ -59,6 +74,12 @@
 <script setup lang="ts">
 const { $indexStore, $apiPost } = useNuxtApp();
 import type ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import type { UploadFile } from "element-plus";
+import type { FormType, UploadResponse } from "~/types/interface";
+
+const config = useRuntimeConfig();
+const baseURL = config.public.apiBaseUrl;
+const uploadActionUrl = computed(() => `${baseURL}/posts/upload`);
 
 const route = useRoute();
 
@@ -68,7 +89,14 @@ definePageMeta({
   middleware: "auth",
 });
 
-const form = reactive({ title: "", content: "", boardId: 0 });
+const form = reactive<FormType>({
+  title: "",
+  content: "",
+  boardId: 0,
+  files: [],
+});
+
+const fileList: Ref<UploadFile[]> = ref([]);
 
 const boardName = computed(
   () =>
@@ -92,7 +120,15 @@ onMounted(async () => {
 
 const onSubmit = async () => {
   if (!form.boardId) {
-    ElMessage.error("Please select a board.");
+    ElMessage.error("게시판을 선택해 주세요.");
+    return;
+  }
+  if (!form.title.trim()) {
+    ElMessage.error("제목을 입력해 주세요.");
+    return;
+  }
+  if (!form.content.trim()) {
+    ElMessage.error("내용을 입력해 주세요.");
     return;
   }
 
@@ -112,6 +148,24 @@ const onSubmit = async () => {
   ElMessage(`${result.message}`);
   navigateTo(`/post/${result.data?.postId}`);
 };
+
+const handleFileUploadSuccess = (response: UploadResponse) => {
+  ElMessage.success("File uploaded successfully!");
+
+  // 서버 응답에서 파일 URL과 이름을 추출
+  const uploadedFiles = response.files.map((file) => ({
+    name: file.originalName,
+    url: file.url,
+    status: "success" as const, // 업로드 성공 상태
+    uid: Date.now() + Math.floor(Math.random() * 1000),
+  }));
+  console.log(uploadedFiles);
+  // 파일 URL을 form.files에 저장
+  form.files = [...form.files, ...uploadedFiles.map((file) => file.url)];
+
+  // fileList는 여전히 유지
+  fileList.value = [...fileList.value, ...uploadedFiles];
+};
 </script>
 
 <style>
@@ -119,6 +173,6 @@ const onSubmit = async () => {
   width: 100%;
 }
 .ck-editor__editable {
-  height: 800px;
+  height: 650px;
 }
 </style>

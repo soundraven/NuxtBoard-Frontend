@@ -94,6 +94,38 @@
               <div>{{ postInfo.report }}</div>
             </el-button>
           </div>
+          <div v-if="postInfo.files && postInfo.files.length > 0">
+            <span class="text-lg font-semibold mb-2">첨부된 파일:</span>
+            <ul>
+              <li
+                v-for="(file, index) in postInfo.files"
+                :key="index"
+                class="flex items-center mb-2 p-2 bg-gray-100 rounded-lg shadow-sm"
+              >
+                <svg
+                  class="w-6 h-6 text-blue-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 16l4-4m0 0l4 4m-4-4v12M5 4a2 2 0 112 2h10a2 2 0 112 2h-5a2 2 0 11-2 2h5"
+                  ></path>
+                </svg>
+                <a
+                  :href="file"
+                  target="_blank"
+                  class="ml-4 text-blue-600 underline hover:text-blue-800"
+                >
+                  {{ file.split("/").pop() }}
+                </a>
+              </li>
+            </ul>
+          </div>
           <div
             class="h-[40px] | flex items-center | border-b border-border-darkerBorder dark:border-darkBorder-darkerBorder | p-[12px]"
           >
@@ -349,6 +381,8 @@ const getPostInfo = async () => {
     postInfo.value = response.data?.postInfo;
     likeInfo.value = response.data?.likeInfo;
   }
+
+  console.log(postInfo.value);
 
   const boardId = postInfo.value.boardId;
 

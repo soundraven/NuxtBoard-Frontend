@@ -1,4 +1,5 @@
 import type { Dayjs } from "dayjs";
+import type { UploadFile } from "element-plus";
 
 interface GeneralServerResponse<T = undefined> {
   success: boolean;
@@ -30,6 +31,23 @@ interface PostInfo {
   report: number;
   registeredByUserName: string;
   active: number;
+  files: string[];
+}
+
+interface FormType {
+  title: string;
+  content: string;
+  boardId: number;
+  files: string[];
+  id?: number;
+}
+interface UploadResponse {
+  message: string;
+  files: {
+    originalName: string;
+    url: string;
+    uid: number;
+  }[];
 }
 
 interface GroupedPost {
@@ -61,4 +79,6 @@ export type {
   CommentInfo,
   GroupedPost,
   GeneralServerResponse,
+  FormType,
+  UploadResponse,
 };
