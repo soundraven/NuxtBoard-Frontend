@@ -192,6 +192,7 @@
                 :rows="2"
                 type="textarea"
                 placeholder="댓글을 입력해주세요"
+                class="resize-none"
               />
               <el-button class="ml-auto mt-[12px]" @click="editComment">
                 댓글 수정
@@ -253,6 +254,7 @@
                         v-model="editedReply"
                         :rows="2"
                         type="textarea"
+                        class="resize-none"
                         placeholder="답글을 수정하세요"
                       />
                       <div class="flex justify-end mt-[12px]">
@@ -274,6 +276,7 @@
                   style="width: 100%"
                   :rows="2"
                   type="textarea"
+                  class="resize-none"
                   placeholder="답글을 입력하세요"
                 />
                 <div class="flex justify-end | mt-[12px]">
@@ -293,6 +296,7 @@
             v-model="comment"
             :rows="2"
             type="textarea"
+            class="resize-none"
             placeholder="댓글을 입력해주세요"
           />
           <div class="flex justify-end | my-[12px]">

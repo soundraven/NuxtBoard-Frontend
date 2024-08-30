@@ -33,6 +33,7 @@
             :rows="1"
             type="textarea"
             placeholder="Please input your username"
+            class="resize-none"
           />
           <template #footer>
             <div class="dialog-footer">

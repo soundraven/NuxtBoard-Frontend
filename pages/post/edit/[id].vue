@@ -33,6 +33,7 @@
             show-word-limit
             :rows="1"
             type="textarea"
+            class="resize-none"
             placeholder="제목을 입력해 주세요"
           />
         </el-form-item>
