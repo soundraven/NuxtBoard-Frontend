@@ -75,7 +75,12 @@
   </div>
 </template>
 <script setup lang="ts">
-import type { PostInfo, UploadResponse } from "@/types/interface";
+import type {
+  FileUrls,
+  GeneralServerResponse,
+  PostInfo,
+  UploadResponse,
+} from "@/types/interface";
 import type ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import type { UploadFile } from "element-plus";
 import type { FormType } from "~/types/interface";
@@ -182,22 +187,22 @@ const onSubmit = async () => {
   navigateTo(`/post/${postId}`);
 };
 
-const handleFileUploadSuccess = (response: UploadResponse) => {
+const handleFileUploadSuccess = (
+  response: GeneralServerResponse<{ files: FileUrls[] }>
+) => {
   ElMessage.success("File uploaded successfully!");
 
-  // 서버 응답에서 파일 URL과 이름을 추출
-  const uploadedFiles = response.files.map((file) => ({
+  const uploadedFiles = response.data?.files.map((file) => ({
     name: file.originalName,
     url: file.url,
-    status: "success" as const, // 업로드 성공 상태
+    status: "success" as const,
     uid: Date.now() + Math.floor(Math.random() * 1000),
   }));
-  console.log(uploadedFiles);
-  // 파일 URL을 form.files에 저장
-  form.files = [...form.files, ...uploadedFiles.map((file) => file.url)];
 
-  // fileList는 여전히 유지
-  fileList.value = [...fileList.value, ...uploadedFiles];
+  if (uploadedFiles) {
+    form.files = [...form.files, ...uploadedFiles.map((file) => file.url)];
+    fileList.value = [...fileList.value, ...uploadedFiles];
+  }
 };
 </script>
 

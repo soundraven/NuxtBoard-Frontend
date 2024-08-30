@@ -34,6 +34,11 @@ interface PostInfo {
   files: string[];
 }
 
+interface FileUrls {
+  originalName: string;
+  url: string;
+}
+
 interface FormType {
   title: string;
   content: string;
@@ -81,4 +86,5 @@ export type {
   GeneralServerResponse,
   FormType,
   UploadResponse,
+  FileUrls,
 };

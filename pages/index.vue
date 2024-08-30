@@ -1,7 +1,7 @@
 <template>
   <div class="w-full h-full flex justify-center">
     <el-container
-      class="max-w-[1000px] h-full flex justify-center border-l border-r border-border-darkerBorder dark:border-darkBorder-darkerBorder dark:bg-darkBackground-lighterFill pb-[12px] pl-[12px] pr-[12px] mx-[12px]"
+      class="max-w-[1000px] h-full flex justify-center border-x border-border-darkerBorder dark:border-darkBorder-darkerBorder dark:bg-darkBackground-lighterFill pb-[12px] pl-[12px] pr-[12px] mx-[12px]"
     >
       <el-header
         height="250px"
@@ -11,7 +11,7 @@
       </el-header>
       <el-main
         style="padding: 0; gap: 12px"
-        class="w-full h-full mt-[12px] xl:columns-[300px] lg:columns-[300px] md:columns-[340px] sm:columns-[240px]"
+        class="w-full h-screen mt-[12px] xl:columns-[300px] lg:columns-[300px] md:columns-[340px] sm:columns-[240px]"
       >
         <div
           v-for="(board, index) in $indexStore.commoncode.boards"

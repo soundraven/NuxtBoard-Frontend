@@ -1,5 +1,5 @@
 <template>
-  <el-container v-if="postInfo" class="w-screen flex flex-col justify-center">
+  <el-container v-if="postInfo" class="w-full flex flex-col justify-center">
     <el-container
       class="max-w-[1000px] h-full | flex justify-center | border-l border-r border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-basicWhite dark:bg-darkBackground-lighterFill | mx-[12px]"
     >
@@ -94,8 +94,11 @@
               <div>{{ postInfo.report }}</div>
             </el-button>
           </div>
-          <div v-if="postInfo.files && postInfo.files.length > 0">
-            <span class="text-lg font-semibold mb-2">첨부된 파일:</span>
+          <div
+            v-if="postInfo.files && postInfo.files.length > 0"
+            class="p-[12px]"
+          >
+            <div class="mb-[12px]">첨부된 파일:</div>
             <ul>
               <li
                 v-for="(file, index) in postInfo.files"
@@ -117,7 +120,7 @@
                   ></path>
                 </svg>
                 <a
-                  :href="file"
+                  :href="`${baseURL}/posts/download/${file.split('/').pop()}`"
                   target="_blank"
                   class="ml-4 text-blue-600 underline hover:text-blue-800"
                 >
@@ -315,6 +318,9 @@ const { $indexStore, $apiGet, $apiPost } = useNuxtApp();
 const route = useRoute();
 const router = useRouter();
 
+const config = useRuntimeConfig();
+const baseURL = config.public.apiBaseUrl;
+
 const postId: string = route.params.id as string;
 const postInfo: Ref<PostInfo> = ref({} as PostInfo);
 const likeInfo: Ref<LikeInfo> = ref({
@@ -381,8 +387,6 @@ const getPostInfo = async () => {
     postInfo.value = response.data?.postInfo;
     likeInfo.value = response.data?.likeInfo;
   }
-
-  console.log(postInfo.value);
 
   const boardId = postInfo.value.boardId;
 

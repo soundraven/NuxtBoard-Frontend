@@ -1,9 +1,9 @@
 <template>
   <div
-    class="w-full min-h-screen bg-background-pageBackground dark:bg-darkBackground-pageBackground text-text-primaryText dark:text-darkText-primaryText"
+    class="w-full h-full bg-background-pageBackground dark:bg-darkBackground-pageBackground text-text-primaryText dark:text-darkText-primaryText"
   >
     <div
-      class="h-[50px] flex justify-center bg-brandColor dark:bg-darkBackground-lighterFill border border-brandColor dark:border-darkBorder-darkerBorder py-[6px] sticky top-0 z-10"
+      class="h-[50px] | flex justify-center | bg-brandColor dark:bg-darkBackground-lighterFill border border-brandColor dark:border-darkBorder-darkerBorder py-[6px] sticky top-0 z-10"
     >
       <div class="w-full max-w-[1320px] flex justify-between items-center">
         <div class="flex items-center">
