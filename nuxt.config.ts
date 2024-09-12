@@ -14,7 +14,6 @@ export default defineNuxtConfig({
   css: ["@/assets/css/tailwind.css", "element-plus/dist/index.css"],
 
   vite: {
-    plugins: ["~/plugins/ckeditor.ts"],
     css: {
       postcss: {
         plugins: [tailwindcss(), autoprefixer()],
@@ -28,6 +27,7 @@ export default defineNuxtConfig({
     "~/plugins/indexStore.ts",
     "~/plugins/dayjs.ts",
     "~/plugins/api.ts",
+    "~/plugins/ckeditor.ts",
   ],
   modules: ["@nuxt/ui", "@element-plus/nuxt", "@pinia/nuxt"],
 

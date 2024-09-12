@@ -19,32 +19,6 @@
           <span class="font-bold">{{ $indexStore.auth.user.userName }}</span>
           <p class="text-[16px]">기본 정보 입니다.</p></span
         >
-        <el-dialog
-          v-model="setUserNameVisible"
-          title="Set your User name"
-          width="500"
-          :before-close="handleClose"
-          >//최하단에 있어도 상관없다. 왜냐면 v-model로 작동하기
-          때문이다.depth만 늘어남
-          <el-input
-            v-model="userName"
-            style="width: 300px; margin-left: 99px"
-            maxlength="12"
-            show-word-limit
-            :rows="1"
-            type="textarea"
-            placeholder="Please input your username"
-            class="resize-none"
-          />
-          <template #footer>
-            <div class="dialog-footer">
-              <el-button @click="setUserNameVisible = false">Cancel</el-button>
-              <el-button type="primary" @click="setUserName">
-                Confirm
-              </el-button>
-            </div>
-          </template>
-        </el-dialog>
       </el-header>
       <el-tabs class="h-full | pt-[12px] px-[12px]" tab-position="left">
         <el-tab-pane label="Home" class="px-[12px]">
@@ -180,6 +154,29 @@
       <Sidebar />
     </el-aside>
   </div>
+  <el-dialog
+    v-model="setUserNameVisible"
+    title="Set your User name"
+    width="500"
+    :before-close="handleClose"
+  >
+    <el-input
+      v-model="userName"
+      style="width: 300px; margin-left: 99px"
+      maxlength="12"
+      show-word-limit
+      :rows="1"
+      type="textarea"
+      placeholder="Please input your username"
+      class="resize-none"
+    />
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="setUserNameVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="setUserName"> Confirm </el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 <script setup lang="ts">
 import type { CommentInfo, PostInfo, UserInfo } from "@/types/interface";
