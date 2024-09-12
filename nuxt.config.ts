@@ -27,7 +27,7 @@ export default defineNuxtConfig({
     "~/plugins/indexStore.ts",
     "~/plugins/dayjs.ts",
     "~/plugins/api.ts",
-    "~/plugins/ckeditor.ts",
+    { src: "~/plugins/ckeditor.client.ts", mode: "client" },
   ],
   modules: ["@nuxt/ui", "@element-plus/nuxt", "@pinia/nuxt"],
 
