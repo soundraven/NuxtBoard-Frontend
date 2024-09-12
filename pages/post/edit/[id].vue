@@ -80,7 +80,6 @@ import type {
   FileUrls,
   GeneralServerResponse,
   PostInfo,
-  UploadResponse,
 } from "@/types/interface";
 import type ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import type { UploadFile } from "element-plus";

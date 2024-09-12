@@ -24,7 +24,8 @@
           title="Set your User name"
           width="500"
           :before-close="handleClose"
-        >
+          >//최하단에 있어도 상관없다. 왜냐면 v-model로 작동하기
+          때문이다.depth만 늘어남
           <el-input
             v-model="userName"
             style="width: 300px; margin-left: 99px"
@@ -102,8 +103,8 @@
                   <a
                     @click="navigateTo(`/post/${scope.row.id}`)"
                     class="text-blue-500 cursor-pointer"
-                    >{{ scope.row.title }}</a
-                  >
+                    >{{ scope.row.title }}
+                  </a>
                 </template>
               </el-table-column>
               <el-table-column prop="registered_date" label="작성일자" />

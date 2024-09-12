@@ -6,14 +6,10 @@ async function refreshAccessToken(
 ): Promise<string | undefined> {
   const { $apiPost } = useNuxtApp();
 
-  console.log("start");
-
   const response: GeneralServerResponse<{ newAccessToken: string }> =
     await $apiPost("/users/refreshAccessToken", {
       refreshToken: refreshToken,
     });
-
-  console.log(response.data);
 
   const newAccessToken = response.data?.newAccessToken;
   if (newAccessToken) {

@@ -56,7 +56,7 @@ const submitForm = async () => {
     await loginForm.value.validate();
     onSubmit();
   } catch (error) {
-    alert("Validation failed");
+    ElMessage.error("Validation failed");
   }
 };
 
@@ -75,7 +75,7 @@ const onSubmit = async () => {
 
   if (user && refreshToken && accessToken) {
     $indexStore.auth.login(user, refreshToken, accessToken);
-    router.push("/");
+    router.replace("/");
   }
 };
 

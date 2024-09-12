@@ -43,8 +43,5 @@ export default defineNuxtPlugin((nuxtApp) => {
       return Promise.reject(error);
     }
   );
-  //axios onResponse, onRequest, onError등으로 에러를 캐치할 수 있음
-  //nuxt/Axios 라는게 있음
-  //응답시작할때 화면로딩키고 다되면 끄고 그걸 onResponse로 관리
   nuxtApp.provide("axios", api);
 });

@@ -80,7 +80,6 @@ import type {
   FileUrls,
   FormType,
   GeneralServerResponse,
-  UploadResponse,
 } from "~/types/interface";
 
 const config = useRuntimeConfig();

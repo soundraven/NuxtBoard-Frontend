@@ -54,7 +54,7 @@ const submitForm = async () => {
     await registerForm.value.validate();
     onSubmit();
   } catch (error) {
-    alert("Validation failed");
+    ElMessage.error("Validation failed");
   }
 };
 

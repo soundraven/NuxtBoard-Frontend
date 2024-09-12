@@ -258,7 +258,9 @@
                         placeholder="답글을 수정하세요"
                       />
                       <div class="flex justify-end mt-[12px]">
-                        <el-button @click="editReply(comment.id, reply.id)">
+                        <el-button
+                          @click="() => editReply(comment.id, reply.id)"
+                        >
                           답글 수정
                         </el-button>
                       </div>
@@ -273,7 +275,6 @@
               >
                 <el-input
                   v-model="reply"
-                  style="width: 100%"
                   :rows="2"
                   type="textarea"
                   class="resize-none"
@@ -335,8 +336,8 @@ const sanitizedContent = computed(() =>
   DOMPurify.sanitize(postInfo.value.content)
 );
 
-const likeAnimationClass = ref("");
-const dislikeAnimationClass = ref("");
+const likeAnimationClass: Ref<string> = ref("");
+const dislikeAnimationClass: Ref<string> = ref("");
 
 const commentList: Ref<CommentInfo[]> = ref([]);
 const comment: Ref<string> = ref("");
