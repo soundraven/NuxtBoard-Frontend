@@ -1,7 +1,10 @@
 <template>
-  <el-container v-if="postInfo" class="w-full flex flex-col justify-center">
+  <el-container
+    v-if="postInfo"
+    class="w-full h-screen | flex flex-col justify-center"
+  >
     <el-container
-      class="max-w-[1000px] h-full | flex justify-center | border-l border-r border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-basicWhite dark:bg-darkBackground-lighterFill | mx-[12px]"
+      class="max-w-[1000px] | flex justify-center | border-l border-r border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-basicWhite dark:bg-darkBackground-lighterFill | mx-[12px]"
     >
       <div class="w-full">
         <div
@@ -476,8 +479,6 @@ const writeReply = async (commentId: number) => {
 };
 
 const editReply = async (commentId: number, replyId: number) => {
-  console.log(commentId, replyId, editedReply.value);
-
   const result = await $apiPost(
     "/comments/edit",
     {
@@ -607,7 +608,7 @@ const report = async () => {
     }
   );
 
-  ElMessage(`${reportResult.message}`);
+  if (reportResult.success) ElMessage(`${reportResult.message}`);
   getPostInfo();
 };
 </script>

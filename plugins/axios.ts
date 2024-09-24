@@ -15,8 +15,6 @@ export default defineNuxtPlugin((nuxtApp) => {
     timeout: 10000,
   });
 
-  console.log("$axios 시작");
-
   api.interceptors.request.use(
     async (config) => {
       if (config.headers.requiresToken) {

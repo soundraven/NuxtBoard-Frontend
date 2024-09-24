@@ -1,12 +1,12 @@
 <template>
   <div
-    class="w-full h-full bg-background-pageBackground dark:bg-darkBackground-pageBackground text-text-primaryText dark:text-darkText-primaryText"
+    class="w-full h-full | bg-background-pageBackground dark:bg-darkBackground-pageBackground text-text-primaryText dark:text-darkText-primaryText"
   >
     <div
-      class="h-[50px] | flex justify-center | bg-brandColor dark:bg-darkBackground-lighterFill border border-brandColor dark:border-darkBorder-darkerBorder py-[6px] sticky top-0 z-10"
+      class="h-[50px] | flex justify-center | bg-brandColor dark:bg-darkBackground-lighterFill border border-brandColor dark:border-darkBorder-darkerBorder | py-[6px] | sticky top-0 z-10"
     >
       <div class="w-full max-w-[1320px] flex justify-between items-center">
-        <div class="flex items-center">
+        <div class="flex items-center | ml-[12px]">
           <el-button @click="navigateTo('/')">Nuxtboard</el-button>
           <div class="hidden sm:block">
             <el-input
@@ -49,7 +49,7 @@
           </el-button>
           <el-button
             type="info"
-            class="ml-[6px] bg-background-darkerFill dark:bg-darkBackground-darkerFill text-white"
+            class="ml-[6px] mr-[12px] bg-background-darkerFill dark:bg-darkBackground-darkerFill text-white"
             @click="toggleColorMode"
           >
             <client-only>
