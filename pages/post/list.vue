@@ -1,15 +1,13 @@
 <template>
-  <el-container class="h-screen flex flex-col justify-center">
-    <div class="w-[1000px] mr-[12px]">
-      <div
-        class="w-full h-[150px] | border border-border-darkerBorder dark:border-darkBorder-darkerBorder shadow-sm bg-background-basicWhite dark:bg-darkBackground-darkerFill | p-[12px]"
-      ></div>
+  <el-container class="h-screen | flex flex-col justify-center">
+    <div
+      class="w-[1000px] | border-x border-border-darkerBorder dark:border-darkBorder-darkerBorder dark:bg-darkBackground-lighterFill | mx-[12px] px-[12px] pt-[12px]"
+    >
       <el-tabs
         v-model="currentBoardId"
-        type="card"
         @tab-click="changeTab"
         :stretch="true"
-        class="h-[40px] | border border-border-darkerBorder dark:border-darkBorder-darkerBorder shadow-sm bg-background-basicWhite dark:bg-darkBackground-darkerFill"
+        class="h-[40px] | | border-x border-t border-border-darkerBorder dark:border-darkBorder-darkerBorder shadow-sm rounded-tl rounded-tr | bg-background-basicWhite dark:bg-darkBackground-darkerFill"
       >
         <el-tab-pane
           v-for="tab in $indexStore.commoncode.boards"
@@ -19,7 +17,7 @@
         />
       </el-tabs>
       <div
-        class="w-full h-[800px] | border-[#E5EAF3] rounded shadow-sm | overflow-auto border-[1px]"
+        class="w-full h-[1000px] | border-x border-b border-border-darkerBorder dark:border-darkBorder-darkerBorder shadow-sm rounded-bl rounded-br | overflow-auto"
         v-infinite-scroll="getPostList"
         infinite-scroll-distance="500"
         :infinite-scroll-disabled="disabled"
@@ -29,7 +27,9 @@
         <el-table
           :data="list"
           :highlight-current-row="true"
-          class="w-full border-[1px] | border-t-0 border-[#E5EAF3] shadow-sm mx-auto"
+          class="w-full"
+          :header-cell-style="getHeaderStyle"
+          row-class-name="custom-row"
         >
           <el-table-column prop="id" label="ID" width="100" align="center" />
           <el-table-column
@@ -41,14 +41,14 @@
           <el-table-column
             prop="title"
             label="제목"
-            width="470"
+            width="440"
             align="left"
             header-align="center"
           >
             <template #default="scope">
               <a
                 @click="navigateTo(`${scope.row.id}`)"
-                class="text-blue-500 cursor-pointer"
+                class="w-full text-blue-500 cursor-pointer truncate"
               >
                 {{ scope.row.title }}
               </a>
@@ -87,6 +87,8 @@ const { $indexStore, $apiGet } = useNuxtApp();
 
 const route = useRoute();
 const router = useRouter();
+
+const colorMode = useColorMode();
 
 const currentPage = ref(1);
 const pageSize = ref(30);
@@ -151,4 +153,29 @@ const goToWrite = () => {
     query: { boardId: currentBoardId.value },
   });
 };
+
+const getHeaderStyle = () => {
+  return colorMode.value === "dark"
+    ? { backgroundColor: "#424243" } // 다크모드 스타일
+    : { backgroundColor: "#ffffff" }; // 라이트모드 스타일
+};
 </script>
+
+<style lang="scss">
+.custom-header {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.custom-row {
+  background-color: #ffffff;
+}
+
+.dark .custom-header {
+  background-color: #424243;
+  color: #ffffff;
+}
+.dark .custom-row {
+  background-color: #424243;
+}
+</style>

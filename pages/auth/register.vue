@@ -48,14 +48,13 @@ onMounted(() => {
 });
 
 const submitForm = async () => {
-  if (!registerForm.value) return;
-
-  try {
-    await registerForm.value.validate();
-    onSubmit();
-  } catch (error) {
-    ElMessage.error("Validation failed");
+  if (!registerForm.value) {
+    ElMessage.error("Please check your info");
+    return;
   }
+
+  await registerForm.value.validate();
+  onSubmit();
 };
 
 const onSubmit = async () => {
