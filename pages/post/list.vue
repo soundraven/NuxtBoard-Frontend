@@ -102,7 +102,6 @@ onMounted(async () => {
 
   await $indexStore.commoncode.getBoards();
   getPostList();
-  console.log(list.value);
 });
 
 const getPostList = async () => {

@@ -28,7 +28,6 @@
     "@nuxtjs/axios": "^5.13.6",
     "@pinia/nuxt": "^0.5.1",
     "@popperjs/core": "^2.11.8",
-    "@types/yup": "^0.32.0",
     "@vue/compiler-sfc": "^3.4.28",
     "@vue/runtime-core": "^3.4.28",
     "@vue/runtime-dom": "^3.4.28",
@@ -41,7 +40,6 @@
     "pinia": "^2.1.7",
     "scss": "^0.2.4",
     "vite-svg-loader": "^5.1.0",
-    "vue": "^3.4.28",
-    "yup": "^1.4.0"
+    "vue": "^3.4.28"
   }
 }

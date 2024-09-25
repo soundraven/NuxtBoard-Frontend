@@ -23,7 +23,7 @@ export const useCommoncodeStore = defineStore<
           const response = await $apiGet<{ boardInfo: BoardInfo[] }>(
             "/posts/boardInfo"
           );
-          console.log(response.data?.boardInfo);
+
           if (response.data?.boardInfo) {
             this.boards = response.data.boardInfo;
           }

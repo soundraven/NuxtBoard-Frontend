@@ -1,7 +1,7 @@
 <template>
   <div class="hidden lg:block mr-[12px]">
     <div
-      class="w-[300px] border border-border-darkerBorder dark:border-darkBorder-darkerBorder rounded shadow-sm bg-background-basicWhite dark:bg-darkBackground-darkerFill p-[12px] mt-[12px]"
+      class="w-[300px] | border border-border-darkerBorder dark:border-darkBorder-darkerBorder rounded shadow-sm bg-background-basicWhite dark:bg-darkBackground-darkerFill | p-[12px] mt-[12px]"
     >
       최근 개념글
       <div v-for="(post, index) in list" class="w-[280px] mt-[6px]">
@@ -19,7 +19,7 @@
     </div>
     <div
       v-if="$route.path !== '/'"
-      class="w-[300px] border border-border-darkerBorder dark:border-darkBorder-darkerBorder rounded shadow-sm bg-background-basicWhite dark:bg-darkBackground-darkerFill p-[12px] mt-[12px]"
+      class="w-[300px] | border border-border-darkerBorder dark:border-darkBorder-darkerBorder rounded shadow-sm bg-background-basicWhite dark:bg-darkBackground-darkerFill | p-[12px] mt-[12px]"
     >
       이 채널의 개념글
       <div v-for="(post, index) in trendList" class="w-[280px] mt-[6px]">
