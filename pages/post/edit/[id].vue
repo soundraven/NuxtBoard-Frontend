@@ -183,7 +183,7 @@ const onSubmit = async () => {
     }
   );
 
-  ElMessage(`${result.message}`);
+  ElMessage({ message: result.message, type: "success" });
   navigateTo(`/post/${postId}`);
 };
 

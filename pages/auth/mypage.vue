@@ -281,7 +281,7 @@ const setUserName = async () => {
       }
     );
 
-    ElMessage("User name successfully set");
+    ElMessage({ message: setUserNameResult.message, type: "success" });
     setUserNameVisible.value = false;
     $indexStore.auth.setUserName();
   } catch (error: any) {
@@ -321,7 +321,7 @@ const deactivate = async () => {
       }
     );
 
-    ElMessage("Account successfully deactivated");
+    ElMessage({ message: deactivateResult.message, type: "success" });
     $indexStore.auth.logout();
     dialogVisible.value = false;
     router.push("/");

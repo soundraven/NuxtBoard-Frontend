@@ -430,9 +430,11 @@ const writeComment = async () => {
     }
   );
 
-  ElMessage(`${result.message}`);
-  comment.value = "";
-  getCommentInfo();
+  if (result.success) {
+    ElMessage({ message: result.message, type: "success" });
+    comment.value = "";
+    getCommentInfo();
+  }
 };
 
 const editComment = async () => {
@@ -449,11 +451,13 @@ const editComment = async () => {
     }
   );
 
-  ElMessage(`${result.message}`);
-  editedComment.value = "";
-  editedCommentNum.value = 0;
-  editCommentInputArea.value = false;
-  getCommentInfo();
+  if (result.success) {
+    ElMessage({ message: result.message, type: "success" });
+    editedComment.value = "";
+    editedCommentNum.value = 0;
+    editCommentInputArea.value = false;
+    getCommentInfo();
+  }
 };
 
 const writeReply = async (commentId: number) => {
@@ -471,11 +475,12 @@ const writeReply = async (commentId: number) => {
       },
     }
   );
-
-  ElMessage(`${result.message}`);
-  reply.value = "";
-  replyInputArea.value = false;
-  getCommentInfo();
+  if (result.success) {
+    ElMessage({ message: result.message, type: "success" });
+    reply.value = "";
+    replyInputArea.value = false;
+    getCommentInfo();
+  }
 };
 
 const editReply = async (commentId: number, replyId: number) => {
@@ -491,11 +496,12 @@ const editReply = async (commentId: number, replyId: number) => {
       },
     }
   );
-
-  ElMessage(`${result.message}`);
-  editedReply.value = "";
-  editedReplyInputArea.value = false;
-  getCommentInfo();
+  if (result.success) {
+    ElMessage({ message: result.message, type: "success" });
+    editedReply.value = "";
+    editedReplyInputArea.value = false;
+    getCommentInfo();
+  }
 };
 
 const deletePost = async () => {
@@ -511,9 +517,10 @@ const deletePost = async () => {
       },
     }
   );
-
-  ElMessage(`${result.message}`);
-  navigateTo("/");
+  if (result.success) {
+    ElMessage(`${result.message}`);
+    navigateTo("/", { replace: true });
+  }
 };
 
 const deleteComment = async (commentId: number) => {
@@ -530,72 +537,50 @@ const deleteComment = async (commentId: number) => {
     }
   );
 
-  ElMessage(`${result.message}`);
-  getPostInfo();
+  if (result.success) {
+    ElMessage({ message: result.message, type: "success" });
+    getPostInfo();
+  }
 };
 
 const handleLike = async (like: boolean) => {
-  if (like) {
-    const result = await $apiPost(
-      "/posts/likes/like",
-      {
-        user: $indexStore.auth.user,
-        postId: postId,
+  const action = like ? "like" : "dislike";
+  const animationClass = like ? likeAnimationClass : dislikeAnimationClass;
+
+  const result = await $apiPost(
+    `/posts/likes/${action}`,
+    {
+      user: $indexStore.auth.user,
+      postId: postId,
+    },
+    {
+      headers: {
+        requiresToken: true,
       },
-      {
-        headers: {
-          requiresToken: true,
-        },
-      }
-    );
-
-    if (!result.success) {
-      likeAnimationClass.value = "animate__animated animate__shakeX";
-      setTimeout(() => {
-        likeAnimationClass.value = "";
-      }, 1000);
-      return;
     }
+  );
 
-    ElMessage(`${result.message}`);
-    likeAnimationClass.value = "animate__animated animate__bounce";
+  if (!result.success) {
+    animationClass.value = "animate__animated animate__shakeX";
     setTimeout(() => {
-      likeAnimationClass.value = "";
+      animationClass.value = "";
     }, 1000);
-    getPostInfo();
+
+    return;
   } else {
-    const result = await $apiPost(
-      "/posts/likes/dislike",
-      {
-        user: $indexStore.auth.user,
-        postId: postId,
-      },
-      {
-        headers: {
-          requiresToken: true,
-        },
-      }
-    );
+    ElMessage({ message: result.message, type: "success" });
 
-    if (!result.success) {
-      dislikeAnimationClass.value = "animate__animated animate__shakeX";
-      setTimeout(() => {
-        dislikeAnimationClass.value = "";
-      }, 1000);
-      return;
-    }
-
-    ElMessage(`${result.message}`);
-    dislikeAnimationClass.value = "animate__animated animate__bounce";
+    animationClass.value = "animate__animated animate__bounce";
     setTimeout(() => {
-      dislikeAnimationClass.value = "";
+      animationClass.value = "";
     }, 1000);
+
     getPostInfo();
   }
 };
 
 const report = async () => {
-  const reportResult = await $apiPost(
+  const result = await $apiPost(
     `/posts/report`,
     {
       user: $indexStore.auth.user,
@@ -608,7 +593,9 @@ const report = async () => {
     }
   );
 
-  if (reportResult.success) ElMessage(`${reportResult.message}`);
-  getPostInfo();
+  if (result.success) {
+    ElMessage({ message: result.message, type: "success" });
+    getPostInfo();
+  }
 };
 </script>

@@ -2,14 +2,14 @@
   <el-container class="h-screen flex flex-col justify-center">
     <div class="w-[1000px] mr-[12px]">
       <div
-        class="w-full h-[150px] border border-border-darkerBorder dark:border-darkBorder-darkerBorder shadow-sm bg-background-basicWhite dark:bg-darkBackground-darkerFill p-[12px]"
+        class="w-full h-[150px] | border border-border-darkerBorder dark:border-darkBorder-darkerBorder shadow-sm bg-background-basicWhite dark:bg-darkBackground-darkerFill | p-[12px]"
       ></div>
       <el-tabs
         v-model="currentBoardId"
         type="card"
         @tab-click="changeTab"
         :stretch="true"
-        class="h-[40px] border border-border-darkerBorder dark:border-darkBorder-darkerBorder shadow-sm bg-background-basicWhite dark:bg-darkBackground-darkerFill"
+        class="h-[40px] | border border-border-darkerBorder dark:border-darkBorder-darkerBorder shadow-sm bg-background-basicWhite dark:bg-darkBackground-darkerFill"
       >
         <el-tab-pane
           v-for="tab in $indexStore.commoncode.boards"
@@ -19,7 +19,7 @@
         />
       </el-tabs>
       <div
-        class="w-full h-[800px] overflow-auto border-[1px] border-[#E5EAF3] rounded shadow-sm"
+        class="w-full h-[800px] | border-[#E5EAF3] rounded shadow-sm | overflow-auto border-[1px]"
         v-infinite-scroll="getPostList"
         infinite-scroll-distance="500"
         :infinite-scroll-disabled="disabled"
@@ -29,34 +29,41 @@
         <el-table
           :data="list"
           :highlight-current-row="true"
-          class="w-full border-[1px] border-t-0 border-[#E5EAF3] shadow-sm mx-auto"
+          class="w-full border-[1px] | border-t-0 border-[#E5EAF3] shadow-sm mx-auto"
         >
-          <el-table-column prop="id" label="ID" width="50" align="center" />
+          <el-table-column prop="id" label="ID" width="100" align="center" />
           <el-table-column
             prop="boardName"
             label="게시판"
-            width="100"
+            width="80"
             align="center"
           />
-          <el-table-column prop="title" label="제목" width="480" align="center">
+          <el-table-column
+            prop="title"
+            label="제목"
+            width="470"
+            align="left"
+            header-align="center"
+          >
             <template #default="scope">
               <a
                 @click="navigateTo(`${scope.row.id}`)"
                 class="text-blue-500 cursor-pointer"
-                >{{ scope.row.title }}</a
               >
+                {{ scope.row.title }}
+              </a>
             </template>
           </el-table-column>
           <el-table-column
             prop="registeredUserName"
             label="작성자"
-            width="100"
+            width="150"
             align="center"
           />
           <el-table-column
             prop="formattedDate"
             label="작성일자"
-            width="250"
+            width="180"
             align="center"
           />
         </el-table>
@@ -67,7 +74,6 @@
         <el-button @click="goToWrite">글작성</el-button>
       </div>
     </div>
-
     <el-aside style="width: auto">
       <Sidebar />
     </el-aside>

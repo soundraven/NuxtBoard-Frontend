@@ -59,12 +59,18 @@ const submitForm = async () => {
 };
 
 const onSubmit = async () => {
-  const result = await $apiPost("/users/register", {
+  const registerResult = await $apiPost("/users/register", {
     user: form,
   });
 
-  ElMessage(`${result.message}`);
-  navigateTo("/");
+  if (registerResult.success) {
+    ElMessage({
+      message: `${registerResult.message} Move to login page.`,
+      type: "success",
+    });
+
+    navigateTo("/auth/login");
+  }
 };
 
 const showCard: Ref<Boolean> = ref(false);
