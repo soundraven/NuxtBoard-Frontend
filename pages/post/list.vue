@@ -7,7 +7,7 @@
         v-model="currentBoardId"
         @tab-click="changeTab"
         :stretch="true"
-        class="h-[40px] | border border-border-darkerBorder dark:border-darkBorder-darkerBorder shadow-sm rounded-tl rounded-tr | bg-background-basicWhite dark:bg-darkBackground-darkerFill"
+        class="h-[40px] | border border-border-darkerBorder dark:border-darkBorder-darkerBorder shadow-sm rounded-tl rounded-tr | bg-background-basicWhite dark:bg-darkBackground-darkFill"
       >
         <el-tab-pane
           v-for="tab in $indexStore.commoncode.boards"
