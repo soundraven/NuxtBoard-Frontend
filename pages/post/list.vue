@@ -7,7 +7,7 @@
         v-model="currentBoardId"
         @tab-click="changeTab"
         :stretch="true"
-        class="h-[40px] | | border-x border-t border-border-darkerBorder dark:border-darkBorder-darkerBorder shadow-sm rounded-tl rounded-tr | bg-background-basicWhite dark:bg-darkBackground-darkerFill"
+        class="h-[40px] | border border-border-darkerBorder dark:border-darkBorder-darkerBorder shadow-sm rounded-tl rounded-tr | bg-background-basicWhite dark:bg-darkBackground-darkerFill"
       >
         <el-tab-pane
           v-for="tab in $indexStore.commoncode.boards"
@@ -17,7 +17,7 @@
         />
       </el-tabs>
       <div
-        class="w-full h-[1000px] | border-x border-b border-border-darkerBorder dark:border-darkBorder-darkerBorder shadow-sm rounded-bl rounded-br | overflow-auto"
+        class="w-full h-[1000px] | border border-border-darkerBorder dark:border-darkBorder-darkerBorder shadow-sm rounded-bl rounded-br | overflow-auto"
         v-infinite-scroll="getPostList"
         infinite-scroll-distance="500"
         :infinite-scroll-disabled="disabled"
