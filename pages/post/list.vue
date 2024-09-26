@@ -161,7 +161,7 @@ const getHeaderStyle = () => {
 };
 </script>
 
-<style lang="scss">
+<style>
 .custom-header {
   background-color: #ffffff;
   color: #000000;

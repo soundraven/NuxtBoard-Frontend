@@ -88,6 +88,8 @@ const uploadActionUrl = computed(() => `${baseURL}/posts/upload`);
 
 const route = useRoute();
 
+const colorMode = useColorMode();
+
 const editor = ref<typeof ClassicEditor | null>(null);
 
 definePageMeta({
@@ -179,5 +181,9 @@ const handleFileUploadSuccess = (
 }
 .ck-editor__editable {
   height: 650px;
+}
+
+.dark .ck-editor__editable {
+  color: #000000;
 }
 </style>
