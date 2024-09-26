@@ -1,7 +1,7 @@
 <template>
   <el-container
     v-if="postInfo"
-    class="w-full h-screen | flex flex-col justify-center"
+    class="w-full h-full | flex flex-col justify-center"
   >
     <el-container
       class="max-w-[1000px] | flex justify-center | border-l border-r border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-basicWhite dark:bg-darkBackground-lighterFill | mx-[12px]"
