@@ -43,12 +43,14 @@ const rules: FormRules = {
   userName: [
     {
       validator: (rule, value: string, callback) => {
-        if (value && value.length < 3) {
+        if (value.length < 3) {
           callback(new Error("User name must be at least 3 characters"));
-        } else if (value && !/^[a-zA-Z0-9]+$/.test(value)) {
-          callback(
-            new Error("User name must contain only alphanumeric characters")
-          );
+        } else if (value.length > 12) {
+          callback(new Error("User name must be at most 12 characters"));
+        } else if (!/^[ㄱ-ㅎ가-힣a-zA-Z0-9]+$/.test(value)) {
+          callback(new Error("Special characters are not allowed"));
+        } else if (/\s/.test(value)) {
+          callback(new Error("User name must not contain spaces"));
         } else {
           callback();
         }

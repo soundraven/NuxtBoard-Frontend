@@ -201,26 +201,32 @@
     width="500"
     :before-close="handleClose"
   >
-    <el-input
-      v-model="userName"
-      style="width: 300px; margin-left: 99px"
-      maxlength="12"
-      show-word-limit
-      :rows="1"
-      type="textarea"
-      placeholder="Please input your username"
-      class="resize-none"
-    />
+    <el-form
+      :model="userNameForm"
+      :rules="rules"
+      ref="userNameFormRef"
+      label-width="120px"
+    >
+      <el-form-item label="User Name" prop="userName">
+        <el-input
+          v-model="userNameForm.userName"
+          maxlength="12"
+          show-word-limit
+        />
+      </el-form-item>
+    </el-form>
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="setUserNameVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="setUserName"> Confirm </el-button>
+        <el-button type="primary" @click="submitForm">Confirm</el-button>
       </div>
     </template>
   </el-dialog>
 </template>
 <script setup lang="ts">
 import type { CommentInfo, PostInfo, UserInfo } from "@/types/interface";
+import type { FormInstance } from "element-plus";
+import rules from "~/utils/formRules";
 
 definePageMeta({
   middleware: "auth",
@@ -235,7 +241,10 @@ const { $indexStore, $catchError, $apiGet, $apiPost } = useNuxtApp();
 const dialogVisible: Ref<boolean> = ref(false);
 const setUserNameVisible: Ref<boolean> = ref(false);
 
-const userName: Ref<string> = ref("");
+const userNameForm = reactive({
+  userName: "",
+});
+const userNameFormRef = ref<FormInstance>();
 
 const currentPage: Ref<number> = ref(1);
 const pageSize: Ref<number> = ref(30);
@@ -309,6 +318,18 @@ const getPostList = async () => {
   });
 };
 
+const submitForm = () => {
+  if (userNameFormRef.value) {
+    userNameFormRef.value.validate((valid) => {
+      if (valid) {
+        setUserName();
+      } else {
+        ElMessage.error("Please correct the errors in the form");
+      }
+    });
+  }
+};
+
 const setUserName = async () => {
   try {
     const userJson = sessionStorage.getItem("user");
@@ -323,7 +344,7 @@ const setUserName = async () => {
       "/users/setUserName",
       {
         user: $indexStore.auth.user,
-        userName: userName.value,
+        userName: userNameForm.userName,
       },
       {
         headers: {
