@@ -2,7 +2,7 @@
   <div class="h-screen flex justify-center">
     <el-card
       :class="{ 'opacity-0': !showCard, 'opacity-100': showCard }"
-      class="w-[600px] h-[320px] flex justify-center items-center my-auto p-[40px] transition-opacity duration-1000 ease-in-out"
+      class="w-[600px] h-[320px] | flex justify-center items-center | my-auto p-[40px] | transition-opacity duration-1000 ease-in-out"
     >
       <el-form
         :model="form"
@@ -11,16 +11,30 @@
         label-width="auto"
         class="flex flex-col justify-center items-center"
       >
-        <el-form-item label="Email" prop="email" class="w-full">
+        <el-form-item
+          label="Email"
+          prop="email"
+          class="w-full whitespace-nowrap"
+        >
           <el-input type="email" v-model="form.email" />
         </el-form-item>
-        <el-form-item label="Password" prop="password" class="w-full">
+        <el-form-item
+          label="Password"
+          prop="password"
+          class="w-full whitespace-nowrap"
+        >
           <el-input type="password" v-model="form.password" show-password />
         </el-form-item>
-        <el-form-item label="userName" prop="userName" class="w-full">
+        <el-form-item
+          label="userName"
+          prop="userName"
+          class="w-full whitespace-nowrap"
+        >
           <el-input v-model="form.userName" />
         </el-form-item>
-        <el-button type="primary" @click="submitForm">회원가입</el-button>
+        <div class="w-[300px] flex justify-center">
+          <el-button type="primary" @click="submitForm">회원가입</el-button>
+        </div>
       </el-form>
     </el-card>
   </div>
@@ -48,23 +62,28 @@ onMounted(() => {
 });
 
 const submitForm = async () => {
-  if (!registerForm.value) return;
-
-  try {
-    await registerForm.value.validate();
-    onSubmit();
-  } catch (error) {
-    ElMessage.error("Validation failed");
+  if (!registerForm.value) {
+    ElMessage.error("Please check your info");
+    return;
   }
+
+  await registerForm.value.validate();
+  onSubmit();
 };
 
 const onSubmit = async () => {
-  const result = await $apiPost("/users/register", {
+  const registerResult = await $apiPost("/users/register", {
     user: form,
   });
 
-  ElMessage(`${result.message}`);
-  navigateTo("/");
+  if (registerResult.success) {
+    ElMessage({
+      message: `${registerResult.message} Move to login page.`,
+      type: "success",
+    });
+
+    navigateTo("/auth/login");
+  }
 };
 
 const showCard: Ref<Boolean> = ref(false);

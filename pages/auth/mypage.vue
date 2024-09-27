@@ -1,29 +1,30 @@
 <template>
   <div
-    class="w-full h-screen | flex justify-center | border border-border-darkerBorder dark:border-darkBorder-darkerBorder | !px-[12px]"
+    class="w-full min-h-screen | flex justify-center | border border-border-darkerBorder dark:border-darkBorder-darkerBorder | !px-[12px]"
   >
     <el-container
-      class="max-w-[1000px] h-screen flex flex-row border border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-basicWhite dark:bg-darkBackground-lighterFill | mr-[12px]"
+      class="max-w-[1000px] flex flex-row border border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-basicWhite dark:bg-darkBackground-lighterFill | mr-[12px]"
     >
       <el-header
-        class="w-full !h-[200px] | flex items-center border-b border-border-darkerBorder dark:border-darkBorder-darkerBorder p-[12px]"
+        class="w-full !h-[160px] | flex items-center border-b border-border-darkerBorder dark:border-darkBorder-darkerBorder p-[12px]"
       >
         <el-button
           type="primary"
           v-if="$indexStore.auth.user.userName === ''"
           @click="setUserNameVisible = true"
-          >Please set your User name</el-button
         >
+          익명{{ $indexStore.auth.user.id }}, Please set your User name
+        </el-button>
         <span v-else class="text-[22px]">
           사용자
           <span class="font-bold">{{ $indexStore.auth.user.userName }}</span>
           <p class="text-[16px]">기본 정보 입니다.</p></span
         >
       </el-header>
-      <el-tabs class="h-full | pt-[12px] px-[12px]" tab-position="left">
+      <el-tabs class="h-full | pt-[12px] px-[12px]" :tab-position="tabPosition">
         <el-tab-pane label="Home" class="px-[12px]">
           <div
-            class="text-[22px] font-bold | underline underline-offset-[4px] decoration-2 decoration-success | mb-[12px]"
+            class="text-[22px] font-bold | underline underline-offset-[6px] decoration-2 decoration-blue-500 | mb-[12px]"
           >
             나의 최신 게시글
           </div>
@@ -32,16 +33,15 @@
             key="post.id"
             class="flex justify-between | text-[15px] | mt-[2px]"
           >
-            <span class="w-[550px] truncate ...">
+            <span class="w-full truncate ...">
               {{ post.title }}
             </span>
-            <span>
+            <span class="whitespace-nowrap hidden md:inline">
               {{ post.formattedDate }}
             </span>
           </div>
-
           <div
-            class="text-[22px] font-bold | underline underline-offset-[4px] decoration-2 decoration-success | mt-[12px] mb-[12px]"
+            class="text-[22px] font-bold | underline underline-offset-[6px] decoration-2 decoration-blue-500 | mt-[12px] mb-[12px]"
           >
             나의 최신 댓글
           </div>
@@ -50,47 +50,75 @@
             key="comment.id"
             class="flex justify-between | text-[15px] | mt-[2px]"
           >
-            <span class="w-[550px] truncate ...">
+            <span class="w-full truncate ...">
               {{ comment.content }}
             </span>
-            <span>{{ comment.formattedDate }}</span>
+            <span class="whitespace-nowrap hidden md:inline">
+              {{ comment.formattedDate }}
+            </span>
           </div>
         </el-tab-pane>
         <el-tab-pane label="My post">
           <div
-            class="w-full h-[660px] overflow-auto border border-border-darkerBorder dark:border-darkBorder-darkerBorder rounded shadow-sm"
+            class="w-full h-[800px] | border border-border-darkerBorder dark:border-darkBorder-darkerBorder rounded shadow-sm | overflow-auto"
             v-infinite-scroll="getPostList"
             infinite-scroll-distance="400"
             :infinite-scroll-disabled="disabled"
-            infinite-scroll-immediate="true"
+            infinite-scroll-immediate="false"
             infinite-scroll-delay="500"
           >
             <el-table
               :data="postList"
+              v-loading="loading"
               :highlight-current-row="true"
               class="mx-auto"
+              :header-cell-style="getHeaderStyle"
+              row-class-name="custom-row"
             >
-              <el-table-column prop="id" label="ID" />
-              <el-table-column prop="board_id" label="게시판" />
-              <el-table-column prop="title" label="제목">
+              <el-table-column
+                prop="id"
+                label="ID"
+                min-width="60"
+                align="center"
+              />
+              <el-table-column
+                prop="boardName"
+                label="게시판"
+                min-width="70"
+                align="center"
+              />
+              <el-table-column
+                prop="title"
+                label="제목"
+                align="left"
+                header-align="center"
+                show-overflow-tooltip
+              >
                 <template #default="scope">
                   <a
                     @click="navigateTo(`/post/${scope.row.id}`)"
-                    class="text-blue-500 cursor-pointer"
-                    >{{ scope.row.title }}
+                    class="text-blue-500 cursor-pointer truncate"
+                  >
+                    {{ scope.row.title }}
                   </a>
                 </template>
               </el-table-column>
-              <el-table-column prop="registered_date" label="작성일자" />
+              <el-table-column
+                prop="formattedDate"
+                label="작성일자"
+                min-width="160"
+                align="center"
+              />
             </el-table>
-            <p v-if="loading">Loading...</p>
-            <p v-if="noMore">No more Post</p>
+            <div v-if="noMore">
+              <el-empty :image-size="100" description="No more post!" />
+            </div>
           </div>
         </el-tab-pane>
         <el-tab-pane label="My comment">
           <div>
             <div
-              class="w-full h-[660px] overflow-auto border border-border-darkerBorder dark:border-darkBorder-darkerBorder rounded shadow-sm"
+              class="w-full h-[800px] overflow-auto border border-border-darkerBorder dark:border-darkBorder-darkerBorder rounded shadow-sm"
               v-infinite-scroll="getPostList"
               infinite-scroll-distance="400"
               :infinite-scroll-disabled="disabled"
@@ -99,31 +127,51 @@
             >
               <el-table
                 :data="commentList"
+                v-loading="loading"
                 :highlight-current-row="true"
                 class="mx-auto"
+                :header-cell-style="getHeaderStyle"
+                row-class-name="custom-row"
               >
-                <el-table-column prop="id" label="ID" />
-                <el-table-column prop="content" label="내용">
+                <el-table-column
+                  prop="id"
+                  label="ID"
+                  min-width="60"
+                  align="center"
+                />
+                <el-table-column
+                  prop="content"
+                  label="내용"
+                  align="left"
+                  header-align="center"
+                >
                   <template #default="scope">
                     <a
                       @click="navigateTo(`/post/${scope.row.post_id}`)"
-                      class="text-blue-500 cursor-pointer"
-                      >{{ scope.row.content }}
+                      class="text-blue-500 cursor-pointer truncate"
+                    >
+                      {{ scope.row.content }}
                     </a>
                   </template>
                 </el-table-column>
-                <el-table-column prop="registered_date" label="작성일자" />
+                <el-table-column
+                  prop="formattedDate"
+                  label="작성일자"
+                  min-width="160"
+                  align="center"
+                />
               </el-table>
-              <p v-if="loading">Loading...</p>
-              <p v-if="noMore">No more Post</p>
+              <div v-if="noMore">
+                <el-empty :image-size="100" description="No more post!" />
+              </div>
             </div>
           </div>
         </el-tab-pane>
         <el-tab-pane label="Resign">
           <div class="flex justify-center items-center">
             <el-button
-              type="warning"
-              @click="dialogVisible = true"
+              type="danger"
+              @click="showDeactivateModal"
               class="!w-[300px] !h-[200px] | mt-[200px]"
             >
               <el-icon :size="100">
@@ -131,22 +179,6 @@
               </el-icon>
             </el-button>
           </div>
-          <el-dialog
-            v-model="dialogVisible"
-            title="Account Delete"
-            width="500"
-            :before-close="handleClose"
-          >
-            <span>Deleting your account is irreversible</span>
-            <template #footer>
-              <div class="dialog-footer">
-                <el-button @click="dialogVisible = false">Cancel</el-button>
-                <el-button type="danger" @click="deactivate">
-                  Confirm
-                </el-button>
-              </div>
-            </template>
-          </el-dialog>
         </el-tab-pane>
       </el-tabs>
     </el-container>
@@ -160,26 +192,40 @@
     width="500"
     :before-close="handleClose"
   >
-    <el-input
-      v-model="userName"
-      style="width: 300px; margin-left: 99px"
-      maxlength="12"
-      show-word-limit
-      :rows="1"
-      type="textarea"
-      placeholder="Please input your username"
-      class="resize-none"
-    />
+    <el-form
+      :model="userNameForm"
+      :rules="rules"
+      ref="userNameFormRef"
+      label-width="120px"
+    >
+      <el-form-item label="User Name" prop="userName">
+        <el-input
+          v-model="userNameForm.userName"
+          maxlength="12"
+          show-word-limit
+        />
+      </el-form-item>
+    </el-form>
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="setUserNameVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="setUserName"> Confirm </el-button>
+        <el-button type="primary" @click="submitForm">Confirm</el-button>
       </div>
     </template>
   </el-dialog>
+  <Modal
+    v-model="isModalVisible"
+    :title="`${modalTitle}`"
+    @confirm="modalConfirmAction"
+  >
+    <p>{{ modalContent }}</p>
+  </Modal>
 </template>
 <script setup lang="ts">
 import type { CommentInfo, PostInfo, UserInfo } from "@/types/interface";
+import type { FormInstance } from "element-plus";
+import rules from "~/utils/formRules";
+import { useModal } from "~/composables/useModals";
 
 definePageMeta({
   middleware: "auth",
@@ -187,15 +233,27 @@ definePageMeta({
 
 const router = useRouter();
 
+const colorMode = useColorMode();
+
 const { $indexStore, $catchError, $apiGet, $apiPost } = useNuxtApp();
+const {
+  isModalVisible,
+  modalTitle,
+  modalContent,
+  modalConfirmAction,
+  openModal,
+} = useModal();
 
 const dialogVisible: Ref<boolean> = ref(false);
 const setUserNameVisible: Ref<boolean> = ref(false);
 
-const userName: Ref<string> = ref("");
+const userNameForm = reactive({
+  userName: "",
+});
+const userNameFormRef = ref<FormInstance>();
 
 const currentPage: Ref<number> = ref(1);
-const pageSize: Ref<number> = ref(20);
+const pageSize: Ref<number> = ref(30);
 const totalCount: Ref<number> = ref(0);
 
 const postList: Ref = ref([]);
@@ -205,21 +263,37 @@ const loading = ref(false);
 const noMore = computed(() => postList.value.length >= totalCount.value);
 const disabled = computed(() => loading.value || noMore.value);
 
+const tabPosition: Ref<"left" | "top" | "bottom" | "right"> = ref("left");
+
+const handleResize = () => {
+  if (window.innerWidth < 860) {
+    tabPosition.value = "top";
+  } else {
+    tabPosition.value = "left";
+  }
+};
+
 onMounted(async () => {
   getPostList();
+  handleResize();
+  window.addEventListener("resize", handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("resize", handleResize);
 });
 
 const getPostList = async () => {
   loading.value = true;
 
   const registeredByJson = sessionStorage.getItem("user");
-  const parsedRegisteredBy = registeredByJson
-    ? JSON.parse(registeredByJson)
-    : null;
+  let parsedRegisteredBy: UserInfo;
 
-  if (!parsedRegisteredBy) {
+  if (!registeredByJson) {
     ElMessage.error("User info not found");
     return;
+  } else {
+    parsedRegisteredBy = JSON.parse(registeredByJson);
   }
 
   const [postResult, commentResult] = await Promise.all([
@@ -249,13 +323,31 @@ const getPostList = async () => {
     ),
   ]);
 
-  postList.value = postResult.data?.postList;
-  totalCount.value = postResult.data?.totalCount || 0;
-  commentList.value = commentResult.data?.commentList;
+  if (postResult.data) {
+    postList.value = [...postList.value, ...postResult.data.postList];
+    totalCount.value = postResult.data?.totalCount || 0;
+    currentPage.value += 1;
+  }
+
+  if (commentResult.data) {
+    commentList.value = [...commentResult.data.commentList];
+  }
 
   nextTick(() => {
     loading.value = false;
   });
+};
+
+const submitForm = () => {
+  if (userNameFormRef.value) {
+    userNameFormRef.value.validate((valid) => {
+      if (valid) {
+        setUserName();
+      } else {
+        ElMessage.error("Please correct the errors in the form");
+      }
+    });
+  }
 };
 
 const setUserName = async () => {
@@ -272,7 +364,7 @@ const setUserName = async () => {
       "/users/setUserName",
       {
         user: $indexStore.auth.user,
-        userName: userName.value,
+        userName: userNameForm.userName,
       },
       {
         headers: {
@@ -281,7 +373,7 @@ const setUserName = async () => {
       }
     );
 
-    ElMessage("User name successfully set");
+    ElMessage({ message: setUserNameResult.message, type: "success" });
     setUserNameVisible.value = false;
     $indexStore.auth.setUserName();
   } catch (error: any) {
@@ -295,6 +387,12 @@ const handleClose = (done: () => void) => {
       done();
     })
     .catch(() => {});
+};
+
+const showDeactivateModal = () => {
+  openModal("Account Delete", "Deleting your account is irreversible.", () => {
+    deactivate();
+  });
 };
 
 const deactivate = async () => {
@@ -321,7 +419,7 @@ const deactivate = async () => {
       }
     );
 
-    ElMessage("Account successfully deactivated");
+    ElMessage({ message: deactivateResult.message, type: "success" });
     $indexStore.auth.logout();
     dialogVisible.value = false;
     router.push("/");
@@ -329,4 +427,29 @@ const deactivate = async () => {
     $catchError(error);
   }
 };
+
+const getHeaderStyle = () => {
+  return colorMode.value === "dark"
+    ? { backgroundColor: "#39393a" }
+    : { backgroundColor: "#ffffff" };
+};
 </script>
+
+<style>
+.custom-header {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.custom-row {
+  background-color: #ffffff;
+}
+
+.dark .custom-header {
+  background-color: #424243;
+  color: #ffffff;
+}
+.dark .custom-row {
+  background-color: #424243;
+}
+</style>

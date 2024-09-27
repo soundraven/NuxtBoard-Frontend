@@ -18,17 +18,14 @@ export const useCommoncodeStore = defineStore<
   actions: {
     async getBoards(): Promise<void> {
       if (this.boards.length === 0) {
-        try {
-          const { $apiGet } = useNuxtApp();
-          const response = await $apiGet<{ boardInfo: BoardInfo[] }>(
-            "/posts/boardInfo"
-          );
+        const { $apiGet } = useNuxtApp();
 
-          if (response.data?.boardInfo) {
-            this.boards = response.data.boardInfo;
-          }
-        } catch (error: any) {
-          errorHandler(error);
+        const response = await $apiGet<{ boardInfo: BoardInfo[] }>(
+          "/posts/boardInfo"
+        );
+
+        if (response.data?.boardInfo) {
+          this.boards = response.data.boardInfo;
         }
       }
     },

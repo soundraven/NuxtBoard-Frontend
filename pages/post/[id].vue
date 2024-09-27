@@ -1,20 +1,20 @@
 <template>
   <el-container
     v-if="postInfo"
-    class="w-full h-screen | flex flex-col justify-center"
+    class="w-full min-h-screen | flex flex-col justify-center"
   >
     <el-container
       class="max-w-[1000px] | flex justify-center | border-l border-r border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-basicWhite dark:bg-darkBackground-lighterFill | mx-[12px]"
     >
       <div class="w-full">
         <div
-          class="h-[100px] | flex items-center | text-[22px] font-bold | border-b border-border-darkerBorder dark:border-darkBorder-darkerBorder px-[12px]"
+          class="h-[80px] | flex items-center | text-[22px] font-bold | border-b border-border-darkerBorder dark:border-darkBorder-darkerBorder px-[12px]"
         >
           {{ postInfo.boardName }} 게시판
         </div>
         <div class="px-[12px]">
           <div
-            class="h-[40px] | flex justify-between items-center | text-[18px] | border-y border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-darkerFill dark:bg-darkBackground-darkerFill | mt-[12px] px-[12px]"
+            class="min-h-[40px] | flex justify-between items-center | text-[18px] | border-y border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-darkerFill dark:bg-darkBackground-darkerFill | mt-[12px] px-[12px]"
           >
             <span class="font-bold">{{ postInfo.title }}</span>
             <div>
@@ -29,23 +29,28 @@
                 v-if="$indexStore.auth.user.id === postInfo.registeredBy"
                 icon="delete"
                 type="danger"
-                @click="deletePost"
+                @click="showDeletePostModal"
                 class="!w-[30px] !h-[30px]"
               />
             </div>
           </div>
           <div
-            class="h-[30px] | flex justify-between items-center | border-b border-border-darkerBorder dark:border-darkBorder-darkerBorder | p-[12px]"
+            class="min-h-[30px] | flex justify-between items-center | border-b border-border-darkerBorder dark:border-darkBorder-darkerBorder | px-[12px]"
           >
-            <span class="text-[15px]">{{ postInfo.registeredByUserName }}</span>
-            <div class="text-[13px]">
+            <span v-if="postInfo.registeredByUserName" class="text-[15px]">
+              {{ postInfo.registeredByUserName }}
+            </span>
+            <span v-else class="text-[15px]">
+              익명{{ postInfo.registeredBy }}
+            </span>
+            <div class="text-[13px] text-right">
               <span class="font-bold">추천: </span>
               <span
                 class="bg-background-darkerFill dark:bg-darkBackground-darkerFill ml-[6px]"
               >
                 {{ likeInfo.totalLikes }}
               </span>
-              <span class="font-bold ml-[6px]">비추천: </span>
+              <span class="font-bold ml-[6px]">비추: </span>
               <span
                 class="bg-background-darkerFill dark:bg-darkBackground-darkerFill ml-[6px]"
               >
@@ -57,16 +62,18 @@
               >
                 {{ commentList.length }}
               </span>
-              <span class="font-bold ml-[6px]">작성일: </span>
-              <span
-                class="bg-background-darkerFill dark:bg-darkBackground-darkerFill ml-[6px]"
-              >
-                {{ postInfo.formattedDate }}
-              </span>
+              <div class="font-bold ml-[6px] md:inline">
+                작성일:
+                <span
+                  class="bg-background-darkerFill dark:bg-darkBackground-darkerFill ml-[6px]"
+                >
+                  {{ postInfo.formattedDate }}
+                </span>
+              </div>
             </div>
           </div>
           <client-only>
-            <div class="min-h-[600px] p-[12px]" v-html="sanitizedContent"></div>
+            <div class="min-h-[350px] p-[12px]" v-html="sanitizedContent"></div>
           </client-only>
           <div class="w-full h-full flex justify-center | mb-[12px]">
             <el-button
@@ -93,7 +100,7 @@
           <div
             class="h-[40px] | flex justify-end items-center | border-t border-b border-border-darkerBorder dark:border-darkBorder-darkerBorder"
           >
-            <el-button icon="bell" type="danger" @click="report">
+            <el-button icon="bell" type="danger" @click="showReportModal">
               <div>{{ postInfo.report }}</div>
             </el-button>
           </div>
@@ -120,7 +127,7 @@
                     stroke-linejoin="round"
                     stroke-width="2"
                     d="M3 16l4-4m0 0l4 4m-4-4v12M5 4a2 2 0 112 2h10a2 2 0 112 2h-5a2 2 0 11-2 2h5"
-                  ></path>
+                  />
                 </svg>
                 <a
                   :href="`${baseURL}/posts/download/${file.split('/').pop()}`"
@@ -175,7 +182,7 @@
                   <el-button
                     icon="delete"
                     type="danger"
-                    @click.stop="deleteComment(comment.id)"
+                    @click.stop="showDeleteCommentModal(comment.id)"
                     class="z-10 !w-[10px] !h-[20px]"
                   />
                 </div>
@@ -236,7 +243,7 @@
                       <el-button
                         icon="delete"
                         type="danger"
-                        @click.stop="deleteComment(comment.id)"
+                        @click.stop="showDeleteReplyModal(reply.id)"
                         class="z-10 !w-[10px] !h-[20px]"
                       />
                     </div>
@@ -313,15 +320,30 @@
       <Sidebar />
     </el-aside>
   </el-container>
+  <Modal
+    v-model="isModalVisible"
+    :title="`${modalTitle}`"
+    @confirm="modalConfirmAction"
+  >
+    <p>{{ modalContent }}</p>
+  </Modal>
 </template>
 
 <script setup lang="ts">
 import type { PostInfo, CommentInfo, LikeInfo } from "~/types/interface";
 import DOMPurify from "dompurify";
+import { useModal } from "~/composables/useModals";
 
 import "animate.css";
 
 const { $indexStore, $apiGet, $apiPost } = useNuxtApp();
+const {
+  isModalVisible,
+  modalTitle,
+  modalContent,
+  modalConfirmAction,
+  openModal,
+} = useModal();
 
 const route = useRoute();
 const router = useRouter();
@@ -430,9 +452,11 @@ const writeComment = async () => {
     }
   );
 
-  ElMessage(`${result.message}`);
-  comment.value = "";
-  getCommentInfo();
+  if (result.success) {
+    ElMessage({ message: result.message, type: "success" });
+    comment.value = "";
+    getCommentInfo();
+  }
 };
 
 const editComment = async () => {
@@ -449,11 +473,13 @@ const editComment = async () => {
     }
   );
 
-  ElMessage(`${result.message}`);
-  editedComment.value = "";
-  editedCommentNum.value = 0;
-  editCommentInputArea.value = false;
-  getCommentInfo();
+  if (result.success) {
+    ElMessage({ message: result.message, type: "success" });
+    editedComment.value = "";
+    editedCommentNum.value = 0;
+    editCommentInputArea.value = false;
+    getCommentInfo();
+  }
 };
 
 const writeReply = async (commentId: number) => {
@@ -471,11 +497,12 @@ const writeReply = async (commentId: number) => {
       },
     }
   );
-
-  ElMessage(`${result.message}`);
-  reply.value = "";
-  replyInputArea.value = false;
-  getCommentInfo();
+  if (result.success) {
+    ElMessage({ message: result.message, type: "success" });
+    reply.value = "";
+    replyInputArea.value = false;
+    getCommentInfo();
+  }
 };
 
 const editReply = async (commentId: number, replyId: number) => {
@@ -491,14 +518,52 @@ const editReply = async (commentId: number, replyId: number) => {
       },
     }
   );
+  if (result.success) {
+    ElMessage({ message: result.message, type: "success" });
+    editedReply.value = "";
+    editedReplyInputArea.value = false;
+    getCommentInfo();
+  }
+};
 
-  ElMessage(`${result.message}`);
-  editedReply.value = "";
-  editedReplyInputArea.value = false;
-  getCommentInfo();
+const showDeletePostModal = () => {
+  openModal(
+    "Post Deletion",
+    "Are you sure you want to delete this post?",
+    () => {
+      deletePost();
+    }
+  );
+};
+
+const showReportModal = () => {
+  openModal("Post Report", "Are you sure you want to report this post?", () => {
+    report();
+  });
+};
+
+const showDeleteCommentModal = (commentId: number) => {
+  openModal(
+    "Comment Deletion",
+    "Are you sure you want to delete this comment?",
+    () => {
+      deleteComment(commentId, undefined);
+    }
+  );
+};
+
+const showDeleteReplyModal = (replyId: number) => {
+  openModal(
+    "Comment Deletion",
+    "Are you sure you want to delete this comment?",
+    () => {
+      deleteComment(undefined, replyId);
+    }
+  );
 };
 
 const deletePost = async () => {
+  console.log("글삭제");
   const result = await $apiPost(
     `/posts/delete`,
     {
@@ -512,16 +577,23 @@ const deletePost = async () => {
     }
   );
 
-  ElMessage(`${result.message}`);
-  navigateTo("/");
+  if (result.success) {
+    isModalVisible.value = false;
+    ElMessage({ message: result.message, type: "success" });
+    navigateTo("/", { replace: true });
+  }
 };
 
-const deleteComment = async (commentId: number) => {
+const deleteComment = async (
+  commentId: number | undefined,
+  replyId: number | undefined
+) => {
   const result = await $apiPost(
     `/comments/delete`,
     {
       user: $indexStore.auth.user,
       commentId: commentId,
+      replyId: replyId,
     },
     {
       headers: {
@@ -530,72 +602,51 @@ const deleteComment = async (commentId: number) => {
     }
   );
 
-  ElMessage(`${result.message}`);
-  getPostInfo();
+  if (result.success) {
+    isModalVisible.value = false;
+    ElMessage({ message: result.message, type: "success" });
+    getCommentInfo();
+  }
 };
 
 const handleLike = async (like: boolean) => {
-  if (like) {
-    const result = await $apiPost(
-      "/posts/likes/like",
-      {
-        user: $indexStore.auth.user,
-        postId: postId,
+  const action = like ? "like" : "dislike";
+  const animationClass = like ? likeAnimationClass : dislikeAnimationClass;
+
+  const result = await $apiPost(
+    `/posts/likes/${action}`,
+    {
+      user: $indexStore.auth.user,
+      postId: postId,
+    },
+    {
+      headers: {
+        requiresToken: true,
       },
-      {
-        headers: {
-          requiresToken: true,
-        },
-      }
-    );
-
-    if (!result.success) {
-      likeAnimationClass.value = "animate__animated animate__shakeX";
-      setTimeout(() => {
-        likeAnimationClass.value = "";
-      }, 1000);
-      return;
     }
+  );
 
-    ElMessage(`${result.message}`);
-    likeAnimationClass.value = "animate__animated animate__bounce";
+  if (!result.success) {
+    animationClass.value = "animate__animated animate__shakeX";
     setTimeout(() => {
-      likeAnimationClass.value = "";
+      animationClass.value = "";
     }, 1000);
-    getPostInfo();
+
+    return;
   } else {
-    const result = await $apiPost(
-      "/posts/likes/dislike",
-      {
-        user: $indexStore.auth.user,
-        postId: postId,
-      },
-      {
-        headers: {
-          requiresToken: true,
-        },
-      }
-    );
+    ElMessage({ message: result.message, type: "success" });
 
-    if (!result.success) {
-      dislikeAnimationClass.value = "animate__animated animate__shakeX";
-      setTimeout(() => {
-        dislikeAnimationClass.value = "";
-      }, 1000);
-      return;
-    }
-
-    ElMessage(`${result.message}`);
-    dislikeAnimationClass.value = "animate__animated animate__bounce";
+    animationClass.value = "animate__animated animate__bounce";
     setTimeout(() => {
-      dislikeAnimationClass.value = "";
+      animationClass.value = "";
     }, 1000);
+
     getPostInfo();
   }
 };
 
 const report = async () => {
-  const reportResult = await $apiPost(
+  const result = await $apiPost(
     `/posts/report`,
     {
       user: $indexStore.auth.user,
@@ -608,7 +659,10 @@ const report = async () => {
     }
   );
 
-  if (reportResult.success) ElMessage(`${reportResult.message}`);
-  getPostInfo();
+  if (result.success) {
+    isModalVisible.value = false;
+    ElMessage({ message: result.message, type: "success" });
+    getPostInfo();
+  }
 };
 </script>

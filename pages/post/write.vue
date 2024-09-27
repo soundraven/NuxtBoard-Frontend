@@ -6,11 +6,10 @@
       <el-form :model="form" class="w-full mx-[12px]">
         <div
           v-if="form.boardId && $indexStore.commoncode.boards"
-          class="w-full h-[100px] | flex items-center | text-[22px] font-bold | border-b border-border-darkerBorder dark:border-darkBorder-darkerBorder px-[12px]"
+          class="w-full h-[80px] | flex items-center | text-[22px] font-bold | border-b border-border-darkerBorder dark:border-darkBorder-darkerBorder px-[12px]"
         >
           {{ boardName }} 게시판
         </div>
-
         <el-form-item class="mt-[12px]">
           <el-select
             v-model="form.boardId"
@@ -21,7 +20,6 @@
               :key="option.boardId"
               :label="option.boardName"
               :value="option.boardId"
-              v-if="options.length > 0"
             >
             </el-option>
           </el-select>
@@ -62,7 +60,9 @@
           </el-upload>
         </el-form-item>
         <div class="flex justify-end | mb-[12px]">
-          <el-button @click="onSubmit" class="w-[80px] ml-auto">작성</el-button>
+          <el-button @click="onSubmit" class="w-[80px] ml-auto mb-[12px]">
+            작성
+          </el-button>
         </div>
       </el-form>
     </el-container>
@@ -150,8 +150,8 @@ const onSubmit = async () => {
     }
   );
 
-  ElMessage(`${result.message}`);
-  navigateTo(`/post/${result.data?.postId}`);
+  ElMessage({ message: result.message, type: "success" });
+  navigateTo(`/post/${result.data?.postId}`, { replace: true });
 };
 
 const handleFileUploadSuccess = (
@@ -178,6 +178,10 @@ const handleFileUploadSuccess = (
   width: 100%;
 }
 .ck-editor__editable {
-  height: 650px;
+  height: 500px;
+}
+
+.dark .ck-editor__editable {
+  color: #000000;
 }
 </style>
