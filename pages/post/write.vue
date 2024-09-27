@@ -178,7 +178,7 @@ const handleFileUploadSuccess = (
   width: 100%;
 }
 .ck-editor__editable {
-  height: 650px;
+  height: 500px;
 }
 
 .dark .ck-editor__editable {
