@@ -1,7 +1,7 @@
 <template>
   <div v-if="form" class="w-full | flex justify-center">
     <el-container
-      class="max-w-[1000px] h-full | flex justify-center | border border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-basicWhite dark:bg-darkBackground-lighterFill | mr-[12px]"
+      class="max-w-[1000px] h-screen | flex justify-center | border border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-basicWhite dark:bg-darkBackground-lighterFill | mr-[12px]"
     >
       <el-form :model="form" class="w-full mx-[12px]">
         <div

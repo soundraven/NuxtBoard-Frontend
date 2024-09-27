@@ -1,7 +1,7 @@
 <template>
   <el-container
     v-if="postInfo"
-    class="w-full h-full | flex flex-col justify-center"
+    class="w-full h-screen | flex flex-col justify-center"
   >
     <el-container
       class="max-w-[1000px] | flex justify-center | border-l border-r border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-basicWhite dark:bg-darkBackground-lighterFill | mx-[12px]"
@@ -29,7 +29,7 @@
                 v-if="$indexStore.auth.user.id === postInfo.registeredBy"
                 icon="delete"
                 type="danger"
-                @click="deletePost"
+                @click="showDeletePostModal"
                 class="!w-[30px] !h-[30px]"
               />
             </div>
@@ -45,7 +45,7 @@
               >
                 {{ likeInfo.totalLikes }}
               </span>
-              <span class="font-bold ml-[6px]">비추천: </span>
+              <span class="font-bold ml-[6px]">비추: </span>
               <span
                 class="bg-background-darkerFill dark:bg-darkBackground-darkerFill ml-[6px]"
               >
@@ -93,7 +93,7 @@
           <div
             class="h-[40px] | flex justify-end items-center | border-t border-b border-border-darkerBorder dark:border-darkBorder-darkerBorder"
           >
-            <el-button icon="bell" type="danger" @click="report">
+            <el-button icon="bell" type="danger" @click="showReportModal">
               <div>{{ postInfo.report }}</div>
             </el-button>
           </div>
@@ -120,7 +120,7 @@
                     stroke-linejoin="round"
                     stroke-width="2"
                     d="M3 16l4-4m0 0l4 4m-4-4v12M5 4a2 2 0 112 2h10a2 2 0 112 2h-5a2 2 0 11-2 2h5"
-                  ></path>
+                  />
                 </svg>
                 <a
                   :href="`${baseURL}/posts/download/${file.split('/').pop()}`"
@@ -175,7 +175,7 @@
                   <el-button
                     icon="delete"
                     type="danger"
-                    @click.stop="deleteComment(comment.id)"
+                    @click.stop="showDeleteCommentModal(comment.id)"
                     class="z-10 !w-[10px] !h-[20px]"
                   />
                 </div>
@@ -236,7 +236,7 @@
                       <el-button
                         icon="delete"
                         type="danger"
-                        @click.stop="deleteComment(comment.id)"
+                        @click.stop="showDeleteReplyModal(reply.id)"
                         class="z-10 !w-[10px] !h-[20px]"
                       />
                     </div>
@@ -313,15 +313,30 @@
       <Sidebar />
     </el-aside>
   </el-container>
+  <Modal
+    v-model="isModalVisible"
+    :title="`${modalTitle}`"
+    @confirm="modalConfirmAction"
+  >
+    <p>{{ modalContent }}</p>
+  </Modal>
 </template>
 
 <script setup lang="ts">
 import type { PostInfo, CommentInfo, LikeInfo } from "~/types/interface";
 import DOMPurify from "dompurify";
+import { useModal } from "~/composables/useModals";
 
 import "animate.css";
 
 const { $indexStore, $apiGet, $apiPost } = useNuxtApp();
+const {
+  isModalVisible,
+  modalTitle,
+  modalContent,
+  modalConfirmAction,
+  openModal,
+} = useModal();
 
 const route = useRoute();
 const router = useRouter();
@@ -504,7 +519,44 @@ const editReply = async (commentId: number, replyId: number) => {
   }
 };
 
+const showDeletePostModal = () => {
+  openModal(
+    "Post Deletion",
+    "Are you sure you want to delete this post?",
+    () => {
+      deletePost();
+    }
+  );
+};
+
+const showReportModal = () => {
+  openModal("Post Report", "Are you sure you want to report this post?", () => {
+    report();
+  });
+};
+
+const showDeleteCommentModal = (commentId: number) => {
+  openModal(
+    "Comment Deletion",
+    "Are you sure you want to delete this comment?",
+    () => {
+      deleteComment(commentId, undefined);
+    }
+  );
+};
+
+const showDeleteReplyModal = (replyId: number) => {
+  openModal(
+    "Comment Deletion",
+    "Are you sure you want to delete this comment?",
+    () => {
+      deleteComment(undefined, replyId);
+    }
+  );
+};
+
 const deletePost = async () => {
+  console.log("글삭제");
   const result = await $apiPost(
     `/posts/delete`,
     {
@@ -517,18 +569,24 @@ const deletePost = async () => {
       },
     }
   );
+
   if (result.success) {
-    ElMessage(`${result.message}`);
+    isModalVisible.value = false;
+    ElMessage({ message: result.message, type: "success" });
     navigateTo("/", { replace: true });
   }
 };
 
-const deleteComment = async (commentId: number) => {
+const deleteComment = async (
+  commentId: number | undefined,
+  replyId: number | undefined
+) => {
   const result = await $apiPost(
     `/comments/delete`,
     {
       user: $indexStore.auth.user,
       commentId: commentId,
+      replyId: replyId,
     },
     {
       headers: {
@@ -538,8 +596,9 @@ const deleteComment = async (commentId: number) => {
   );
 
   if (result.success) {
+    isModalVisible.value = false;
     ElMessage({ message: result.message, type: "success" });
-    getPostInfo();
+    getCommentInfo();
   }
 };
 
@@ -594,6 +653,7 @@ const report = async () => {
   );
 
   if (result.success) {
+    isModalVisible.value = false;
     ElMessage({ message: result.message, type: "success" });
     getPostInfo();
   }

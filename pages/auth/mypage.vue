@@ -311,8 +311,6 @@ const getPostList = async () => {
     commentList.value = [...commentResult.data.commentList];
   }
 
-  console.log(postList.value);
-
   nextTick(() => {
     loading.value = false;
   });
