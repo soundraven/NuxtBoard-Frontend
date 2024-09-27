@@ -2,7 +2,7 @@
   <div class="h-screen flex justify-center">
     <el-card
       :class="{ 'opacity-0': !showCard, 'opacity-100': showCard }"
-      class="w-[600px] h-[320px] flex justify-center items-center my-auto p-[40px] transition-opacity duration-1000 ease-in-out"
+      class="w-[600px] h-[320px] | flex justify-center items-center | my-auto p-[40px] | transition-opacity duration-1000 ease-in-out"
     >
       <el-form
         :model="form"
@@ -11,10 +11,18 @@
         label-width="auto"
         class="flex flex-col justify-center items-center"
       >
-        <el-form-item label="Email" prop="email" class="w-full">
+        <el-form-item
+          label="Email"
+          prop="email"
+          class="w-full whitespace-nowrap"
+        >
           <el-input type="email" v-model="form.email" />
         </el-form-item>
-        <el-form-item label="Password" prop="password" class="w-full">
+        <el-form-item
+          label="Password"
+          prop="password"
+          class="w-full whitespace-nowrap"
+        >
           <el-input type="password" v-model="form.password" show-password />
         </el-form-item>
         <div class="flex justify-center items-center">
