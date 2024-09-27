@@ -1,12 +1,12 @@
 <template>
   <div
-    class="w-full h-screen | flex justify-center | border border-border-darkerBorder dark:border-darkBorder-darkerBorder | !px-[12px]"
+    class="w-full min-h-screen | flex justify-center | border border-border-darkerBorder dark:border-darkBorder-darkerBorder | !px-[12px]"
   >
     <el-container
-      class="max-w-[1000px] h-screen flex flex-row border border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-basicWhite dark:bg-darkBackground-lighterFill | mr-[12px]"
+      class="max-w-[1000px] flex flex-row border border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-basicWhite dark:bg-darkBackground-lighterFill | mr-[12px]"
     >
       <el-header
-        class="w-full !h-[200px] | flex items-center border-b border-border-darkerBorder dark:border-darkBorder-darkerBorder p-[12px]"
+        class="w-full !h-[160px] | flex items-center border-b border-border-darkerBorder dark:border-darkBorder-darkerBorder p-[12px]"
       >
         <el-button
           type="primary"
@@ -21,7 +21,7 @@
           <p class="text-[16px]">기본 정보 입니다.</p></span
         >
       </el-header>
-      <el-tabs class="h-full | pt-[12px] px-[12px]" tab-position="left">
+      <el-tabs class="h-full | pt-[12px] px-[12px]" :tab-position="tabPosition">
         <el-tab-pane label="Home" class="px-[12px]">
           <div
             class="text-[22px] font-bold | underline underline-offset-[6px] decoration-2 decoration-blue-500 | mb-[12px]"
@@ -78,13 +78,13 @@
               <el-table-column
                 prop="id"
                 label="ID"
-                width="100"
+                min-width="60"
                 align="center"
               />
               <el-table-column
                 prop="boardName"
                 label="게시판"
-                width="80"
+                min-width="70"
                 align="center"
               />
               <el-table-column
@@ -92,6 +92,7 @@
                 label="제목"
                 align="left"
                 header-align="center"
+                show-overflow-tooltip
               >
                 <template #default="scope">
                   <a
@@ -105,7 +106,7 @@
               <el-table-column
                 prop="formattedDate"
                 label="작성일자"
-                width="180"
+                min-width="160"
                 align="center"
               />
             </el-table>
@@ -135,7 +136,7 @@
                 <el-table-column
                   prop="id"
                   label="ID"
-                  width="100"
+                  min-width="60"
                   align="center"
                 />
                 <el-table-column
@@ -147,15 +148,16 @@
                   <template #default="scope">
                     <a
                       @click="navigateTo(`/post/${scope.row.post_id}`)"
-                      class="text-blue-500 cursor-pointer"
-                      >{{ scope.row.content }}
+                      class="text-blue-500 cursor-pointer truncate"
+                    >
+                      {{ scope.row.content }}
                     </a>
                   </template>
                 </el-table-column>
                 <el-table-column
                   prop="formattedDate"
                   label="작성일자"
-                  width="180"
+                  min-width="160"
                   align="center"
                 />
               </el-table>
@@ -261,8 +263,24 @@ const loading = ref(false);
 const noMore = computed(() => postList.value.length >= totalCount.value);
 const disabled = computed(() => loading.value || noMore.value);
 
+const tabPosition: Ref<"left" | "top" | "bottom" | "right"> = ref("left");
+
+const handleResize = () => {
+  if (window.innerWidth < 860) {
+    tabPosition.value = "top";
+  } else {
+    tabPosition.value = "left";
+  }
+};
+
 onMounted(async () => {
   getPostList();
+  handleResize();
+  window.addEventListener("resize", handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("resize", handleResize);
 });
 
 const getPostList = async () => {
