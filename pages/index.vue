@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-full flex justify-center">
+  <div class="w-full h-screen flex justify-center">
     <el-container
       class="max-w-[1000px] h-full | flex justify-center | border-x border-border-darkerBorder dark:border-darkBorder-darkerBorder dark:bg-darkBackground-lighterFill pb-[12px] px-[12px] mx-[12px]"
     >
