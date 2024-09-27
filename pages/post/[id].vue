@@ -351,7 +351,9 @@ const router = useRouter();
 const config = useRuntimeConfig();
 const baseURL = config.public.apiBaseUrl;
 
-const postId: string = route.params.id as string;
+const postId = Array.isArray(route.params.id)
+  ? route.params.id[0]
+  : route.params.id;
 const postInfo: Ref<PostInfo> = ref({} as PostInfo);
 const likeInfo: Ref<LikeInfo> = ref({
   totalLikes: 0,
