@@ -40,7 +40,6 @@
               {{ post.formattedDate }}
             </span>
           </div>
-
           <div
             class="text-[22px] font-bold | underline underline-offset-[6px] decoration-2 decoration-blue-500 | mt-[12px] mb-[12px]"
           >
@@ -70,6 +69,7 @@
           >
             <el-table
               :data="postList"
+              v-loading="loading"
               :highlight-current-row="true"
               class="mx-auto"
               :header-cell-style="getHeaderStyle"
@@ -97,7 +97,8 @@
                   <a
                     @click="navigateTo(`/post/${scope.row.id}`)"
                     class="text-blue-500 cursor-pointer truncate"
-                    >{{ scope.row.title }}
+                  >
+                    {{ scope.row.title }}
                   </a>
                 </template>
               </el-table-column>
@@ -108,8 +109,9 @@
                 align="center"
               />
             </el-table>
-            <p v-if="loading">Loading...</p>
-            <p v-if="noMore">No more Post</p>
+            <div v-if="noMore">
+              <el-empty :image-size="100" description="No more post!" />
+            </div>
           </div>
         </el-tab-pane>
         <el-tab-pane label="My comment">
@@ -124,6 +126,7 @@
             >
               <el-table
                 :data="commentList"
+                v-loading="loading"
                 :highlight-current-row="true"
                 class="mx-auto"
                 :header-cell-style="getHeaderStyle"
@@ -156,8 +159,9 @@
                   align="center"
                 />
               </el-table>
-              <p v-if="loading">Loading...</p>
-              <p v-if="noMore">No more Post</p>
+              <div v-if="noMore">
+                <el-empty :image-size="100" description="No more post!" />
+              </div>
             </div>
           </div>
         </el-tab-pane>

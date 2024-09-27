@@ -26,6 +26,7 @@
       >
         <el-table
           :data="list"
+          v-loading="loading"
           :highlight-current-row="true"
           class="w-full"
           :header-cell-style="getHeaderStyle"
@@ -74,8 +75,9 @@
             align="center"
           />
         </el-table>
-        <p v-if="loading">Loading...</p>
-        <p v-if="noMore">No more Post</p>
+        <div v-if="noMore">
+          <el-empty :image-size="100" description="No more post!" />
+        </div>
       </div>
       <div class="flex justify-end | mt-[12px]">
         <el-button @click="goToWrite">글작성</el-button>

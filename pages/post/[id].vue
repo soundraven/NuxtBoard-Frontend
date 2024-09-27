@@ -1,20 +1,20 @@
 <template>
   <el-container
     v-if="postInfo"
-    class="w-full h-screen | flex flex-col justify-center"
+    class="w-full min-h-screen | flex flex-col justify-center"
   >
     <el-container
       class="max-w-[1000px] | flex justify-center | border-l border-r border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-basicWhite dark:bg-darkBackground-lighterFill | mx-[12px]"
     >
       <div class="w-full">
         <div
-          class="h-[100px] | flex items-center | text-[22px] font-bold | border-b border-border-darkerBorder dark:border-darkBorder-darkerBorder px-[12px]"
+          class="h-[80px] | flex items-center | text-[22px] font-bold | border-b border-border-darkerBorder dark:border-darkBorder-darkerBorder px-[12px]"
         >
           {{ postInfo.boardName }} 게시판
         </div>
         <div class="px-[12px]">
           <div
-            class="h-[40px] | flex justify-between items-center | text-[18px] | border-y border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-darkerFill dark:bg-darkBackground-darkerFill | mt-[12px] px-[12px]"
+            class="min-h-[40px] | flex justify-between items-center | text-[18px] | border-y border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-darkerFill dark:bg-darkBackground-darkerFill | mt-[12px] px-[12px]"
           >
             <span class="font-bold">{{ postInfo.title }}</span>
             <div>
@@ -35,7 +35,7 @@
             </div>
           </div>
           <div
-            class="h-[30px] | flex justify-between items-center | border-b border-border-darkerBorder dark:border-darkBorder-darkerBorder | p-[12px]"
+            class="min-h-[30px] | flex justify-between items-center | border-b border-border-darkerBorder dark:border-darkBorder-darkerBorder | px-[12px]"
           >
             <span v-if="postInfo.registeredByUserName" class="text-[15px]">
               {{ postInfo.registeredByUserName }}
@@ -43,7 +43,7 @@
             <span v-else class="text-[15px]">
               익명{{ postInfo.registeredBy }}
             </span>
-            <div class="text-[13px]">
+            <div class="text-[13px] text-right">
               <span class="font-bold">추천: </span>
               <span
                 class="bg-background-darkerFill dark:bg-darkBackground-darkerFill ml-[6px]"
@@ -62,16 +62,18 @@
               >
                 {{ commentList.length }}
               </span>
-              <span class="font-bold ml-[6px]">작성일: </span>
-              <span
-                class="bg-background-darkerFill dark:bg-darkBackground-darkerFill ml-[6px]"
-              >
-                {{ postInfo.formattedDate }}
-              </span>
+              <div class="font-bold ml-[6px] md:inline">
+                작성일:
+                <span
+                  class="bg-background-darkerFill dark:bg-darkBackground-darkerFill ml-[6px]"
+                >
+                  {{ postInfo.formattedDate }}
+                </span>
+              </div>
             </div>
           </div>
           <client-only>
-            <div class="min-h-[600px] p-[12px]" v-html="sanitizedContent"></div>
+            <div class="min-h-[350px] p-[12px]" v-html="sanitizedContent"></div>
           </client-only>
           <div class="w-full h-full flex justify-center | mb-[12px]">
             <el-button

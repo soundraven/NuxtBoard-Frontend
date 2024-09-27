@@ -11,7 +11,7 @@
       </el-header>
       <el-main
         style="padding: 0; gap: 12px"
-        class="w-full h-screen mt-[12px] xl:columns-[300px] lg:columns-[300px] md:columns-[340px] sm:columns-[240px]"
+        class="w-full h-auto mt-[12px] xl:columns-[300px] lg:columns-[300px] md:columns-[340px] sm:columns-[240px]"
       >
         <div
           v-for="(board, index) in $indexStore.commoncode.boards"
@@ -33,7 +33,9 @@
               class="flex justify-between text-[14px] cursor-pointer"
               @click="navigateTo(`/post/${post.id}`)"
             >
-              <span class="xl:w-[170px] truncate ... md:w-[170px] sm:w-[150px]">
+              <span
+                class="xl:w-[200px] truncate md:w-[200px] sm:w-[170px] w-[320px]"
+              >
                 {{ post.title }}
               </span>
               <span class="ml-[12px]">
