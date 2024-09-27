@@ -37,7 +37,12 @@
           <div
             class="h-[30px] | flex justify-between items-center | border-b border-border-darkerBorder dark:border-darkBorder-darkerBorder | p-[12px]"
           >
-            <span class="text-[15px]">{{ postInfo.registeredByUserName }}</span>
+            <span v-if="postInfo.registeredByUserName" class="text-[15px]">
+              {{ postInfo.registeredByUserName }}
+            </span>
+            <span v-else class="text-[15px]">
+              익명{{ postInfo.registeredBy }}
+            </span>
             <div class="text-[13px]">
               <span class="font-bold">추천: </span>
               <span

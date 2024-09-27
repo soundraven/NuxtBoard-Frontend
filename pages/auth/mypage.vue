@@ -12,8 +12,9 @@
           type="primary"
           v-if="$indexStore.auth.user.userName === ''"
           @click="setUserNameVisible = true"
-          >Please set your User name</el-button
         >
+          익명{{ $indexStore.auth.user.id }}, Please set your User name
+        </el-button>
         <span v-else class="text-[22px]">
           사용자
           <span class="font-bold">{{ $indexStore.auth.user.userName }}</span>
@@ -163,8 +164,8 @@
         <el-tab-pane label="Resign">
           <div class="flex justify-center items-center">
             <el-button
-              type="warning"
-              @click="dialogVisible = true"
+              type="danger"
+              @click="showDeactivateModal"
               class="!w-[300px] !h-[200px] | mt-[200px]"
             >
               <el-icon :size="100">
@@ -172,22 +173,6 @@
               </el-icon>
             </el-button>
           </div>
-          <el-dialog
-            v-model="dialogVisible"
-            title="Account Delete"
-            width="500"
-            :before-close="handleClose"
-          >
-            <span>Deleting your account is irreversible</span>
-            <template #footer>
-              <div class="dialog-footer">
-                <el-button @click="dialogVisible = false">Cancel</el-button>
-                <el-button type="danger" @click="deactivate">
-                  Confirm
-                </el-button>
-              </div>
-            </template>
-          </el-dialog>
         </el-tab-pane>
       </el-tabs>
     </el-container>
@@ -222,11 +207,19 @@
       </div>
     </template>
   </el-dialog>
+  <Modal
+    v-model="isModalVisible"
+    :title="`${modalTitle}`"
+    @confirm="modalConfirmAction"
+  >
+    <p>{{ modalContent }}</p>
+  </Modal>
 </template>
 <script setup lang="ts">
 import type { CommentInfo, PostInfo, UserInfo } from "@/types/interface";
 import type { FormInstance } from "element-plus";
 import rules from "~/utils/formRules";
+import { useModal } from "~/composables/useModals";
 
 definePageMeta({
   middleware: "auth",
@@ -237,6 +230,13 @@ const router = useRouter();
 const colorMode = useColorMode();
 
 const { $indexStore, $catchError, $apiGet, $apiPost } = useNuxtApp();
+const {
+  isModalVisible,
+  modalTitle,
+  modalContent,
+  modalConfirmAction,
+  openModal,
+} = useModal();
 
 const dialogVisible: Ref<boolean> = ref(false);
 const setUserNameVisible: Ref<boolean> = ref(false);
@@ -365,6 +365,12 @@ const handleClose = (done: () => void) => {
       done();
     })
     .catch(() => {});
+};
+
+const showDeactivateModal = () => {
+  openModal("Account Delete", "Deleting your account is irreversible.", () => {
+    deactivate();
+  });
 };
 
 const deactivate = async () => {

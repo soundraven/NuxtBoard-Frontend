@@ -151,7 +151,7 @@ const onSubmit = async () => {
   );
 
   ElMessage({ message: result.message, type: "success" });
-  navigateTo(`/post/${result.data?.postId}`);
+  navigateTo(`/post/${result.data?.postId}`, { replace: true });
 };
 
 const handleFileUploadSuccess = (

@@ -59,7 +59,14 @@
             label="작성자"
             width="150"
             align="center"
-          />
+          >
+            <template #default="scope">
+              <span v-if="scope.row.registeredUserName">
+                {{ scope.row.registeredUserName }}
+              </span>
+              <span v-else>익명{{ scope.row.registeredBy }}</span>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="formattedDate"
             label="작성일자"
