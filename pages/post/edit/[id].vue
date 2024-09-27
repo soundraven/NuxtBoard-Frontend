@@ -1,12 +1,12 @@
 <template>
   <div v-if="form" class="w-full | flex justify-center">
     <el-container
-      class="max-w-[1000px] h-screen | flex justify-center | border border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-basicWhite dark:bg-darkBackground-lighterFill | mr-[12px]"
+      class="max-w-[1000px] h-full | flex justify-center | border border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-basicWhite dark:bg-darkBackground-lighterFill | mr-[12px]"
     >
       <el-form :model="form" class="w-full mx-[12px]">
         <div
           v-if="form.boardId && $indexStore.commoncode.boards"
-          class="w-full h-[100px] | flex items-center | text-[22px] font-bold | border-b border-border-darkerBorder dark:border-darkBorder-darkerBorder px-[12px]"
+          class="w-full h-[80px] | flex items-center | text-[22px] font-bold | border-b border-border-darkerBorder dark:border-darkBorder-darkerBorder px-[12px]"
         >
           {{ boardName }} 게시판
         </div>
@@ -66,7 +66,9 @@
           </el-upload>
         </el-form-item>
         <div class="flex justify-end">
-          <el-button @click="onSubmit" class="w-[80px] ml-auto">작성</el-button>
+          <el-button @click="onSubmit" class="w-[80px] ml-auto mb-[12px]">
+            작성
+          </el-button>
         </div>
       </el-form>
     </el-container>
@@ -212,5 +214,9 @@ const handleFileUploadSuccess = (
 }
 .ck-editor__editable {
   height: 650px;
+}
+
+.dark .ck-editor__editable {
+  color: #000000;
 }
 </style>

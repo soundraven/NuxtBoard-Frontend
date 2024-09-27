@@ -20,7 +20,7 @@
         >
           <div
             @click="navigateTo(`/post/list?boardId=${board.boardId}`)"
-            class="w-[50px] text-[22px] font-bold underline underline-offset-[4px] decoration-2 decoration-success cursor-pointer"
+            class="w-[50px] text-[22px] font-bold underline underline-offset-[6px] decoration-2 decoration-success cursor-pointer"
           >
             {{ board.boardName }}
           </div>

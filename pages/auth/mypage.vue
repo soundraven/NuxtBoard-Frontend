@@ -23,7 +23,7 @@
       <el-tabs class="h-full | pt-[12px] px-[12px]" tab-position="left">
         <el-tab-pane label="Home" class="px-[12px]">
           <div
-            class="text-[22px] font-bold | underline underline-offset-[4px] decoration-2 decoration-success | mb-[12px]"
+            class="text-[22px] font-bold | underline underline-offset-[6px] decoration-2 decoration-blue-500 | mb-[12px]"
           >
             나의 최신 게시글
           </div>
@@ -32,16 +32,16 @@
             key="post.id"
             class="flex justify-between | text-[15px] | mt-[2px]"
           >
-            <span class="w-[550px] truncate ...">
+            <span class="w-full truncate ...">
               {{ post.title }}
             </span>
-            <span>
+            <span class="whitespace-nowrap hidden md:inline">
               {{ post.formattedDate }}
             </span>
           </div>
 
           <div
-            class="text-[22px] font-bold | underline underline-offset-[4px] decoration-2 decoration-success | mt-[12px] mb-[12px]"
+            class="text-[22px] font-bold | underline underline-offset-[6px] decoration-2 decoration-blue-500 | mt-[12px] mb-[12px]"
           >
             나의 최신 댓글
           </div>
@@ -50,38 +50,62 @@
             key="comment.id"
             class="flex justify-between | text-[15px] | mt-[2px]"
           >
-            <span class="w-[550px] truncate ...">
+            <span class="w-full truncate ...">
               {{ comment.content }}
             </span>
-            <span>{{ comment.formattedDate }}</span>
+            <span class="whitespace-nowrap hidden md:inline">
+              {{ comment.formattedDate }}
+            </span>
           </div>
         </el-tab-pane>
         <el-tab-pane label="My post">
           <div
-            class="w-full h-[660px] overflow-auto border border-border-darkerBorder dark:border-darkBorder-darkerBorder rounded shadow-sm"
+            class="w-full h-[800px] | border border-border-darkerBorder dark:border-darkBorder-darkerBorder rounded shadow-sm | overflow-auto"
             v-infinite-scroll="getPostList"
             infinite-scroll-distance="400"
             :infinite-scroll-disabled="disabled"
-            infinite-scroll-immediate="true"
+            infinite-scroll-immediate="false"
             infinite-scroll-delay="500"
           >
             <el-table
               :data="postList"
               :highlight-current-row="true"
               class="mx-auto"
+              :header-cell-style="getHeaderStyle"
+              row-class-name="custom-row"
             >
-              <el-table-column prop="id" label="ID" />
-              <el-table-column prop="board_id" label="게시판" />
-              <el-table-column prop="title" label="제목">
+              <el-table-column
+                prop="id"
+                label="ID"
+                width="100"
+                align="center"
+              />
+              <el-table-column
+                prop="boardName"
+                label="게시판"
+                width="80"
+                align="center"
+              />
+              <el-table-column
+                prop="title"
+                label="제목"
+                align="left"
+                header-align="center"
+              >
                 <template #default="scope">
                   <a
                     @click="navigateTo(`/post/${scope.row.id}`)"
-                    class="text-blue-500 cursor-pointer"
+                    class="text-blue-500 cursor-pointer truncate"
                     >{{ scope.row.title }}
                   </a>
                 </template>
               </el-table-column>
-              <el-table-column prop="registered_date" label="작성일자" />
+              <el-table-column
+                prop="formattedDate"
+                label="작성일자"
+                width="180"
+                align="center"
+              />
             </el-table>
             <p v-if="loading">Loading...</p>
             <p v-if="noMore">No more Post</p>
@@ -90,7 +114,7 @@
         <el-tab-pane label="My comment">
           <div>
             <div
-              class="w-full h-[660px] overflow-auto border border-border-darkerBorder dark:border-darkBorder-darkerBorder rounded shadow-sm"
+              class="w-full h-[800px] overflow-auto border border-border-darkerBorder dark:border-darkBorder-darkerBorder rounded shadow-sm"
               v-infinite-scroll="getPostList"
               infinite-scroll-distance="400"
               :infinite-scroll-disabled="disabled"
@@ -101,9 +125,21 @@
                 :data="commentList"
                 :highlight-current-row="true"
                 class="mx-auto"
+                :header-cell-style="getHeaderStyle"
+                row-class-name="custom-row"
               >
-                <el-table-column prop="id" label="ID" />
-                <el-table-column prop="content" label="내용">
+                <el-table-column
+                  prop="id"
+                  label="ID"
+                  width="100"
+                  align="center"
+                />
+                <el-table-column
+                  prop="content"
+                  label="내용"
+                  align="left"
+                  header-align="center"
+                >
                   <template #default="scope">
                     <a
                       @click="navigateTo(`/post/${scope.row.post_id}`)"
@@ -112,7 +148,12 @@
                     </a>
                   </template>
                 </el-table-column>
-                <el-table-column prop="registered_date" label="작성일자" />
+                <el-table-column
+                  prop="formattedDate"
+                  label="작성일자"
+                  width="180"
+                  align="center"
+                />
               </el-table>
               <p v-if="loading">Loading...</p>
               <p v-if="noMore">No more Post</p>
@@ -187,6 +228,8 @@ definePageMeta({
 
 const router = useRouter();
 
+const colorMode = useColorMode();
+
 const { $indexStore, $catchError, $apiGet, $apiPost } = useNuxtApp();
 
 const dialogVisible: Ref<boolean> = ref(false);
@@ -195,7 +238,7 @@ const setUserNameVisible: Ref<boolean> = ref(false);
 const userName: Ref<string> = ref("");
 
 const currentPage: Ref<number> = ref(1);
-const pageSize: Ref<number> = ref(20);
+const pageSize: Ref<number> = ref(30);
 const totalCount: Ref<number> = ref(0);
 
 const postList: Ref = ref([]);
@@ -213,13 +256,13 @@ const getPostList = async () => {
   loading.value = true;
 
   const registeredByJson = sessionStorage.getItem("user");
-  const parsedRegisteredBy = registeredByJson
-    ? JSON.parse(registeredByJson)
-    : null;
+  let parsedRegisteredBy: UserInfo;
 
-  if (!parsedRegisteredBy) {
+  if (!registeredByJson) {
     ElMessage.error("User info not found");
     return;
+  } else {
+    parsedRegisteredBy = JSON.parse(registeredByJson);
   }
 
   const [postResult, commentResult] = await Promise.all([
@@ -249,9 +292,17 @@ const getPostList = async () => {
     ),
   ]);
 
-  postList.value = postResult.data?.postList;
-  totalCount.value = postResult.data?.totalCount || 0;
-  commentList.value = commentResult.data?.commentList;
+  if (postResult.data) {
+    postList.value = [...postList.value, ...postResult.data.postList];
+    totalCount.value = postResult.data?.totalCount || 0;
+    currentPage.value += 1;
+  }
+
+  if (commentResult.data) {
+    commentList.value = [...commentResult.data.commentList];
+  }
+
+  console.log(postList.value);
 
   nextTick(() => {
     loading.value = false;
@@ -329,4 +380,29 @@ const deactivate = async () => {
     $catchError(error);
   }
 };
+
+const getHeaderStyle = () => {
+  return colorMode.value === "dark"
+    ? { backgroundColor: "#39393a" }
+    : { backgroundColor: "#ffffff" };
+};
 </script>
+
+<style>
+.custom-header {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.custom-row {
+  background-color: #ffffff;
+}
+
+.dark .custom-header {
+  background-color: #424243;
+  color: #ffffff;
+}
+.dark .custom-row {
+  background-color: #424243;
+}
+</style>

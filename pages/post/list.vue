@@ -156,25 +156,16 @@ const goToWrite = () => {
 
 const getHeaderStyle = () => {
   return colorMode.value === "dark"
-    ? { backgroundColor: "#424243" } // 다크모드 스타일
-    : { backgroundColor: "#ffffff" }; // 라이트모드 스타일
+    ? { backgroundColor: "#424243" }
+    : { backgroundColor: "#ffffff" };
 };
 </script>
 
 <style>
-.custom-header {
-  background-color: #ffffff;
-  color: #000000;
-}
-
 .custom-row {
   background-color: #ffffff;
 }
 
-.dark .custom-header {
-  background-color: #424243;
-  color: #ffffff;
-}
 .dark .custom-row {
   background-color: #424243;
 }
