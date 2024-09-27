@@ -1,7 +1,7 @@
 <template>
-  <el-container class="h-screen | flex flex-col justify-center">
+  <el-container class="min-h-screen | flex flex-col justify-center">
     <div
-      class="w-[1000px] | border-x border-border-darkerBorder dark:border-darkBorder-darkerBorder dark:bg-darkBackground-lighterFill | mx-[12px] px-[12px] pt-[12px]"
+      class="w-full max-w-[1000px] | border-x border-border-darkerBorder dark:border-darkBorder-darkerBorder dark:bg-darkBackground-lighterFill | mx-[12px] px-[12px] pt-[12px]"
     >
       <el-tabs
         v-model="currentBoardId"
@@ -17,7 +17,7 @@
         />
       </el-tabs>
       <div
-        class="w-full h-[1000px] | border border-border-darkerBorder dark:border-darkBorder-darkerBorder shadow-sm rounded-bl rounded-br | overflow-auto"
+        class="h-[800px] | border border-border-darkerBorder dark:border-darkBorder-darkerBorder shadow-sm rounded-bl rounded-br | overflow-auto"
         v-infinite-scroll="getPostList"
         infinite-scroll-distance="500"
         :infinite-scroll-disabled="disabled"
@@ -32,17 +32,18 @@
           :header-cell-style="getHeaderStyle"
           row-class-name="custom-row"
         >
-          <el-table-column prop="id" label="ID" width="100" align="center" />
           <el-table-column
-            prop="boardName"
-            label="게시판"
-            width="80"
+            v-if="isMdScreen"
+            prop="id"
+            label="ID"
+            min-width="100"
             align="center"
           />
+
           <el-table-column
             prop="title"
             label="제목"
-            width="440"
+            min-width="450"
             align="left"
             header-align="center"
           >
@@ -56,9 +57,10 @@
             </template>
           </el-table-column>
           <el-table-column
+            v-if="isSmScreen"
             prop="registeredUserName"
             label="작성자"
-            width="150"
+            min-width="150"
             align="center"
           >
             <template #default="scope">
@@ -69,9 +71,10 @@
             </template>
           </el-table-column>
           <el-table-column
+            v-if="isLgScreen"
             prop="formattedDate"
             label="작성일자"
-            width="180"
+            min-width="180"
             align="center"
           />
         </el-table>
@@ -99,19 +102,41 @@ const router = useRouter();
 
 const colorMode = useColorMode();
 
-const currentPage = ref(1);
-const pageSize = ref(30);
-const totalCount = ref(0);
-const registeredBy = ref<string>("");
-const currentBoardId = ref<number>(0);
+const currentPage: Ref<number> = ref(1);
+const pageSize: Ref<number> = ref(30);
+const totalCount: Ref<number> = ref(0);
+const registeredBy: Ref<string> = ref("");
+const currentBoardId: Ref<number> = ref(0);
 
-const loading = ref(false);
+const loading: Ref<boolean> = ref(false);
 const noMore = computed(() => list.value.length >= totalCount.value);
 const disabled = computed(() => loading.value || noMore.value);
 
 const list: Ref<PostInfo[]> = ref([]);
 
+const isLgScreen: Ref<boolean> = ref(false);
+const isMdScreen: Ref<boolean> = ref(false);
+const isSmScreen: Ref<boolean> = ref(false);
+
 onMounted(async () => {
+  if (process.client) {
+    const handleResize = () => {
+      isLgScreen.value = window.innerWidth >= 1024;
+      isMdScreen.value = window.innerWidth >= 860;
+      isMdScreen.value = window.innerWidth >= 640;
+    };
+
+    isLgScreen.value = window.innerWidth >= 1024;
+    isMdScreen.value = window.innerWidth >= 860;
+    isSmScreen.value = window.innerWidth >= 640;
+
+    window.addEventListener("resize", handleResize);
+
+    onUnmounted(() => {
+      window.removeEventListener("resize", handleResize);
+    });
+  }
+
   const boardId = Number(route.query.boardId);
   if (boardId) {
     currentBoardId.value = boardId;

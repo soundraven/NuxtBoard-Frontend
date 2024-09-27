@@ -1,5 +1,5 @@
 <template>
-  <div class="hidden lg:block mr-[12px]">
+  <div class="hidden xl:inline mr-[12px]">
     <div
       class="w-[300px] | border border-border-darkerBorder dark:border-darkBorder-darkerBorder rounded shadow-sm bg-background-basicWhite dark:bg-darkBackground-darkerFill | p-[12px] mt-[12px]"
     >
