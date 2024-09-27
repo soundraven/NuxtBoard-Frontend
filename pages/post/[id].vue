@@ -148,7 +148,7 @@
         <div v-for="(comment, index) in commentList" :key="comment.id">
           <div class="w-full | px-[24px]">
             <div
-              class="w-full h-[60px] | flex flex-col justify-between items-center | border border-border-darkerBorder dark:border-darkBorder-darkerBorder | mt-[12px] mx-auto cursor-pointer"
+              class="w-full min-h-[60px] | flex flex-col justify-between items-center | border border-border-darkerBorder dark:border-darkBorder-darkerBorder | mt-[12px] mx-auto cursor-pointer"
               :class="{
                 'bg-background-lightFill dark:bg-darkBackground-lightFill':
                   (editCommentInputArea && comment.id === editedCommentNum) ||
@@ -157,13 +157,13 @@
               @click="onReplyArea(comment.id)"
             >
               <div
-                class="w-full h-[25px] | flex justify-between items-center | border-b border-dashed border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-darkerFill dark:bg-darkBackground-darkerFill | px-[12px]"
+                class="w-full min-h-[25px] | flex justify-between items-center | border-b border-dashed border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-darkerFill dark:bg-darkBackground-darkerFill | px-[12px]"
               >
                 <span
                   v-if="comment.userName === ''"
                   class="text-[15px] | mr-[6px]"
                 >
-                  익명
+                  익명{{ comment.registeredBy }}
                 </span>
                 <span v-else class="text-[15px] | mr-[6px]">
                   {{ comment.userName }}

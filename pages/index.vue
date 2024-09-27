@@ -38,7 +38,7 @@
               >
                 {{ post.title }}
               </span>
-              <span class="ml-[12px]">
+              <span class="w-full ml-[12px]">
                 {{ getElapsedTime(post.formattedDate) }}
               </span>
             </div>
