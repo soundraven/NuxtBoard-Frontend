@@ -23,6 +23,8 @@ const props = defineProps({
   title: String,
 });
 
+//cancel 버튼은 옵션으로 넣어서 확인만 할 수 있게
+
 const emits = defineEmits(["close", "confirm", "update:model-value"]);
 
 const handleClose = () => {

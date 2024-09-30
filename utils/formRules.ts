@@ -18,20 +18,13 @@ const rules: FormRules = {
     },
     {
       validator: (rule, value: string, callback) => {
-        if (value.length < 8) {
-          callback(new Error("Password must be at least 8 characters"));
-        } else if (!/[A-Z]/.test(value)) {
-          callback(
-            new Error("Password must contain at least one uppercase letter")
-          );
-        } else if (!/[a-z]/.test(value)) {
-          callback(
-            new Error("Password must contain at least one lowercase letter")
-          );
-        } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) {
-          callback(
-            new Error("Password must contain at least one special character")
-          );
+        if (
+          value.length < 8 ||
+          !/[A-Z]/.test(value) ||
+          !/[a-z]/.test(value) ||
+          !/[!@#$%^&*(),.?":{}|<>]/.test(value)
+        ) {
+          callback(new Error("The id or password is incorrect."));
         } else {
           callback();
         }

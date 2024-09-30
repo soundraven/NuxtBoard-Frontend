@@ -168,23 +168,22 @@
                 <span v-else class="text-[15px] | mr-[6px]">
                   {{ comment.userName }}
                 </span>
-                <div
-                  v-if="comment.registeredBy === $indexStore.auth.user.id"
-                  class="flex space-x-2 items-center"
-                >
+                <div class="flex space-x-2 items-center">
                   <span class="text-[14px]">{{ comment.formattedDate }}</span>
-                  <el-button
-                    icon="edit"
-                    type="primary"
-                    @click.stop="onEditArea(comment.id, comment.content)"
-                    class="z-10 !w-[10px] !h-[20px]"
-                  />
-                  <el-button
-                    icon="delete"
-                    type="danger"
-                    @click.stop="showDeleteCommentModal(comment.id)"
-                    class="z-10 !w-[10px] !h-[20px]"
-                  />
+                  <div v-if="comment.registeredBy === $indexStore.auth.user.id">
+                    <el-button
+                      icon="edit"
+                      type="primary"
+                      @click.stop="onEditArea(comment.id, comment.content)"
+                      class="z-10 !w-[10px] !h-[20px]"
+                    />
+                    <el-button
+                      icon="delete"
+                      type="danger"
+                      @click.stop="showDeleteCommentModal(comment.id)"
+                      class="z-10 !w-[10px] !h-[20px]"
+                    />
+                  </div>
                 </div>
               </div>
               <div
@@ -222,30 +221,34 @@
                   class="w-full h-[25px] | flex justify-between items-center | border-b border-dashed border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-darkerFill dark:bg-darkBackground-darkerFill | px-[12px]"
                 >
                   <div class="w-full | flex justify-between items-center |">
-                    <span v-if="!reply.userName" class="text-[15px] | mr-[12px]"
-                      >익명
+                    <span
+                      v-if="!reply.userName"
+                      class="text-[15px] | mr-[12px]"
+                    >
+                      익명
                     </span>
                     <span v-else class="text-[15px] | mr-[12px]">
                       {{ reply.userName }}
                     </span>
-                    <div
-                      v-if="reply.registeredBy === $indexStore.auth.user.id"
-                      class="flex space-x-2 items-center"
-                    >
+                    <div class="flex space-x-2 items-center">
                       <span class="text-[14px]">{{ reply.formattedDate }}</span>
-                      <el-button
-                        icon="Edit"
-                        type="primary"
-                        style="my-auto"
-                        @click.stop="onEditReplyArea(reply.id, reply.content)"
-                        class="z-10 !w-[10px] !h-[20px]"
-                      />
-                      <el-button
-                        icon="delete"
-                        type="danger"
-                        @click.stop="showDeleteReplyModal(reply.id)"
-                        class="z-10 !w-[10px] !h-[20px]"
-                      />
+                      <div
+                        v-if="reply.registeredBy === $indexStore.auth.user.id"
+                      >
+                        <el-button
+                          icon="Edit"
+                          type="primary"
+                          style="my-auto"
+                          @click.stop="onEditReplyArea(reply.id, reply.content)"
+                          class="z-10 !w-[10px] !h-[20px]"
+                        />
+                        <el-button
+                          icon="delete"
+                          type="danger"
+                          @click.stop="showDeleteReplyModal(reply.id)"
+                          class="z-10 !w-[10px] !h-[20px]"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -299,16 +302,18 @@
             </div>
           </div>
         </div>
-        <div
-          v-if="$indexStore.auth.isAuthenticated"
-          class="w-[full] h-auto px-[24px] mt-[12px]"
-        >
+        <div class="w-[full] h-auto px-[24px] mt-[12px]">
           <el-input
             v-model="comment"
             :rows="2"
             type="textarea"
-            class="resize-none"
-            placeholder="댓글을 입력해주세요"
+            class="custom-input"
+            :placeholder="
+              !$indexStore.auth.isAuthenticated
+                ? '댓글을 입력하려면 로그인이 필요합니다.'
+                : '댓글을 입력해주세요.'
+            "
+            :disabled="!$indexStore.auth.isAuthenticated"
           />
           <div class="flex justify-end | my-[12px]">
             <el-button @click="writeComment">댓글 작성</el-button>
@@ -384,6 +389,11 @@ onMounted(() => {
 });
 
 const onReplyArea = (commentId: number) => {
+  if (!$indexStore.auth.isAuthenticated) {
+    ElMessage({ message: "로그인이 필요합니다.", type: "error" });
+    return;
+  }
+
   replyInputArea.value = !replyInputArea.value;
   editedReplyInputArea.value = false;
   editCommentInputArea.value = false;
@@ -441,6 +451,16 @@ const getCommentInfo = async () => {
 };
 
 const writeComment = async () => {
+  if (!$indexStore.auth.isAuthenticated) {
+    ElMessage({ message: "로그인이 필요합니다.", type: "error" });
+    return;
+  }
+
+  if (comment.value.trim() === "") {
+    ElMessage({ message: "댓글을 입력해주세요.", type: "error" });
+    return;
+  }
+
   const result = await $apiPost(
     "/comments/write",
     {
@@ -485,6 +505,11 @@ const editComment = async () => {
 };
 
 const writeReply = async (commentId: number) => {
+  if (comment.value.trim() === "") {
+    ElMessage({ message: "답글을 입력해주세요.", type: "error" });
+    return;
+  }
+
   const result = await $apiPost(
     "/comments/write",
     {
@@ -668,3 +693,10 @@ const report = async () => {
   }
 };
 </script>
+
+<style>
+.custom-input .el-textarea__inner {
+  height: 60px;
+  resize: none;
+}
+</style>
