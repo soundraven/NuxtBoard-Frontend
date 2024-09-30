@@ -201,7 +201,7 @@
                 :rows="2"
                 type="textarea"
                 placeholder="댓글을 입력해주세요"
-                class="resize-none"
+                class="custom-input"
               />
               <el-button class="ml-auto mt-[12px]" @click="editComment">
                 댓글 수정
@@ -225,7 +225,7 @@
                       v-if="!reply.userName"
                       class="text-[15px] | mr-[12px]"
                     >
-                      익명
+                      익명{{ reply.registeredBy }}
                     </span>
                     <span v-else class="text-[15px] | mr-[12px]">
                       {{ reply.userName }}
@@ -267,7 +267,7 @@
                         v-model="editedReply"
                         :rows="2"
                         type="textarea"
-                        class="resize-none"
+                        class="custom-input"
                         placeholder="답글을 수정하세요"
                       />
                       <div class="flex justify-end mt-[12px]">
@@ -290,7 +290,7 @@
                   v-model="reply"
                   :rows="2"
                   type="textarea"
-                  class="resize-none"
+                  class="custom-input"
                   placeholder="답글을 입력하세요"
                 />
                 <div class="flex justify-end | mt-[12px]">
@@ -482,6 +482,11 @@ const writeComment = async () => {
 };
 
 const editComment = async () => {
+  if (comment.value.trim() === "") {
+    ElMessage({ message: "댓글을 입력해주세요.", type: "error" });
+    return;
+  }
+
   const result = await $apiPost(
     "/comments/edit",
     {
@@ -505,7 +510,7 @@ const editComment = async () => {
 };
 
 const writeReply = async (commentId: number) => {
-  if (comment.value.trim() === "") {
+  if (reply.value.trim() === "") {
     ElMessage({ message: "답글을 입력해주세요.", type: "error" });
     return;
   }
@@ -533,6 +538,11 @@ const writeReply = async (commentId: number) => {
 };
 
 const editReply = async (commentId: number, replyId: number) => {
+  if (reply.value.trim() === "") {
+    ElMessage({ message: "답글을 입력해주세요.", type: "error" });
+    return;
+  }
+
   const result = await $apiPost(
     "/comments/edit",
     {
