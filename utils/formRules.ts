@@ -18,20 +18,13 @@ const rules: FormRules = {
     },
     {
       validator: (rule, value: string, callback) => {
-        if (value.length < 8) {
-          callback(new Error("Password must be at least 8 characters"));
-        } else if (!/[A-Z]/.test(value)) {
-          callback(
-            new Error("Password must contain at least one uppercase letter")
-          );
-        } else if (!/[a-z]/.test(value)) {
-          callback(
-            new Error("Password must contain at least one lowercase letter")
-          );
-        } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) {
-          callback(
-            new Error("Password must contain at least one special character")
-          );
+        if (
+          value.length < 8 ||
+          !/[A-Z]/.test(value) ||
+          !/[a-z]/.test(value) ||
+          !/[!@#$%^&*(),.?":{}|<>]/.test(value)
+        ) {
+          callback(new Error("The id or password is incorrect."));
         } else {
           callback();
         }
@@ -43,17 +36,27 @@ const rules: FormRules = {
   userName: [
     {
       validator: (rule, value: string, callback) => {
-        if (value.length < 3) {
-          callback(new Error("User name must be at least 3 characters"));
-        } else if (value.length > 12) {
-          callback(new Error("User name must be at most 12 characters"));
-        } else if (!/^[ㄱ-ㅎ가-힣a-zA-Z0-9]+$/.test(value)) {
-          callback(new Error("Special characters are not allowed"));
-        } else if (/\s/.test(value)) {
-          callback(new Error("User name must not contain spaces"));
-        } else {
+        if (!value) {
           callback();
+          return;
         }
+
+        if (value.length > 12) {
+          callback(new Error("User name must be at most 12 characters"));
+          return;
+        }
+
+        if (!/^[ㄱ-ㅎ가-힣a-zA-Z0-9]+$/.test(value)) {
+          callback(new Error("Special characters are not allowed"));
+          return;
+        }
+
+        if (/\s/.test(value)) {
+          callback(new Error("User name must not contain spaces"));
+          return;
+        }
+
+        callback();
       },
       trigger: "blur",
     },

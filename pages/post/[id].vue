@@ -148,7 +148,7 @@
         <div v-for="(comment, index) in commentList" :key="comment.id">
           <div class="w-full | px-[24px]">
             <div
-              class="w-full h-[60px] | flex flex-col justify-between items-center | border border-border-darkerBorder dark:border-darkBorder-darkerBorder | mt-[12px] mx-auto cursor-pointer"
+              class="w-full min-h-[60px] | flex flex-col justify-between items-center | border border-border-darkerBorder dark:border-darkBorder-darkerBorder | mt-[12px] mx-auto cursor-pointer"
               :class="{
                 'bg-background-lightFill dark:bg-darkBackground-lightFill':
                   (editCommentInputArea && comment.id === editedCommentNum) ||
@@ -157,34 +157,33 @@
               @click="onReplyArea(comment.id)"
             >
               <div
-                class="w-full h-[25px] | flex justify-between items-center | border-b border-dashed border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-darkerFill dark:bg-darkBackground-darkerFill | px-[12px]"
+                class="w-full min-h-[25px] | flex justify-between items-center | border-b border-dashed border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-darkerFill dark:bg-darkBackground-darkerFill | px-[12px]"
               >
                 <span
                   v-if="comment.userName === ''"
                   class="text-[15px] | mr-[6px]"
                 >
-                  익명
+                  익명{{ comment.registeredBy }}
                 </span>
                 <span v-else class="text-[15px] | mr-[6px]">
                   {{ comment.userName }}
                 </span>
-                <div
-                  v-if="comment.registeredBy === $indexStore.auth.user.id"
-                  class="flex space-x-2 items-center"
-                >
+                <div class="flex space-x-2 items-center">
                   <span class="text-[14px]">{{ comment.formattedDate }}</span>
-                  <el-button
-                    icon="edit"
-                    type="primary"
-                    @click.stop="onEditArea(comment.id, comment.content)"
-                    class="z-10 !w-[10px] !h-[20px]"
-                  />
-                  <el-button
-                    icon="delete"
-                    type="danger"
-                    @click.stop="showDeleteCommentModal(comment.id)"
-                    class="z-10 !w-[10px] !h-[20px]"
-                  />
+                  <div v-if="comment.registeredBy === $indexStore.auth.user.id">
+                    <el-button
+                      icon="edit"
+                      type="primary"
+                      @click.stop="onEditArea(comment.id, comment.content)"
+                      class="z-10 !w-[10px] !h-[20px]"
+                    />
+                    <el-button
+                      icon="delete"
+                      type="danger"
+                      @click.stop="showDeleteCommentModal(comment.id)"
+                      class="z-10 !w-[10px] !h-[20px]"
+                    />
+                  </div>
                 </div>
               </div>
               <div
@@ -202,7 +201,7 @@
                 :rows="2"
                 type="textarea"
                 placeholder="댓글을 입력해주세요"
-                class="resize-none"
+                class="custom-input"
               />
               <el-button class="ml-auto mt-[12px]" @click="editComment">
                 댓글 수정
@@ -222,30 +221,34 @@
                   class="w-full h-[25px] | flex justify-between items-center | border-b border-dashed border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-darkerFill dark:bg-darkBackground-darkerFill | px-[12px]"
                 >
                   <div class="w-full | flex justify-between items-center |">
-                    <span v-if="!reply.userName" class="text-[15px] | mr-[12px]"
-                      >익명
+                    <span
+                      v-if="!reply.userName"
+                      class="text-[15px] | mr-[12px]"
+                    >
+                      익명{{ reply.registeredBy }}
                     </span>
                     <span v-else class="text-[15px] | mr-[12px]">
                       {{ reply.userName }}
                     </span>
-                    <div
-                      v-if="reply.registeredBy === $indexStore.auth.user.id"
-                      class="flex space-x-2 items-center"
-                    >
+                    <div class="flex space-x-2 items-center">
                       <span class="text-[14px]">{{ reply.formattedDate }}</span>
-                      <el-button
-                        icon="Edit"
-                        type="primary"
-                        style="my-auto"
-                        @click.stop="onEditReplyArea(reply.id, reply.content)"
-                        class="z-10 !w-[10px] !h-[20px]"
-                      />
-                      <el-button
-                        icon="delete"
-                        type="danger"
-                        @click.stop="showDeleteReplyModal(reply.id)"
-                        class="z-10 !w-[10px] !h-[20px]"
-                      />
+                      <div
+                        v-if="reply.registeredBy === $indexStore.auth.user.id"
+                      >
+                        <el-button
+                          icon="Edit"
+                          type="primary"
+                          style="my-auto"
+                          @click.stop="onEditReplyArea(reply.id, reply.content)"
+                          class="z-10 !w-[10px] !h-[20px]"
+                        />
+                        <el-button
+                          icon="delete"
+                          type="danger"
+                          @click.stop="showDeleteReplyModal(reply.id)"
+                          class="z-10 !w-[10px] !h-[20px]"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -264,7 +267,7 @@
                         v-model="editedReply"
                         :rows="2"
                         type="textarea"
-                        class="resize-none"
+                        class="custom-input"
                         placeholder="답글을 수정하세요"
                       />
                       <div class="flex justify-end mt-[12px]">
@@ -287,7 +290,7 @@
                   v-model="reply"
                   :rows="2"
                   type="textarea"
-                  class="resize-none"
+                  class="custom-input"
                   placeholder="답글을 입력하세요"
                 />
                 <div class="flex justify-end | mt-[12px]">
@@ -299,16 +302,18 @@
             </div>
           </div>
         </div>
-        <div
-          v-if="$indexStore.auth.isAuthenticated"
-          class="w-[full] h-auto px-[24px] mt-[12px]"
-        >
+        <div class="w-[full] h-auto px-[24px] mt-[12px]">
           <el-input
             v-model="comment"
             :rows="2"
             type="textarea"
-            class="resize-none"
-            placeholder="댓글을 입력해주세요"
+            class="custom-input"
+            :placeholder="
+              !$indexStore.auth.isAuthenticated
+                ? '댓글을 입력하려면 로그인이 필요합니다.'
+                : '댓글을 입력해주세요.'
+            "
+            :disabled="!$indexStore.auth.isAuthenticated"
           />
           <div class="flex justify-end | my-[12px]">
             <el-button @click="writeComment">댓글 작성</el-button>
@@ -351,7 +356,9 @@ const router = useRouter();
 const config = useRuntimeConfig();
 const baseURL = config.public.apiBaseUrl;
 
-const postId: string = route.params.id as string;
+const postId = Array.isArray(route.params.id)
+  ? route.params.id[0]
+  : route.params.id;
 const postInfo: Ref<PostInfo> = ref({} as PostInfo);
 const likeInfo: Ref<LikeInfo> = ref({
   totalLikes: 0,
@@ -382,6 +389,11 @@ onMounted(() => {
 });
 
 const onReplyArea = (commentId: number) => {
+  if (!$indexStore.auth.isAuthenticated) {
+    ElMessage({ message: "로그인이 필요합니다.", type: "error" });
+    return;
+  }
+
   replyInputArea.value = !replyInputArea.value;
   editedReplyInputArea.value = false;
   editCommentInputArea.value = false;
@@ -439,6 +451,16 @@ const getCommentInfo = async () => {
 };
 
 const writeComment = async () => {
+  if (!$indexStore.auth.isAuthenticated) {
+    ElMessage({ message: "로그인이 필요합니다.", type: "error" });
+    return;
+  }
+
+  if (comment.value.trim() === "") {
+    ElMessage({ message: "댓글을 입력해주세요.", type: "error" });
+    return;
+  }
+
   const result = await $apiPost(
     "/comments/write",
     {
@@ -460,6 +482,11 @@ const writeComment = async () => {
 };
 
 const editComment = async () => {
+  if (editedComment.value.trim() === "") {
+    ElMessage({ message: "댓글을 입력해주세요.", type: "error" });
+    return;
+  }
+
   const result = await $apiPost(
     "/comments/edit",
     {
@@ -483,6 +510,11 @@ const editComment = async () => {
 };
 
 const writeReply = async (commentId: number) => {
+  if (editedReply.value.trim() === "") {
+    ElMessage({ message: "답글을 입력해주세요.", type: "error" });
+    return;
+  }
+
   const result = await $apiPost(
     "/comments/write",
     {
@@ -506,6 +538,11 @@ const writeReply = async (commentId: number) => {
 };
 
 const editReply = async (commentId: number, replyId: number) => {
+  if (reply.value.trim() === "") {
+    ElMessage({ message: "답글을 입력해주세요.", type: "error" });
+    return;
+  }
+
   const result = await $apiPost(
     "/comments/edit",
     {
@@ -666,3 +703,10 @@ const report = async () => {
   }
 };
 </script>
+
+<style>
+.custom-input .el-textarea__inner {
+  height: 60px;
+  resize: none;
+}
+</style>

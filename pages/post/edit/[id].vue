@@ -105,7 +105,9 @@ const form = reactive<FormType>({
   files: [],
 });
 
-const postId: string = route.params.id as string;
+const postId = Array.isArray(route.params.id)
+  ? route.params.id[0]
+  : route.params.id;
 
 const fileList: Ref<UploadFile[]> = ref([]);
 

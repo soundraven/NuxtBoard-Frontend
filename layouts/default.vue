@@ -13,7 +13,14 @@
               v-model="keyword"
               class="w-[240px] ml-[6px]"
               placeholder="검색"
-            />
+              clearable
+            >
+              <template #suffix>
+                <el-icon class="cursor-pointer">
+                  <Search />
+                </el-icon>
+              </template>
+            </el-input>
           </div>
         </div>
         <div class="flex items-center">
