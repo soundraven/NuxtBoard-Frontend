@@ -510,7 +510,7 @@ const editComment = async () => {
 };
 
 const writeReply = async (commentId: number) => {
-  if (editedReply.value.trim() === "") {
+  if (reply.value.trim() === "") {
     ElMessage({ message: "답글을 입력해주세요.", type: "error" });
     return;
   }
@@ -538,7 +538,7 @@ const writeReply = async (commentId: number) => {
 };
 
 const editReply = async (commentId: number, replyId: number) => {
-  if (reply.value.trim() === "") {
+  if (editedReply.value.trim() === "") {
     ElMessage({ message: "답글을 입력해주세요.", type: "error" });
     return;
   }
