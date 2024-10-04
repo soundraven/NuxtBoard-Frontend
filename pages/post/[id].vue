@@ -251,7 +251,6 @@
                   >
                     <span>{{ reply.content }}</span>
                   </div>
-                  <!-- 답글 수정 입력창 -->
                 </div>
                 <div
                   class="w-full h-auto | flex flex-col | pt-[12px] ml-auto"
@@ -271,7 +270,6 @@
                   </div>
                 </div>
               </div>
-
               <div
                 v-if="replyInputArea && comment.id === replyComment"
                 class="w-full h-auto | mt-[12px] ml-auto"
