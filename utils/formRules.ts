@@ -29,7 +29,7 @@ const rules: FormRules = {
           callback();
         }
       },
-      trigger: "change",
+      trigger: "blur",
     },
   ],
 

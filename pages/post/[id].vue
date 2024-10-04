@@ -159,10 +159,7 @@
               <div
                 class="w-full min-h-[25px] | flex justify-between items-center | border-b border-dashed border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-darkerFill dark:bg-darkBackground-darkerFill | px-[12px]"
               >
-                <span
-                  v-if="comment.userName === ''"
-                  class="text-[15px] | mr-[6px]"
-                >
+                <span v-if="!comment.userName" class="text-[15px] | mr-[6px]">
                   익명{{ comment.registeredBy }}
                 </span>
                 <span v-else class="text-[15px] | mr-[6px]">
@@ -208,19 +205,17 @@
               </el-button>
             </div>
             <div class="pl-[50px]">
-              <div
-                v-for="(reply, index) in comment.replies"
-                :key="reply.id"
-                class="w-full h-[60px] | flex flex-col justify-center items-end | border border-border-darkerBorder dark:border-darkBorder-darkerBorder | mt-[12px] ml-[auto]"
-                :class="{
-                  'bg-background-lightFill dark:bg-darkBackground-lightFill':
-                    editedReplyInputArea && reply.id === editedReplyNum,
-                }"
-              >
+              <div v-for="(reply, index) in comment.replies" :key="reply.id">
                 <div
-                  class="w-full h-[25px] | flex justify-between items-center | border-b border-dashed border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-darkerFill dark:bg-darkBackground-darkerFill | px-[12px]"
+                  class="w-full min-h-[60px] | flex flex-col justify-center items-center | border border-border-darkerBorder dark:border-darkBorder-darkerBorder | mt-[12px] ml-[auto]"
+                  :class="{
+                    'bg-background-lightFill dark:bg-darkBackground-lightFill':
+                      editedReplyInputArea && reply.id === editedReplyNum,
+                  }"
                 >
-                  <div class="w-full | flex justify-between items-center |">
+                  <div
+                    class="w-full h-[25px] | flex justify-between items-center | border-b border-dashed border-border-darkerBorder dark:border-darkBorder-darkerBorder bg-background-darkerFill dark:bg-darkBackground-darkerFill | px-[12px]"
+                  >
                     <span
                       v-if="!reply.userName"
                       class="text-[15px] | mr-[12px]"
@@ -251,37 +246,32 @@
                       </div>
                     </div>
                   </div>
+                  <div
+                    class="w-full min-h-[35px] | flex justify-start items-center | text-[15px] | p-[12px]"
+                  >
+                    <span>{{ reply.content }}</span>
+                  </div>
+                  <!-- 답글 수정 입력창 -->
                 </div>
                 <div
-                  class="w-full h-[35px] | flex justify-start items-center | text-[15px] | p-[12px]"
+                  class="w-full h-auto | flex flex-col | pt-[12px] ml-auto"
+                  v-if="editedReplyInputArea && reply.id === editedReplyNum"
                 >
-                  <span>{{ reply.content }}</span>
+                  <el-input
+                    v-model="editedReply"
+                    :rows="2"
+                    type="textarea"
+                    class="custom-input"
+                    placeholder="답글을 수정하세요"
+                  />
+                  <div class="flex justify-end mt-[12px]">
+                    <el-button @click="() => editReply(comment.id, reply.id)">
+                      답글 수정
+                    </el-button>
+                  </div>
                 </div>
-                <ClientOnly>
-                  <teleport to="#replyEditPosition">
-                    <div
-                      v-if="editedReplyInputArea && reply.id === editedReplyNum"
-                      class="w-full h-auto | flex flex-col | pt-[12px] ml-auto"
-                    >
-                      <el-input
-                        v-model="editedReply"
-                        :rows="2"
-                        type="textarea"
-                        class="custom-input"
-                        placeholder="답글을 수정하세요"
-                      />
-                      <div class="flex justify-end mt-[12px]">
-                        <el-button
-                          @click="() => editReply(comment.id, reply.id)"
-                        >
-                          답글 수정
-                        </el-button>
-                      </div>
-                    </div>
-                  </teleport>
-                </ClientOnly>
               </div>
-              <div :id="'replyEditPosition'"></div>
+
               <div
                 v-if="replyInputArea && comment.id === replyComment"
                 class="w-full h-auto | mt-[12px] ml-auto"
@@ -510,7 +500,7 @@ const editComment = async () => {
 };
 
 const writeReply = async (commentId: number) => {
-  if (editedReply.value.trim() === "") {
+  if (reply.value.trim() === "") {
     ElMessage({ message: "답글을 입력해주세요.", type: "error" });
     return;
   }
@@ -538,7 +528,7 @@ const writeReply = async (commentId: number) => {
 };
 
 const editReply = async (commentId: number, replyId: number) => {
-  if (reply.value.trim() === "") {
+  if (editedReply.value.trim() === "") {
     ElMessage({ message: "답글을 입력해주세요.", type: "error" });
     return;
   }
@@ -706,7 +696,7 @@ const report = async () => {
 
 <style>
 .custom-input .el-textarea__inner {
-  height: 60px;
+  min-height: 60px;
   resize: none;
 }
 </style>

@@ -4,9 +4,8 @@
       class="w-[300px] | border border-border-darkerBorder dark:border-darkBorder-darkerBorder rounded shadow-sm bg-background-basicWhite dark:bg-darkBackground-darkerFill | p-[12px] mt-[12px]"
     >
       최근 개념글
-      <div v-for="(post, index) in list" class="w-[280px] mt-[6px]">
+      <div v-for="(post, index) in slicedTrendList" class="w-[280px] mt-[6px]">
         <div
-          v-if="index < 5"
           class="text-[14px] | flex justify-between | cursor-pointer"
           @click="navigateTo(`/post/${post.id}`)"
         >
@@ -20,9 +19,11 @@
       class="w-[300px] | border border-border-darkerBorder dark:border-darkBorder-darkerBorder rounded shadow-sm bg-background-basicWhite dark:bg-darkBackground-darkerFill | p-[12px] mt-[12px]"
     >
       이 채널의 개념글
-      <div v-for="(post, index) in trendList" class="w-[280px] mt-[6px]">
+      <div
+        v-for="(post, index) in slicedCurrentBoardTrendList"
+        class="w-[280px] mt-[6px]"
+      >
         <div
-          v-if="index < 5"
           class="flex justify-between text-[14px] cursor-pointer"
           @click="navigateTo(`/post/${post.id}`)"
         >
@@ -42,8 +43,16 @@ const { $dayjs, $apiGet } = useNuxtApp();
 
 const route = useRoute();
 
-const list: Ref<PostInfo[]> = ref([] as PostInfo[]);
-const trendList: Ref<PostInfo[]> = ref([] as PostInfo[]);
+const trendList: Ref<PostInfo[]> = ref([]);
+const currentBoardTrendList: Ref<PostInfo[]> = ref([]);
+
+const slicedTrendList: ComputedRef<PostInfo[]> = computed(() => {
+  return trendList.value.slice(0, 5);
+});
+
+const slicedCurrentBoardTrendList: ComputedRef<PostInfo[]> = computed(() => {
+  return trendList.value.slice(0, 5);
+});
 
 onMounted(() => {
   getPostList();
@@ -57,8 +66,8 @@ const getPostList = async () => {
     currentBoardTrendPosts: PostInfo[];
   }>(`/posts/trendPosts?boardId=${boardId}`);
 
-  list.value = result.data?.trendPosts || [];
-  trendList.value = result.data?.currentBoardTrendPosts || [];
+  trendList.value = result.data?.trendPosts || [];
+  currentBoardTrendList.value = result.data?.currentBoardTrendPosts || [];
 };
 
 const getElapsedTime = (registeredDate: Dayjs) => {
