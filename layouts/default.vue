@@ -16,7 +16,10 @@
               clearable
             >
               <template #suffix>
-                <el-icon class="cursor-pointer">
+                <el-icon
+                  class="cursor-pointer"
+                  @click="ElMessage('현재 준비중 입니다.')"
+                >
                   <Search />
                 </el-icon>
               </template>

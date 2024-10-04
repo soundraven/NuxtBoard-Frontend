@@ -28,7 +28,9 @@
         <div class="flex justify-center items-center">
           <el-button type="primary" @click="submitForm">로그인</el-button>
           <el-button @click="navigateTo('/auth/register')">회원가입</el-button>
-          <el-button>비밀번호 찾기</el-button>
+          <el-button @click="ElMessage('현재 준비중 입니다.')">
+            비밀번호 찾기
+          </el-button>
         </div>
       </el-form>
     </el-card>
